@@ -1,0 +1,54 @@
+[project]
+name = "scrapegraphaiapisdk"
+version = "0.0.1"
+description = "library for extracting reference from documents"
+authors = [
+    { name = "Marco Vinciguerra", email = "mvincig11@gmail.com" },
+    { name = "Marco Perini", email = "perinim.98@gmail.com" },
+    { name = "Lorenzo Padoan", email = "lorenzo.padoan977@gmail.com" }
+]
+
+dependencies = [
+]
+
+license = "MIT"
+readme = "README.md"
+homepage = "https://scrapegraphai.com/"
+repository = ""
+documentation = ""
+keywords = [
+    "ai",
+    "artificial intelligence",
+    "gpt",
+    "machine learning",
+    "nlp",
+    "natural language processing",
+    "openai",
+    "scraping",
+    "web scraping tool",
+    "webscraping",
+    "graph",
+]
+classifiers = [
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+requires-python = ">=3.9,<4.0"
+
+[project.optional-dependencies]
+docs = ["sphinx==6.0", "furo==2024.5.6"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.rye]
+managed = true
+dev-dependencies = [
+    "pytest==8.0.0",
+    "pytest-mock==3.14.0",
+    "-e file:.[docs]",
+    "pylint>=3.2.5",
+]
