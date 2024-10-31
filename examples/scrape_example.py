@@ -1,39 +1,16 @@
-import os
-from dotenv import load_dotenv
 from scrapegraphaiapisdk.scrape import scrape
-from pydantic import BaseModel
-from typing import List
-
-# Load environment variables from .env file
-load_dotenv()
-
-class Product(BaseModel):
-    name: str
-    price: float
-    description: str
-
-class ProductList(BaseModel):
-    products: List[Product]
+from dotenv import load_dotenv  # Import load_dotenv
+import os  # Import os to access environment variables
+import json  # Import json for beautifying output
 
 def main():
-    # Get API key from environment variables
+    """Main function to execute the scraping process."""
+    load_dotenv()
     api_key = os.getenv("SCRAPEGRAPH_API_KEY")
-    
-    # URL to scrape
-    url = "https://example.com/products"
-    
-    # Natural language prompt
-    prompt = "Extract all products from this page including their names, prices, and descriptions"
-    
-    # Create schema
-    schema = ProductList
-    
-    # Make the request
-    try:
-        result = scrape(api_key, url, prompt, schema)
-        print(f"Scraped data: {result}")
-    except Exception as e:
-        print(f"Error occurred: {e}")
+    url = "https://scrapegraphai.com/"
+    prompt = "What does the company do?"
 
+    result = scrape(api_key, url, prompt)
+    print(result)
 if __name__ == "__main__":
-    main() 
+    main()

@@ -10,6 +10,8 @@
 -e file:.
 alabaster==0.7.16
     # via sphinx
+annotated-types==0.7.0
+    # via pydantic
 astroid==3.3.5
     # via pylint
 babel==2.16.0
@@ -51,6 +53,10 @@ platformdirs==4.3.6
     # via pylint
 pluggy==1.5.0
     # via pytest
+pydantic==2.9.2
+    # via scrapegraphaiapisdk
+pydantic-core==2.23.4
+    # via pydantic
 pygments==2.18.0
     # via furo
     # via sphinx
@@ -58,7 +64,10 @@ pylint==3.3.1
 pytest==8.0.0
     # via pytest-mock
 pytest-mock==3.14.0
+python-dotenv==1.0.1
+    # via scrapegraphaiapisdk
 requests==2.32.3
+    # via scrapegraphaiapisdk
     # via sphinx
 snowballstemmer==2.2.0
     # via sphinx
@@ -89,6 +98,8 @@ tomlkit==0.13.2
     # via pylint
 typing-extensions==4.12.2
     # via astroid
+    # via pydantic
+    # via pydantic-core
     # via pylint
 urllib3==2.2.3
     # via requests
