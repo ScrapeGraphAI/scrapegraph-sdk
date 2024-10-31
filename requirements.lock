@@ -8,3 +8,24 @@
 #   with-sources: false
 
 -e file:.
+annotated-types==0.7.0
+    # via pydantic
+certifi==2024.8.30
+    # via requests
+charset-normalizer==3.4.0
+    # via requests
+idna==3.10
+    # via requests
+pydantic==2.9.2
+    # via scrapegraphaiapisdk
+pydantic-core==2.23.4
+    # via pydantic
+python-dotenv==1.0.1
+    # via scrapegraphaiapisdk
+requests==2.32.3
+    # via scrapegraphaiapisdk
+typing-extensions==4.12.2
+    # via pydantic
+    # via pydantic-core
+urllib3==2.2.3
+    # via requests

@@ -1,38 +1,53 @@
-"""
-This module provides a function to scrape and extract structured data from a webpage
-using the ScrapeGraph AI API. It allows specifying a schema for the output structure
-using a Pydantic model.
-"""
-
 from pydantic import BaseModel
 import requests
+import argparse
+from typing import Optional
+import json
 
-def scrape(api_key: str, url: str, prompt: str, schema: BaseModel) -> str:
+class ExampleSchema(BaseModel):
+    """Define an example schema for the output structure, if needed."""
+    name: str
+    description: str
+
+def scrape(api_key: str, url: str, prompt: str, schema: Optional[BaseModel] = None) -> str:
     """Scrape and extract structured data from a webpage using ScrapeGraph AI.
 
     Args:
-        api_key (str): Your ScrapeGraph AI API key
-        url (str): The URL of the webpage to scrape
-        prompt (str): Natural language prompt describing what data to extract
-        schema (BaseModel): Pydantic model defining the output structure.
-            The model will be converted to JSON schema before making the request.
+        api_key (str): Your ScrapeGraph AI API key.
+        url (str): The URL of the webpage to scrape.
+        prompt (str): Natural language prompt describing what data to extract.
+        schema (Optional[BaseModel]): Pydantic model defining the output structure,
+            if provided. The model will be converted to JSON schema before making 
+            the request.
 
     Returns:
-        str: Extracted data in JSON format matching the provided schema
+        str: Extracted data in JSON format matching the provided schema.
     """
-    endpoint = "https://api.scrapegraph.ai/v1/scrape"
+    endpoint = "https://sgai-api.onrender.com/api/v1/smartscraper"
     headers = {
-        "Authorization": f"Bearer {api_key}",
+        "accept": "application/json",
+        "SGAI-API-KEY": api_key,
         "Content-Type": "application/json"
     }
     
     payload = {
-        "url": url,
-        "prompt": prompt,
-        "schema": schema.model_json_schema()
+        "website_url": url,
+        "user_prompt": prompt
     }
     
-    response = requests.post(endpoint, headers=headers, json=payload)
-    response.raise_for_status()
+    if schema:
+        payload["schema"] = schema.model_json_schema()
+    
+    try:
+        response = requests.post(endpoint, headers=headers, json=payload)
+        response.raise_for_status()
+    except requests.exceptions.HTTPError as http_err:
+        # Handle HTTP errors specifically
+        if response.status_code == 403:
+            return json.dumps({"error": "Access forbidden (403)", "message": "You do not have permission to access this resource."})
+        return json.dumps({"error": "HTTP error occurred", "message": str(http_err), "status_code": response.status_code})
+    except requests.exceptions.RequestException as e:
+        # Handle other request exceptions (e.g., connection errors, timeouts)
+        return json.dumps({"error": "An error occurred", "message": str(e)})
     
     return response.text
