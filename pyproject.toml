@@ -9,6 +9,8 @@ authors = [
 ]
 
 dependencies = [
+    "requests>=2.32.3",
+    "pydantic>=2.9.2"
 ]
 
 license = "MIT"
