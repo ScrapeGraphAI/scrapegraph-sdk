@@ -17,7 +17,6 @@ class TestFeedback(unittest.TestCase):
         response = feedback("test_api_key", "Great service!")
         self.assertIn("HTTP error occurred", response)
 
-# ... additional tests can be added here ...
 
 if __name__ == '__main__':
     unittest.main() 
