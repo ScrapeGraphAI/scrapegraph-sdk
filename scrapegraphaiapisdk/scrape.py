@@ -1,13 +1,7 @@
 from pydantic import BaseModel
 import requests
-import argparse
 from typing import Optional
 import json
-
-class ExampleSchema(BaseModel):
-    """Define an example schema for the output structure, if needed."""
-    name: str
-    description: str
 
 def scrape(api_key: str, url: str, prompt: str, schema: Optional[BaseModel] = None) -> str:
     """Scrape and extract structured data from a webpage using ScrapeGraph AI.
