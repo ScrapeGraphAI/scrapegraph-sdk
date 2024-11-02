@@ -30,7 +30,13 @@ def scrape(api_key: str, url: str, prompt: str, schema: Optional[BaseModel] = No
     }
     
     if schema:
-        payload["schema"] = schema.model_json_schema()
+        schema_json = schema.model_json_schema()
+        payload["output_schema"] = {
+            "description": schema_json.get("title", "Schema"),
+            "name": schema_json.get("title", "Schema"),
+            "properties": schema_json.get("properties", {}),
+            "required": schema_json.get("required", [])
+        }
     
     try:
         response = requests.post(endpoint, headers=headers, json=payload)

@@ -18,8 +18,10 @@ def main():
         print(f"Error occurred: {e}")
 
     # Example usage of feedback function
+    request_id = "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    rating = 5
     feedback_message = "This is a test feedback message."
-    feedback_response = feedback(api_key, feedback_message)  # Call the feedback function
+    feedback_response = feedback(api_key, request_id, rating, feedback_message)  # Call the feedback function
     print(f"Feedback Response: {feedback_response}")  # Print the response
 
 if __name__ == "__main__":

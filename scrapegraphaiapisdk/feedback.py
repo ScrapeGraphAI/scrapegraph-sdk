@@ -8,12 +8,14 @@ and handles responses and errors appropriately.
 import requests
 import json
 
-def feedback(api_key: str, feedback: str) -> str:
+def feedback(api_key: str, request_id: str, rating: int, feedback_text: str) -> str:
     """Send feedback to the API.
 
     Args:
         api_key (str): Your ScrapeGraph AI API key.
-        feedback (str): The feedback message to send.
+        request_id (str): The request ID associated with the feedback.
+        rating (int): The rating score.
+        feedback_text (str): The feedback message to send.
 
     Returns:
         str: Response from the API in JSON format.
@@ -25,7 +27,11 @@ def feedback(api_key: str, feedback: str) -> str:
         "Content-Type": "application/json"
     }
     
-    feedback_data = {"feedback": feedback}  # Prepare the feedback data
+    feedback_data = {
+        "request_id": request_id,
+        "rating": rating,
+        "feedback_text": feedback_text
+    }  
 
     try:
         response = requests.post(endpoint, headers=headers, json=feedback_data)
