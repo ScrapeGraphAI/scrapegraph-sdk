@@ -1,5 +1,5 @@
 [project]
-name = "scrapegraphaiapisdk"
+name = "scrapegraph_py"
 version = "0.0.1"
 description = "library for extracting reference from documents"
 authors = [

@@ -1,4 +1,4 @@
-from scrapegraphaiapisdk.scrape import scrape
+from scrapegraph_py.scrape import scrape
 from dotenv import load_dotenv  # Import load_dotenv
 import os  # Import os to access environment variables
 import json  # Import json for beautifying output
