@@ -5,7 +5,7 @@ to retrieve credits from the ScrapeGraph AI API.
 
 import os
 from dotenv import load_dotenv
-from scrapegraphaiapisdk.credits import credits
+from scrapegraph_py.credits import credits
 
 # Load environment variables from a .env file
 load_dotenv()

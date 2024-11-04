@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
-from scrapegraphaiapisdk.credits import status
-from scrapegraphaiapisdk.feedback import feedback
+from scrapegraph_py.credits import status
+from scrapegraph_py.feedback import feedback
 
 # Load environment variables from .env file
 load_dotenv()
