@@ -1,7 +1,7 @@
 [project]
 name = "scrapegraph_py"
 version = "0.0.1"
-description = "ScrapeGraph Python SDK for API
+description = "ScrapeGraph Python SDK for API"
 authors = [
     { name = "Marco Vinciguerra", email = "mvincig11@gmail.com" },
     { name = "Marco Perini", email = "perinim.98@gmail.com" },
