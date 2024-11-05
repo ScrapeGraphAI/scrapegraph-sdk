@@ -1,9 +1,8 @@
+import os
 from pydantic import BaseModel, Field
 from scrapegraph_py.scrape import scrape
 from dotenv import load_dotenv
-import os
 
-# Load environment variables from .env file
 load_dotenv()
 
 # Define a Pydantic schema
