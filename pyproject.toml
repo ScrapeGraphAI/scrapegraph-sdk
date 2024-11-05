@@ -1,7 +1,7 @@
 [project]
 name = "scrapegraph_py"
 version = "0.0.1"
-description = "library for extracting reference from documents"
+description = "ScrapeGraph Python SDK for API
 authors = [
     { name = "Marco Vinciguerra", email = "mvincig11@gmail.com" },
     { name = "Marco Perini", email = "perinim.98@gmail.com" },
@@ -31,7 +31,9 @@ keywords = [
     "web scraping tool",
     "webscraping",
     "graph",
-]
+    "sdk",
+    "api"
+    ]
 classifiers = [
     "Intended Audience :: Developers",
     "Topic :: Software Development :: Libraries :: Python Modules",

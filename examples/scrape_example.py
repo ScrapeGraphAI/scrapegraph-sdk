@@ -1,5 +1,5 @@
 import os
-from scrapegraph_py.scrape import scrape
+from scrapegraph_py import scrape
 from dotenv import load_dotenv
 
 
