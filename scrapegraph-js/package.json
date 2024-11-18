@@ -1,9 +1,28 @@
 {
   "name": "scrapegraph-js",
-  "version": "1.0.0",
-  "type": "module",
+  "author": "ScrapeGraphAI",
+  "version": "0.0.1",
+  "description": "Scrape and extract structured data from a webpage using ScrapeGraph AI.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ScrapeGraphAI/scrapegraph-sdk",
+    "directory": "scrapegraph-js"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/ScrapeGraphAI/scrapegraph-sdk/tree/main/scrapegraph-js",
+  "keywords": [
+    "scraping",
+    "webscraping",
+    "automated-scraper",
+    "gpt-3",
+    "gpt-4",
+    "llm",
+    "ai"
+  ],
   "main": "index.js",
+  "module": "index.js",
+  "type": "module",
   "dependencies": {
     "axios": "^1.6.0"
   }
-} 
+}
