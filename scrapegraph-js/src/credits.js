@@ -7,10 +7,10 @@ import axios from 'axios';
  * @returns {Promise<string>} Response from the API in JSON format
  */
 export async function credits(apiKey) {
-  const endpoint = "https://sgai-api.onrender.com/api/v1/credits";
+  const endpoint = "https://api.scrapegraphai.com/v1/credits";
   const headers = {
     "accept": "application/json",
-    "SGAI-API-KEY": apiKey
+    "SGAI-APIKEY": apiKey
   };
 
   try {
