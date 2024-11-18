@@ -10,10 +10,10 @@ import axios from 'axios';
  * @returns {Promise<string>} Response from the API in JSON format
  */
 export async function feedback(apiKey, requestId, rating, feedbackText) {
-  const endpoint = "https://sgai-api.onrender.com/api/v1/feedback";
+  const endpoint = "https://api.scrapegraphai.com/v1/feedback";
   const headers = {
     "accept": "application/json",
-    "SGAI-API-KEY": apiKey,
+    "SGAI-APIKEY": apiKey,
     "Content-Type": "application/json"
   };
 
