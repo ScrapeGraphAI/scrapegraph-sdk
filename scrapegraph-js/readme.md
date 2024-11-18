@@ -12,6 +12,9 @@ npm install scrapegraph-js
 
 ## Usage
 
+> [!WARNING]  
+> Remember not to write API keys directly in the code; instead, store them securely in `.env` files.
+
 First, import the required functions:
 
 ```javascript
