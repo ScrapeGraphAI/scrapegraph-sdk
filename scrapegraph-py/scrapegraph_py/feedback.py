@@ -7,38 +7,37 @@ and handles responses and errors appropriately.
 
 import requests
 import json
+from .client import ScrapeGraphClient
+from .exceptions import APIError, BadRequestError
 
-def feedback(api_key: str, request_id: str, rating: int, feedback_text: str) -> str:
+def feedback(client: ScrapeGraphClient, request_id: str, rating: int, feedback_text: str) -> str:
     """Send feedback to the API.
 
     Args:
-        api_key (str): Your ScrapeGraph AI API key.
-        request_id (str): The request ID associated with the feedback.
-        rating (int): The rating score.
-        feedback_text (str): The feedback message to send.
+        client (ScrapeGraphClient): Initialized ScrapeGraph client
+        request_id (str): The request ID associated with the feedback
+        rating (int): The rating score
+        feedback_text (str): The feedback message to send
 
     Returns:
         str: Response from the API in JSON format.
     """
-    endpoint = "https://sgai-api.onrender.com/api/v1/feedback"
-    headers = {
-        "accept": "application/json",
-        "SGAI-API-KEY": api_key,
-        "Content-Type": "application/json"
-    }
+    # Validate rating
+    if not 0 <= rating <= 5:
+        raise BadRequestError("Rating must be between 0 and 5")
+
+    endpoint = client.get_endpoint("feedback")
+    headers = client.get_headers()
     
     feedback_data = {
         "request_id": request_id,
         "rating": rating,
         "feedback_text": feedback_text
-    }  
+    }
 
     try:
         response = requests.post(endpoint, headers=headers, json=feedback_data)
-        response.raise_for_status()
-    except requests.exceptions.HTTPError as http_err:
-        return json.dumps({"error": "HTTP error occurred", "message": str(http_err), "status_code": response.status_code})
+        raise_for_status_code(response.status_code, response)
+        return response.text
     except requests.exceptions.RequestException as e:
-        return json.dumps({"error": "An error occurred", "message": str(e)})
-    
-    return response.text
+        raise APIError(f"Request failed: {str(e)}", response=None)
