@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import patch
 from scrapegraph_py.local_scraper import scrape_text
+from scrapegraph_py.client import ScrapeGraphClient
 from pydantic import BaseModel, Field
 import requests
 
@@ -10,6 +11,9 @@ class TestSchema(BaseModel):
 
 class TestLocalScraper(unittest.TestCase):
     
+    def setUp(self):
+        self.client = ScrapeGraphClient("test_api_key")
+    
     @patch('scrapegraph_py.local_scraper.requests.post')
     def test_scrape_text_success(self, mock_post):
         # Setup mock response
@@ -18,7 +22,7 @@ class TestLocalScraper(unittest.TestCase):
         
         # Test basic scraping without schema
         response = scrape_text(
-            "test_api_key",
+            self.client,
             "Sample website text",
             "Extract information"
         )
@@ -32,7 +36,7 @@ class TestLocalScraper(unittest.TestCase):
         
         # Test scraping with schema
         response = scrape_text(
-            "test_api_key",
+            self.client,
             "Sample website text",
             "Extract information",
             schema=TestSchema
@@ -44,7 +48,7 @@ class TestLocalScraper(unittest.TestCase):
         # Test HTTP error handling
         mock_post.side_effect = requests.exceptions.HTTPError("404 Client Error")
         response = scrape_text(
-            "test_api_key",
+            self.client,
             "Sample website text",
             "Extract information"
         )
@@ -58,7 +62,7 @@ class TestLocalScraper(unittest.TestCase):
         mock_post.side_effect = requests.exceptions.HTTPError("403 Forbidden")
         
         response = scrape_text(
-            "test_api_key",
+            self.client,
             "Sample website text",
             "Extract information"
         )
@@ -69,7 +73,7 @@ class TestLocalScraper(unittest.TestCase):
         # Test general request exception handling
         mock_post.side_effect = requests.exceptions.RequestException("Connection error")
         response = scrape_text(
-            "test_api_key",
+            self.client,
             "Sample website text",
             "Extract information"
         )
