@@ -2,27 +2,29 @@ from pydantic import BaseModel
 import requests
 from typing import Optional
 import json
+from .client import ScrapeGraphClient
+from .exceptions import APIError
 
-def scrape(api_key: str, url: str, prompt: str, schema: Optional[BaseModel] = None) -> str:
+def raise_for_status_code(status_code: int, response: requests.Response):
+    if status_code >= 400:
+        raise APIError(f"API request failed with status {status_code}", response=response)
+
+def scrape(client: ScrapeGraphClient, url: str, prompt: str, schema: Optional[BaseModel] = None) -> str:
     """Scrape and extract structured data from a webpage using ScrapeGraph AI.
 
     Args:
-        api_key (str): Your ScrapeGraph AI API key.
-        url (str): The URL of the webpage to scrape.
-        prompt (str): Natural language prompt describing what data to extract.
+        client (ScrapeGraphClient): Initialized ScrapeGraph client
+        url (str): The URL of the webpage to scrape
+        prompt (str): Natural language prompt describing what data to extract
         schema (Optional[BaseModel]): Pydantic model defining the output structure,
             if provided. The model will be converted to JSON schema before making 
-            the request.
+            the request
 
     Returns:
-        str: Extracted data in JSON format matching the provided schema.
+        str: Extracted data in JSON format matching the provided schema
     """
-    endpoint = "https://sgai-api.onrender.com/api/v1/smartscraper"
-    headers = {
-        "accept": "application/json",
-        "SGAI-API-KEY": api_key,
-        "Content-Type": "application/json"
-    }
+    endpoint = client.get_endpoint("smartscraper")
+    headers = client.get_headers()
     
     payload = {
         "website_url": url,
@@ -40,14 +42,7 @@ def scrape(api_key: str, url: str, prompt: str, schema: Optional[BaseModel] = No
     
     try:
         response = requests.post(endpoint, headers=headers, json=payload)
-        response.raise_for_status()
-    except requests.exceptions.HTTPError as http_err:
-        # Handle HTTP errors specifically
-        if response.status_code == 403:
-            return json.dumps({"error": "Access forbidden (403)", "message": "You do not have permission to access this resource."})
-        return json.dumps({"error": "HTTP error occurred", "message": str(http_err), "status_code": response.status_code})
+        raise_for_status_code(response.status_code, response)
+        return response.text
     except requests.exceptions.RequestException as e:
-        # Handle other request exceptions (e.g., connection errors, timeouts)
-        return json.dumps({"error": "An error occurred", "message": str(e)})
-    
-    return response.text
+        raise APIError(f"Request failed: {str(e)}", response=None)

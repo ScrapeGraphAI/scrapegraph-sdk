@@ -1,56 +1,45 @@
 from bs4 import BeautifulSoup
 import os
+from scrapegraph_py import ScrapeGraphClient, scrape_text
+from dotenv import load_dotenv
 
-def scrape_local_html(file_path):
+def scrape_local_html(client: ScrapeGraphClient, file_path: str, prompt: str):
     """
-    Scrape content from a local HTML file.
+    Scrape content from a local HTML file using ScrapeGraph AI.
     
     Args:
+        client (ScrapeGraphClient): Initialized ScrapeGraph client
         file_path (str): Path to the local HTML file
+        prompt (str): Natural language prompt describing what to extract
         
     Returns:
-        dict: Extracted data from the HTML file
+        str: Extracted data in JSON format
     """
-    # Check if file exists
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"HTML file not found at: {file_path}")
     
-    # Read the HTML file
     with open(file_path, 'r', encoding='utf-8') as file:
         html_content = file.read()
     
-    # Parse HTML with BeautifulSoup
+    # Use BeautifulSoup to extract text content
     soup = BeautifulSoup(html_content, 'html.parser')
+    text_content = soup.get_text(separator='\n', strip=True)
     
-    # Example extraction - modify based on your HTML structure
-    data = {
-        'title': soup.title.string if soup.title else None,
-        'paragraphs': [p.text for p in soup.find_all('p')],
-        'links': [{'text': a.text, 'href': a.get('href')} for a in soup.find_all('a')],
-        'headers': [h.text for h in soup.find_all(['h1', 'h2', 'h3'])]
-    }
-    
-    return data
+    # Use ScrapeGraph AI to analyze the text
+    return scrape_text(client, text_content, prompt)
 
 def main():
-    # Example usage
+    load_dotenv()
+    api_key = os.getenv("SCRAPEGRAPH_API_KEY")
+    client = ScrapeGraphClient(api_key)
+    
     try:
-        # Assuming you have a sample.html file in the same directory
-        result = scrape_local_html('sample.html')
-        
-        # Print extracted data
-        print("Title:", result['title'])
-        print("\nParagraphs:")
-        for p in result['paragraphs']:
-            print(f"- {p}")
-            
-        print("\nLinks:")
-        for link in result['links']:
-            print(f"- {link['text']}: {link['href']}")
-            
-        print("\nHeaders:")
-        for header in result['headers']:
-            print(f"- {header}")
+        result = scrape_local_html(
+            client,
+            'sample.html',
+            "Extract main content and important information"
+        )
+        print("Extracted Data:", result)
             
     except FileNotFoundError as e:
         print(f"Error: {e}")
