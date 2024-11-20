@@ -1,6 +1,6 @@
 import os
 from pydantic import BaseModel, Field
-from scrapegraph_py import ScrapeGraphClient, scrape
+from scrapegraph_py import ScrapeGraphClient, smart_scraper
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -19,5 +19,5 @@ url = "https://scrapegraphai.com/"
 prompt = "What does the company do?"
 
 # Call the scrape function with the schema
-result = scrape(client=client, url=url, prompt=prompt, schema=CompanyInfoSchema)
+result = smart_scraper(client=client, url=url, prompt=prompt, schema=CompanyInfoSchema)
 print(result)
