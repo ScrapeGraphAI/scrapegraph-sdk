@@ -1,13 +1,13 @@
 """
 This module provides functionality to interact with the ScrapeGraph AI API.
 
-It includes functions to retrieve credits and send feedback, handling responses and errors appropriately.
+It includes functions to retrieve credits and send feedback, 
+handling responses and errors appropriately.
 """
 
 import requests
-import json
 from .client import ScrapeGraphClient
-from .exceptions import raise_for_status_code
+from .exceptions import raise_for_status_code, APIError
 
 def credits(client: ScrapeGraphClient) -> str:
     """Retrieve credits from the API.
