@@ -16,9 +16,9 @@ import requests
 from .client import ScrapeGraphClient
 from .exceptions import APIError, raise_for_status_code
 
-def scrape(client: ScrapeGraphClient, url: str, prompt: str, 
+def smart_scraper(client: ScrapeGraphClient, url: str, prompt: str, 
            schema: Optional[BaseModel] = None) -> str:
-    """Scrape and extract structured data from a webpage using ScrapeGraph AI.
+    """smart_scraper and extract structured data from a webpage using ScrapeGraph AI.
 
     Args:
         client (ScrapeGraphClient): Initialized ScrapeGraph client

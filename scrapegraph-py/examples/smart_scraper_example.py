@@ -1,5 +1,5 @@
 import os
-from scrapegraph_py import ScrapeGraphClient, scrape
+from scrapegraph_py import ScrapeGraphClient, smart_scraper
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -9,5 +9,5 @@ client = ScrapeGraphClient(api_key)
 url = "https://scrapegraphai.com/"
 prompt = "What does the company do?"
 
-result = scrape(client, url, prompt)
+result = smart_scraper(client, url, prompt)
 print(result)
