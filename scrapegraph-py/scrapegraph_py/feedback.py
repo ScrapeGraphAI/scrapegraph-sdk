@@ -36,8 +36,7 @@ def feedback(client: ScrapeGraphClient, request_id: str, rating: int, feedback_t
     }
 
     try:
-        response = requests.post(endpoint, headers=headers, json=feedback_data)
-        raise_for_status_code(response.status_code, response)
+        response = requests.post(endpoint, headers=headers, json=feedback_data, timeout=10)
         return response.text
     except requests.exceptions.RequestException as e:
-        raise APIError(f"Request failed: {str(e)}", response=None)
+        raise APIError(f"Request failed: {str(e)}", response=None) from e
