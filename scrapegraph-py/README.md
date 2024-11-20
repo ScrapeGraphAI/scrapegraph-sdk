@@ -34,6 +34,51 @@ The SDK provides four main functionalities:
 
 ## Usage
 
+### Basic Web Scraping
+
+```python
+from scrapegraph_py import ScrapeGraphClient, scrape
+from dotenv import load_dotenv
+
+load_dotenv()
+api_key = os.getenv("SCRAPEGRAPH_API_KEY")
+client = ScrapeGraphClient(api_key)
+
+url = "https://scrapegraphai.com/"
+prompt = "What does the company do?"
+
+result = scrape(client, url, prompt)
+print(result)
+```
+
+### Local HTML Scraping
+
+You can also scrape content from local HTML files:
+
+```python
+from scrapegraph_py import ScrapeGraphClient, scrape_text
+from bs4 import BeautifulSoup
+
+def scrape_local_html(client: ScrapeGraphClient, file_path: str, prompt: str):
+    with open(file_path, 'r', encoding='utf-8') as file:
+        html_content = file.read()
+    
+    # Use BeautifulSoup to extract text content
+    soup = BeautifulSoup(html_content, 'html.parser')
+    text_content = soup.get_text(separator='\n', strip=True)
+    
+    # Use ScrapeGraph AI to analyze the text
+    return scrape_text(client, text_content, prompt)
+
+# Usage
+client = ScrapeGraphClient(api_key)
+result = scrape_local_html(
+    client,
+    'sample.html',
+    "Extract main content and important information"
+)
+print("Extracted Data:", result)
+```
 
 ### Structured Data Extraction
 
