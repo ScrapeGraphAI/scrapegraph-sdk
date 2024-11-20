@@ -1,33 +1,29 @@
 """
 This module provides functionality to interact with the ScrapeGraph AI API.
 
-It includes functions to retrieve credits and send feedback, handling responses and errors appropriately.
+It includes functions to retrieve credits and send feedback, 
+handling responses and errors appropriately.
 """
 
 import requests
-import json
+from .client import ScrapeGraphClient
+from .exceptions import raise_for_status_code, APIError
 
-def credits(api_key: str) -> str:
+def credits(client: ScrapeGraphClient) -> str:
     """Retrieve credits from the API.
 
     Args:
-        api_key (str): Your ScrapeGraph AI API key.
+        client (ScrapeGraphClient): Initialized ScrapeGraph client
 
     Returns:
         str: Response from the API in JSON format.
     """
-    endpoint = "https://sgai-api.onrender.com/api/v1/credits"
-    headers = {
-        "accept": "application/json",
-        "SGAI-API-KEY": api_key
-    }
+    endpoint = client.get_endpoint("credits")
+    headers = client.get_headers(include_content_type=False)
 
     try:
         response = requests.get(endpoint, headers=headers)
-        response.raise_for_status()
-    except requests.exceptions.HTTPError as http_err:
-        return json.dumps({"error": "HTTP error occurred", "message": str(http_err), "status_code": response.status_code})
+        raise_for_status_code(response.status_code, response)
+        return response.text
     except requests.exceptions.RequestException as e:
-        return json.dumps({"error": "An error occurred", "message": str(e)})
-
-    return response.text
+        raise APIError(f"Request failed: {str(e)}", response=None)
