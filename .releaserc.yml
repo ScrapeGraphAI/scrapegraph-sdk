@@ -33,6 +33,7 @@ plugins:
   - - "semantic-release-pypi"
     - buildCommand: "cd scrapegraph-py && rye build"
       distDirectory: "scrapegraph-py/dist"
+      packageDirectory: "scrapegraph-py"
   - "@semantic-release/github"
   - - "@semantic-release/git"
     - assets:
