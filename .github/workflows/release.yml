@@ -74,6 +74,7 @@ jobs:
       - name: Check folder
         run: |
           ls
+          cd ./scrapegraph-py
       - name: Semantic Release
         uses: cycjimmy/semantic-release-action@v4.1.0
         with:
