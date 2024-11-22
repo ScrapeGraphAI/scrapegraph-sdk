@@ -55,14 +55,14 @@ jobs:
       pull-requests: write
       id-token: write
     steps:
-      - name: Go to scrapegraph-py folder
-        run: |
-          cd scrapegraph-py
       - name: Checkout repo
         uses: actions/checkout@v4.1.1
         with:
           fetch-depth: 0
           persist-credentials: false
+      - name: Go to scrapegraph-py folder
+        run: |
+          cd scrapegraph-py
       - name: Install the latest version of rye
         uses: eifinger/setup-rye@v3
       - name: Restore build artifacts
