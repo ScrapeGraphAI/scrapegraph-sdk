@@ -1,0 +1,34 @@
+on:
+  push:
+    paths:
+      - 'scrapegraph-py/**'
+      - '.github/workflows/pylint.yml'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install the latest version of rye
+        uses: eifinger/setup-rye@v3
+      - name: Install dependencies
+        run: |
+          cd scrapegraph-py
+          rye sync --no-lock
+      - name: Analysing the code with pylint
+        working-directory: scrapegraph-py
+        run: rye run pylint-ci
+      - name: Check Pylint score
+        working-directory: scrapegraph-py
+        run: |
+          pylint_score=$(rye run pylint-score-ci | grep 'Raw metrics' | awk '{print $4}')
+          if (( $(echo "$pylint_score < 8" | bc -l) )); then
+            echo "Pylint score is below 8. Blocking commit."
+            exit 1
+          else
+            echo "Pylint score is acceptable."
+          fi
