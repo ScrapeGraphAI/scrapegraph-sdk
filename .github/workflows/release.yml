@@ -71,6 +71,9 @@ jobs:
         with:
           path: ./dist
           key: ${{ runner.os }}-bui ld-${{ hashFiles('./dist/**') }}
+      - name: Check folder
+        run: |
+          ls
       - name: Semantic Release
         uses: cycjimmy/semantic-release-action@v4.1.0
         with:
