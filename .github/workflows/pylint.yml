@@ -17,6 +17,7 @@ jobs:
         run: rye run pylint-ci
       - name: Check Pylint score
         run: |
+          cd scrapegraph-py
           pylint_score=$(rye run pylint-score-ci | grep 'Raw metrics' | awk '{print $4}')
           if (( $(echo "$pylint_score < 8" | bc -l) )); then
             echo "Pylint score is below 8. Blocking commit."
