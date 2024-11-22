@@ -1,8 +1,29 @@
 {
   "branches": ["main", {"name": "pre/*", "prerelease": true}],
   "plugins": [
-    "@semantic-release/commit-analyzer",
-    "@semantic-release/release-notes-generator",
+    ["@semantic-release/commit-analyzer", {
+      "preset": "conventionalcommits",
+      "releaseRules": [
+        {"type": "docs", "scope": "README", "release": "patch"},
+        {"type": "refactor", "release": "patch"},
+        {"type": "style", "release": "patch"}
+      ]
+    }],
+    ["@semantic-release/release-notes-generator", {
+      "preset": "conventionalcommits",
+      "presetConfig": {
+        "types": [
+          {"type": "feat", "section": "Features"},
+          {"type": "fix", "section": "Bug Fixes"},
+          {"type": "chore", "section": "Maintenance"},
+          {"type": "docs", "section": "Documentation"},
+          {"type": "style", "section": "Styling"},
+          {"type": "refactor", "section": "Refactoring"},
+          {"type": "perf", "section": "Performance"},
+          {"type": "test", "section": "Testing"}
+        ]
+      }
+    }],
     "@semantic-release/changelog",
     ["semantic-release-pypi", {
       "path": "./scrapegraph-py"
