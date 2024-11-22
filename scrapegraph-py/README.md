@@ -39,6 +39,7 @@ The SDK provides four main functionalities:
 ```python
 from scrapegraph_py import ScrapeGraphClient, scrape
 from dotenv import load_dotenv
+import os
 
 load_dotenv()
 api_key = os.getenv("SCRAPEGRAPH_API_KEY")
@@ -58,6 +59,14 @@ You can also scrape content from local HTML files:
 ```python
 from scrapegraph_py import ScrapeGraphClient, scrape_text
 from bs4 import BeautifulSoup
+import os
+
+# Load environment variables
+from dotenv import load_dotenv
+load_dotenv()
+api_key = os.getenv("SCRAPEGRAPH_API_KEY")
+
+client = ScrapeGraphClient(api_key)
 
 def scrape_local_html(client: ScrapeGraphClient, file_path: str, prompt: str):
     with open(file_path, 'r', encoding='utf-8') as file:
@@ -71,7 +80,6 @@ def scrape_local_html(client: ScrapeGraphClient, file_path: str, prompt: str):
     return scrape_text(client, text_content, prompt)
 
 # Usage
-client = ScrapeGraphClient(api_key)
 result = scrape_local_html(
     client,
     'sample.html',
@@ -87,6 +95,12 @@ For more structured data extraction, you can define a Pydantic schema:
 ```python
 from pydantic import BaseModel, Field
 from scrapegraph_py import scrape
+import os
+
+# Load environment variables
+from dotenv import load_dotenv
+load_dotenv()
+api_key = os.getenv("SCRAPEGRAPH_API_KEY")
 
 class CompanyInfoSchema(BaseModel):
     company_name: str = Field(description="The name of the company")
@@ -109,6 +123,12 @@ Monitor your API usage:
 
 ```python
 from scrapegraph_py import credits
+import os
+
+# Load environment variables
+from dotenv import load_dotenv
+load_dotenv()
+api_key = os.getenv("SCRAPEGRAPH_API_KEY")
 
 response = credits(api_key)
 print(response)
@@ -120,6 +140,12 @@ You can provide feedback on scraping results and check the API status:
 
 ```python
 from scrapegraph_py import feedback, status
+import os
+
+# Load environment variables
+from dotenv import load_dotenv
+load_dotenv()
+api_key = os.getenv("SCRAPEGRAPH_API_KEY")
 
 # Check API status
 status_response = status(api_key)
@@ -133,6 +159,33 @@ feedback_response = feedback(
     message="Great results!"
 )
 print(f"Feedback Response: {feedback_response}")
+```
+
+## Expected Output Example
+
+The following is an example of the expected output when scraping articles from a webpage:
+
+```json
+{
+  "articles": [
+    {
+      "title": "Thousands of People Are Cloning Their Dead Pets. This Is the Woman They Call First",
+      "url": "https://www.wired.com/story/your-next-job-pet-cloner/"
+    },
+    {
+      "title": "The Quantum Geometry That Exists Outside of Space and Time",
+      "url": "https://www.wired.com/story/physicists-reveal-a-quantum-geometry-that-exists-outside-of-space-and-time/"
+    },
+    {
+      "title": "How a PhD Student Discovered a Lost Mayan City From Hundreds of Miles Away",
+      "url": "https://www.wired.com/story/lost-maya-city-valeriana-interview/"
+    },
+    {
+      "title": "The Maker of Ozempic Is Trying to Block Compounded Versions of Its Blockbuster Drug",
+      "url": "https://www.wired.com/story/novo-nordisk-ozempic-compounded-fda-block-pharmacies/"
+    }
+  ]
+}
 ```
 
 ## Development
@@ -195,4 +248,5 @@ For support:
 - Visit [ScrapeGraph AI](https://scrapegraphai.com/)
 - Contact our support team
 - Check the examples in the `examples/` directory
+
 
