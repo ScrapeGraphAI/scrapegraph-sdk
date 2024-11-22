@@ -60,6 +60,13 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+      - name: Install the latest version of rye
+        uses: eifinger/setup-rye@v3
+      - name: Restore build artifacts
+        uses: actions/cache@v2
+        with:
+          path: scrapegraph-py/dist
+          key: ${{ runner.os }}-build-${{ hashFiles('scrapegraph-py/dist/**') }}
       - name: Semantic Release
         uses: cycjimmy/semantic-release-action@v4.1.0
         with:
