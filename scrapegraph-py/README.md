@@ -1,6 +1,6 @@
-# ScrapeGraph Python SDK
+# ScrapeGraph API Python SDK
 
-The official Python SDK for interacting with the ScrapeGraph AI API - a powerful web scraping and data extraction service.
+The official Python SDK for interacting with the ScrapeGraphAI API - a powerful web scraping and data extraction service.
 
 ## Installation
 
