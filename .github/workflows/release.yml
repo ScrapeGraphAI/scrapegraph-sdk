@@ -62,7 +62,7 @@ jobs:
           persist-credentials: false
       - name: Go to scrapegraph-py folder
         run: |
-          cd scrapegraph-py
+          ls
       - name: Install the latest version of rye
         uses: eifinger/setup-rye@v3
       - name: Restore build artifacts
