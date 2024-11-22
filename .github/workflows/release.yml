@@ -27,6 +27,7 @@ jobs:
           persist-credentials: false
       - name: Build app
         run: |
+          cd scrapegraph-py
           rye sync --no-lock
           rye build
         id: build_cache
