@@ -17,8 +17,8 @@ dependencies = [
 license = "MIT"
 readme = "README.md"
 homepage = "https://scrapegraphai.com/"
-repository = ""
-documentation = ""
+repository = "https://github.com/ScrapeGraphAI/scrapegraph-sdk"
+documentation = "https://github.com/ScrapeGraphAI/scrapegraph-sdk/tree/main/scrapegraph-py#readme"
 keywords = [
     "ai",
     "artificial intelligence",

@@ -33,10 +33,10 @@ jobs:
         id: build_cache
         if: success()
       - name: Cache build
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
-          path: ./dist
-          key: ${{ runner.os }}-build-${{ hashFiles('dist/**') }}
+          path: ./scrapegraph-py/dist
+          key: ${{ runner.os }}-build-${{ hashFiles('scrapegraph-py/dist/**') }}
         if: steps.build_cache.outputs.id != ''
 
   release:
@@ -60,16 +60,23 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm install
       - name: Semantic Release
         uses: cycjimmy/semantic-release-action@v4.1.0
         with:
           semantic_version: 23
           extra_plugins: |
             semantic-release-pypi@3
-            @semantic-release/git 
-            @semantic-release/commit-analyzer@12 
-            @semantic-release/release-notes-generator@13 
-            @semantic-release/github@10 
+            @semantic-release/git@10
+            @semantic-release/commit-analyzer@12
+            @semantic-release/release-notes-generator@13
+            @semantic-release/github@10
             @semantic-release/changelog@6
             conventional-changelog-conventionalcommits@7
         env:
