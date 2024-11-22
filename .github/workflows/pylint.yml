@@ -4,26 +4,18 @@ on:
       - 'scrapegraph-py/**'
       - '.github/workflows/pylint.yml'
 
-permissions:
-  contents: read
-  pull-requests: write
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
       - name: Install the latest version of rye
         uses: eifinger/setup-rye@v3
       - name: Install dependencies
-        run: |
-          cd scrapegraph-py
-          rye sync --no-lock
+        run: rye sync --no-lock
       - name: Analysing the code with pylint
-        working-directory: scrapegraph-py
         run: rye run pylint-ci
       - name: Check Pylint score
-        working-directory: scrapegraph-py
         run: |
           pylint_score=$(rye run pylint-score-ci | grep 'Raw metrics' | awk '{print $4}')
           if (( $(echo "$pylint_score < 8" | bc -l) )); then
