@@ -30,7 +30,9 @@ plugins:
         - type: ci
           section: CI
   - "@semantic-release/changelog"
-  - "semantic-release-pypi"
+  - - "semantic-release-pypi"
+    - buildCommand: "cd scrapegraph-py && rye build"
+      distDirectory: "scrapegraph-py/dist"
   - "@semantic-release/github"
   - - "@semantic-release/git"
     - assets:
