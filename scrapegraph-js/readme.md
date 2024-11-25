@@ -18,49 +18,77 @@ npm install scrapegraph-js
 First, import the required functions:
 
 ```javascript
-import { scrape, credits, feedback } from 'scrapegraph-js';
+import { smartScraper, getSmartScraperRequest, getCredits, sendFeedback } from 'scrapegraph-sdk';
 ```
 
 ### Scraping Websites
 
+#### Basic scraping
+
 ```javascript
+import { smartScraper } from 'scrapegraph-sdk';
+
+const apiKey = process.env.SGAI_APIKEY;
+const url = 'https://scrapegraphai.com';
+const prompt = 'What does the company do?';
+
+try {
+  const response = await smartScraper(apiKey, url, prompt);
+  console.log(response);
+} catch (error) {
+  console.error(error);
+}
+```
+
+#### Scraping with custom output schema
+
+```javascript
+import { smartScraper } from 'scrapegraph-sdk';
+
 const apiKey = 'your_api_key';
-const url = 'https://example.com';
+const url = 'https://scrapegraphai.com';
+const prompt = 'What does the company do?';
+const schema = //TODO
 
-// Basic scraping
-const result = await scrape(apiKey, url);
-console.log(JSON.parse(result));
-
-// Scraping with custom options
-const options = {
-  elements: ['h1', '.product-price'],
-  wait_for: '.specific-element',
-  javascript: true
-};
-
-const customResult = await scrape(apiKey, url, options);
-console.log(JSON.parse(customResult));
+try {
+  const response = await smartScraper(apiKey, url, prompt, schema);
+  console.log(response);
+} catch (error) {
+  console.error(error);
+}
 ```
 
 ### Checking Credits
 
 ```javascript
+import { getCredist } from 'scrapegraph-sdk';
+
 const apiKey = 'your_api_key';
 
-const creditsInfo = await credits(apiKey);
-console.log(JSON.parse(creditsInfo));
+try {
+	const myCredit = await getCredits(apiKey);
+	console.log(myCredit)
+} catch (error) {
+	console.error(error)
+}
 ```
 
 ### Submitting Feedback
 
 ```javascript
-const apiKey = 'your_api_key';
-const requestId = 'request_id_from_scrape_response';
-const rating = 5;
-const feedbackText = 'Great results!';
+import { sendFeedback } from 'scrapegraph-sdk';
 
-const feedbackResponse = await feedback(apiKey, requestId, rating, feedbackText);
-console.log(JSON.parse(feedbackResponse));
+const apiKey = 'your_api_key';
+const requestId = '16a63a80-c87f-4cde-b005-e6c3ecda278b';
+const rating = 5;
+const feedbackMessage = 'This is a test feedback message.';
+
+try {
+  const feedback_response = await sendFeedback(apiKey, requestId, rating, feedbackMessage);
+  console.log(feedback_response);
+} catch (error) {
+  console.error(error)
+}
 ```
 
 ## API Reference
@@ -92,17 +120,20 @@ Parameters:
 - `apiKey` (string): Your ScrapeGraph AI API key
 - `requestId` (string): The request ID from the scrape response
 - `rating` (number): Rating score
-- `feedbackText` (string): Feedback message
+- `feedbackText` (string) (optional): Feedback message
 
 ## Error Handling
 
-All functions return JSON strings that you should parse. In case of errors, the response will include error details:
+All functions return javascript `Error` object with imformation. In case of errors, the response will include error details:
+
+// TODO error list
 
 ```javascript
 {
-  "error": "HTTP error occurred",
-  "message": "Error details",
-  "status_code": 400
+  "statusCode": 400,
+  "title": "HTTP error occurred"
+  "details": "Error details",
+  
 }
 ```
 
