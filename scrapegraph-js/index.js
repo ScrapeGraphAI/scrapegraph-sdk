@@ -1,3 +1,3 @@
-export { smartScraper, smartScraperInfo } from './src/smartScraper.js';
-export { credits } from './src/credits.js';
-export { feedback } from './src/feedback.js'; 
+export { smartScraper, getSmartScraperRequest } from './src/smartScraper.js';
+export { getCredits } from './src/credits.js';
+export { sendFeedback } from './src/feedback.js'; 
