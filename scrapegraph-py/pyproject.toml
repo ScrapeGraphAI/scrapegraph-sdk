@@ -49,11 +49,10 @@ docs = ["sphinx==6.0", "furo==2024.5.6"]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[tool.rye]
+[tool.uv]
 managed = true
 dev-dependencies = [
     "pytest==8.0.0",
     "pytest-mock==3.14.0",
-    "-e file:.[docs]",
     "pylint>=3.2.5",
 ]
