@@ -2,11 +2,11 @@ import { getCredits } from "scrapegraph-sdk";
 import 'dotenv/config';
 
 try {
-    const apiKey = process.env.SGAI_APIKEY;
+	const apiKey = process.env.SGAI_APIKEY;
 
-    const myCredit = await getCredits(apiKey);
+	const myCredit = await getCredits(apiKey);
 
-    console.log(myCredit)
+	console.log(myCredit)
 } catch (error) {
-    console.error(error)
+	console.error(error)
 }
