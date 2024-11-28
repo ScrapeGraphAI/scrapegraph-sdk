@@ -8,15 +8,6 @@ authors = [
     { name = "Lorenzo Padoan", email = "lorenzo.padoan977@gmail.com" }
 ]
 
-dependencies = [
-    "requests>=2.32.3",
-    "pydantic>=2.10.2",
-    "python-dotenv>=1.0.1",
-    "aiohttp>=3.11.8",
-    "requests>=2.32.3",
-    "validators>=0.34.0",
-]
-
 license = "MIT"
 readme = "README.md"
 homepage = "https://scrapegraphai.com/"
@@ -43,7 +34,16 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
 ]
-requires-python = ">=3.9,<4.0"
+requires-python = ">=3.10,<4.0"
+
+dependencies = [
+    "requests>=2.32.3",
+    "pydantic>=2.10.2",
+    "python-dotenv>=1.0.1",
+    "aiohttp>=3.11.8",
+    "requests>=2.32.3",
+    "validators>=0.34.0",
+]
 
 [project.optional-dependencies]
 docs = ["sphinx==6.0", "furo==2024.5.6"]
@@ -73,7 +73,7 @@ dev-dependencies = [
 
 [tool.black]
 line-length = 88
-target-version = ["py39"]
+target-version = ["py310"]
 
 [tool.isort]
 profile = "black"
@@ -86,7 +86,7 @@ select = ["F", "E", "W", "C"]
 ignore = ["E203", "E501"]  # Ignore conflicts with Black
 
 [tool.mypy]
-python_version = "3.9"
+python_version = "3.10"
 strict = true
 disallow_untyped_calls = true
 ignore_missing_imports = true
