@@ -1,65 +1,182 @@
-"""
-Module for ScrapeGraph Client
+# Sync client implementation goes here
+from typing import Any, Optional
 
-This module contains the ScrapeGraphClient class, which provides methods to interact
-with the ScrapeGraph AI API. It allows users to initialize the client with an API key,
-retrieve necessary headers for API requests, and construct full endpoint URLs for
-making requests to the ScrapeGraph API. This facilitates seamless integration with
-ScrapeGraph AI services.
-"""
+import requests
+import urllib3
+from pydantic import BaseModel
+from requests.exceptions import RequestException
 
-class ScrapeGraphClient:
-    """Client for interacting with the ScrapeGraph AI API.
+from scrapegraph_py.config import API_BASE_URL, DEFAULT_HEADERS
+from scrapegraph_py.exceptions import APIError
+from scrapegraph_py.logger import sgai_logger as logger
+from scrapegraph_py.models.feedback import FeedbackRequest
+from scrapegraph_py.models.smartscraper import (
+    GetSmartScraperRequest,
+    SmartScraperRequest,
+)
+from scrapegraph_py.utils.helpers import handle_sync_response, validate_api_key
 
-    This class provides methods to initialize the client with an API key and base URL,
-    retrieve headers for API requests, and construct full endpoint URLs for making
-    requests to the ScrapeGraph API. It is designed to facilitate seamless interaction
-    with the ScrapeGraph AI services.
 
-    Attributes:
-        api_key (str): Your ScrapeGraph AI API key.
-        base_url (str): Base URL for the API, defaulting to "https://api.scrapegraphai.com/v1".
-    """
+class SyncClient:
+    def __init__(
+        self,
+        api_key: str,
+        verify_ssl: bool = True,
+        timeout: float = 30,
+        max_retries: int = 3,
+        retry_delay: float = 1.0,
+    ):
+        """Initialize SyncClient with configurable parameters.
 
-    def __init__(self, api_key: str, base_url: str = "https://api.scrapegraphai.com/v1"):
-        """Initialize the ScrapeGraph client.
-        
         Args:
-            api_key (str): Your ScrapeGraph AI API key.
-            base_url (str): Base URL for the API (optional, defaults 
-            to "https://api.scrapegraphai.com/v1").
+            api_key: API key for authentication
+            verify_ssl: Whether to verify SSL certificates
+            timeout: Request timeout in seconds
+            max_retries: Maximum number of retry attempts
+            retry_delay: Delay between retries in seconds
         """
+        logger.info("🔑 Initializing SyncClient")
+        validate_api_key(api_key)
+        logger.debug(
+            f"🛠️ Configuration: verify_ssl={verify_ssl}, timeout={timeout}, max_retries={max_retries}"
+        )
+
         self.api_key = api_key
-        self.base_url = base_url.rstrip('/')
+        self.headers = {**DEFAULT_HEADERS, "SGAI-APIKEY": api_key}
+        self.timeout = timeout
+        self.max_retries = max_retries
+        self.retry_delay = retry_delay
 
-    def get_headers(self, include_content_type: bool = True) -> dict:
-        """Get the headers for API requests.
-        
-        Args:
-            include_content_type (bool): Whether to include the Content-Type header 
-            (default is True).
-            
-        Returns:
-            dict: A dictionary containing the headers for the API request, including
-                  the API key and optionally the Content-Type.
-        """
-        headers = {
-            "accept": "application/json",
-            "SGAI-APIKEY": self.api_key
-        }
+        # Create a session for connection pooling
+        self.session = requests.Session()
+        self.session.headers.update(self.headers)
+        self.session.verify = verify_ssl
 
-        if include_content_type:
-            headers["Content-Type"] = "application/json"
- 
-        return headers
+        # Configure retries
+        adapter = requests.adapters.HTTPAdapter(
+            max_retries=requests.urllib3.Retry(
+                total=max_retries,
+                backoff_factor=retry_delay,
+                status_forcelist=[500, 502, 503, 504],
+            )
+        )
+        self.session.mount("http://", adapter)
+        self.session.mount("https://", adapter)
 
-    def get_endpoint(self, path: str) -> str:
-        """Get the full endpoint URL.
-        
-        Args:
-            path (str): The API endpoint path to be appended to the base URL.
-            
-        Returns:
-            str: The full endpoint URL constructed from the base URL and the provided path.
-        """
-        return f"{self.base_url}/{path}"
+        # Add warning suppression if verify_ssl is False
+        if not verify_ssl:
+            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+        logger.info("✅ SyncClient initialized successfully")
+
+    def _make_request(self, method: str, url: str, **kwargs) -> Any:
+        """Make HTTP request with error handling."""
+        try:
+            logger.info(f"🚀 Making {method} request to {url}")
+            logger.debug(f"🔍 Request parameters: {kwargs}")
+
+            response = self.session.request(method, url, timeout=self.timeout, **kwargs)
+            logger.debug(f"📥 Response status: {response.status_code}")
+
+            result = handle_sync_response(response)
+            logger.info(f"✅ Request completed successfully: {method} {url}")
+            return result
+
+        except RequestException as e:
+            logger.error(f"❌ Request failed: {str(e)}")
+            if hasattr(e, "response") and e.response is not None:
+                try:
+                    error_data = e.response.json()
+                    error_msg = error_data.get("error", str(e))
+                    logger.error(f"🔴 API Error: {error_msg}")
+                    raise APIError(error_msg, status_code=e.response.status_code)
+                except ValueError:
+                    logger.error("🔴 Could not parse error response")
+                    raise APIError(
+                        str(e),
+                        status_code=(
+                            e.response.status_code
+                            if hasattr(e.response, "status_code")
+                            else None
+                        ),
+                    )
+            logger.error(f"🔴 Connection Error: {str(e)}")
+            raise ConnectionError(f"Failed to connect to API: {str(e)}")
+
+    def smartscraper(
+        self,
+        website_url: str,
+        user_prompt: str,
+        output_schema: Optional[BaseModel] = None,
+    ):
+        """Send a smartscraper request"""
+        logger.info(f"🔍 Starting smartscraper request for {website_url}")
+        logger.debug(f"📝 Prompt: {user_prompt}")
+
+        request = SmartScraperRequest(
+            website_url=website_url,
+            user_prompt=user_prompt,
+            output_schema=output_schema,
+        )
+        logger.debug("✅ Request validation passed")
+
+        result = self._make_request(
+            "POST", f"{API_BASE_URL}/smartscraper", json=request.model_dump()
+        )
+        logger.info("✨ Smartscraper request completed successfully")
+        return result
+
+    def get_smartscraper(self, request_id: str):
+        """Get the result of a previous smartscraper request"""
+        logger.info(f"🔍 Fetching smartscraper result for request {request_id}")
+
+        # Validate input using Pydantic model
+        GetSmartScraperRequest(request_id=request_id)
+        logger.debug("✅ Request ID validation passed")
+
+        result = self._make_request("GET", f"{API_BASE_URL}/smartscraper/{request_id}")
+        logger.info(f"✨ Successfully retrieved result for request {request_id}")
+        return result
+
+    def get_credits(self):
+        """Get credits information"""
+        logger.info("💳 Fetching credits information")
+
+        result = self._make_request(
+            "GET",
+            f"{API_BASE_URL}/credits",
+        )
+        logger.info(
+            f"✨ Credits info retrieved: {result.get('remaining_credits')} credits remaining"
+        )
+        return result
+
+    def submit_feedback(
+        self, request_id: str, rating: int, feedback_text: Optional[str] = None
+    ):
+        """Submit feedback for a request"""
+        logger.info(f"📝 Submitting feedback for request {request_id}")
+        logger.debug(f"⭐ Rating: {rating}, Feedback: {feedback_text}")
+
+        feedback = FeedbackRequest(
+            request_id=request_id, rating=rating, feedback_text=feedback_text
+        )
+        logger.debug("✅ Feedback validation passed")
+
+        result = self._make_request(
+            "POST", f"{API_BASE_URL}/feedback", json=feedback.model_dump()
+        )
+        logger.info("✨ Feedback submitted successfully")
+        return result
+
+    def close(self):
+        """Close the session to free up resources"""
+        logger.info("🔒 Closing SyncClient session")
+        self.session.close()
+        logger.debug("✅ Session closed successfully")
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
