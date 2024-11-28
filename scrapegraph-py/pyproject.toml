@@ -55,4 +55,5 @@ dev-dependencies = [
     "pytest==8.0.0",
     "pytest-mock==3.14.0",
     "pylint>=3.2.5",
+    "poethepoet>=0.31.1",
 ]
