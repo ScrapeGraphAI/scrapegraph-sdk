@@ -25,17 +25,19 @@ Official Python SDK for the ScrapeGraph AI API - Smart web scraping powered by A
 pip install scrapegraph-py
 ```
 
-### Using Poetry (Recommended)
+### Using uv
+
+We recommend using [uv](https://docs.astral.sh/uv/) to install the dependencies and pre-commit hooks.
 
 ```
-# Install poetry if you haven't already
-pip install poetry
+# Install uv if you haven't already
+pip install uv
 
 # Install dependencies
-poetry install
+uv sync
 
 # Install pre-commit hooks
-poetry run pre-commit install
+uv run pre-commit install
 ```
 
 ## 🔧 Quick Start
