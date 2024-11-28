@@ -1,3 +1,16 @@
+## [1.2.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.1.0...v1.2.0) (2024-11-28)
+
+
+### Features
+
+* enhaced python sdk ([c253363](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/c2533636c230426be06cd505598e8a85d5771cbc))
+
+
+### chore
+
+* set up CI scripts ([f688bdc](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/f688bdc11746325582787fa3c1ffb429838f46b6))
+* update workflow scripts ([5ea9cac](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/5ea9cacb6758171283d96ff9aa1934c25af804f1))
+
 ## [1.1.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.0.0...v1.1.0) (2024-11-28)
 
 
