@@ -8,13 +8,17 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install uv
         uses: astral-sh/setup-uv@v3
       - name: Install dependencies
-        run: uv sync --frozen
+        run: |
+          cd scrapegraph-py
+          uv sync --frozen
       - name: Analysing the code with pylint
-        run: uv run poe pylint-ci
+        run: |
+          cd scrapegraph-py
+          uv run poe pylint-ci
       - name: Check Pylint score
         run: |
           cd scrapegraph-py
