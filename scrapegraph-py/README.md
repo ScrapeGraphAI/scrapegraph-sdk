@@ -53,15 +53,15 @@ from scrapegraph_py.logger import get_logger
 logger = get_logger(level="DEBUG")
 
 # Initialize client
-client = SyncClient(api_key="sgai-your-api-key")
+sgai_client = SyncClient(api_key="your-api-key-here")
 
 # Make a request
-response = client.smartscraper(
+response = sgai_client.smartscraper(
     website_url="https://example.com",
     user_prompt="Extract the main heading and description"
 )
 
-print(response)
+print(response["result"])
 ```
 
 ## 🎯 Examples
@@ -73,12 +73,12 @@ import asyncio
 from scrapegraph_py import AsyncClient
 
 async def main():
-    async with AsyncClient(api_key="sgai-your-api-key") as client:
-        response = await client.smartscraper(
+    async with AsyncClient(api_key="your-api-key-here") as sgai_client:
+        response = await sgai_client.smartscraper(
             website_url="https://example.com",
-            user_prompt="Extract the main heading"
+            user_prompt="Summarize the main content"
         )
-        print(response)
+        print(response["result"])
 
 asyncio.run(main())
 ```
@@ -94,12 +94,14 @@ class WebsiteData(BaseModel):
     title: str = Field(description="The page title")
     description: str = Field(description="The meta description")
 
-client = SyncClient(api_key="sgai-your-api-key")
-response = client.smartscraper(
+sgai_client = SyncClient(api_key="your-api-key-here")
+response = sgai_client.smartscraper(
     website_url="https://example.com",
     user_prompt="Extract the title and description",
     output_schema=WebsiteData
 )
+
+print(response["result"])
 ```
 </details>
 
@@ -114,27 +116,24 @@ For detailed documentation, visit [docs.scrapegraphai.com](https://docs.scrapegr
 1. Clone the repository:
 ```
 git clone https://github.com/ScrapeGraphAI/scrapegraph-sdk.git
-cd scrapegraph-sdk
+cd scrapegraph-sdk/scrapegraph-py
 ```
 
 2. Install dependencies:
 ```
-poetry install
+uv sync
 ```
 
 3. Install pre-commit hooks:
 ```
-poetry run pre-commit install
+uv run pre-commit install
 ```
 
 ### Running Tests
 
 ```
 # Run all tests
-poetry run pytest
-
-# Run with coverage
-poetry run pytest --cov=scrapegraph_py
+uv run pytest
 
 # Run specific test file
 poetry run pytest tests/test_client.py
