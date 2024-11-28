@@ -1,4 +1,4 @@
-import { getSmartScraperRequest } from "scrapegraph-sdk";
+import { getSmartScraperRequest } from 'scrapegraph-sdk';
 import 'dotenv/config';
 
 try {

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import handleError from './utils/handleError.js';
 
 /**
  * Send feedback to the API.
@@ -6,15 +7,15 @@ import axios from 'axios';
  * @param {string} apiKey - Your ScrapeGraph AI API key
  * @param {string} requestId - The request ID associated with the feedback
  * @param {number} rating - The rating score
- * @param {string} feedbackText - The feedback message to send
+ * @param {string} feedbackText - Optional feedback message to send
  * @returns {Promise<string>} Response from the API in JSON format
  */
-export async function feedback(apiKey, requestId, rating, feedbackText) {
-  const endpoint = "https://api.scrapegraphai.com/v1/feedback";
+export async function sendFeedback(apiKey, requestId, rating, feedbackText = null) {
+  const endpoint = 'https://api.scrapegraphai.com/v1/feedback';
   const headers = {
-    "accept": "application/json",
-    "SGAI-APIKEY": apiKey,
-    "Content-Type": "application/json"
+    'accept': 'application/json',
+    'SGAI-APIKEY': apiKey,
+    'Content-Type': 'application/json'
   };
 
   const feedbackData = {
@@ -25,18 +26,8 @@ export async function feedback(apiKey, requestId, rating, feedbackText) {
 
   try {
     const response = await axios.post(endpoint, feedbackData, { headers });
-    return JSON.stringify(response.data);
+    return response.data;
   } catch (error) {
-    if (error.response) {
-      return JSON.stringify({
-        error: "HTTP error occurred",
-        message: error.message,
-        status_code: error.response.status
-      });
-    }
-    return JSON.stringify({
-      error: "An error occurred",
-      message: error.message
-    });
+    handleError(error);
   }
 } 
