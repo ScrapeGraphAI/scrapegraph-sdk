@@ -1,7 +1,6 @@
 # 🌐 ScrapeGraph JavaScript SDK
 
 [![npm version](https://badge.fury.io/js/scrapegraph-js.svg)](https://badge.fury.io/js/scrapegraph-js)  
-[![TypeScript Support](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)  
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)  
 [![Build Status](https://github.com/ScrapeGraphAI/scrapegraph-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/ScrapeGraphAI/scrapegraph-sdk/actions)  
 [![Documentation Status](https://img.shields.io/badge/docs-latest-brightgreen.svg)](https://docs.scrapegraphai.com)
@@ -11,8 +10,7 @@ Official JavaScript/TypeScript SDK for the ScrapeGraph AI API - Smart web scrapi
 ## 🚀 Features
 
 - ✨ Smart web scraping with AI  
-- 🔄 Fully asynchronous design  
-- 📊 TypeScript-ready with strongly typed responses  
+- 🔄 Fully asynchronous design 
 - 🔍 Detailed error handling  
 - ⚡ Automatic retries and logging  
 - 🔐 Secure API authentication  
@@ -23,7 +21,11 @@ Install the package using npm or yarn:
 
 ```bash
 # Using npm
-npm install scrapegraph-js
+npm i scrapegraph-js
+
+# Using yarn 
+yarn add scrapegraph-js
+```
 
 
 ## 🔧 Quick Start
@@ -34,6 +36,7 @@ npm install scrapegraph-js
 
 ```javascript
 import { smartScraper } from 'scrapegraph-js';
+import 'dotenv/config';
 
 // Initialize variables
 const apiKey = process.env.SGAI_APIKEY; // Set your API key as an environment variable
@@ -75,26 +78,8 @@ const prompt = 'Extract the main heading and description.';
 
 #### Scraping with Custom Output Schema
 
-```typescript
-import { smartScraper } from 'scrapegraph-js';
-
-interface WebsiteData {
-  title: string;
-  description: string;
-}
-
-const apiKey = 'your-api-key';
-const url = 'https://example.com';
-const prompt = 'Extract the title and description.';
-
-(async () => {
-  try {
-    const response = await smartScraper<WebsiteData>(apiKey, url, prompt);
-    console.log(response.result.title, response.result.description);
-  } catch (error) {
-    console.error('Error:', error);
-  }
-})();
+```javascript
+//TODO
 ```
 
 ### Checking API Credits
