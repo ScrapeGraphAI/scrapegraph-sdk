@@ -96,5 +96,5 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.poe.tasks]
-pylint-local = "pylint scraperaphai/**/*.py"
-pylint-ci = "pylint --disable=C0114,C0115,C0116 --exit-zero scrapegraphai/**/*.py"
+pylint-local = "pylint scrapegraph_py/**/*.py"
+pylint-ci = "pylint --disable=C0114,C0115,C0116 --exit-zero scrapegraph_py/**/*.py"
