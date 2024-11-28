@@ -33,7 +33,7 @@ jobs:
         id: build_cache
         if: success()
       - name: Cache build
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: scrapegraph-py/dist
           key: ${{ runner.os }}-build-${{ hashFiles('scrapegraph-py/dist/**') }}
@@ -67,7 +67,7 @@ jobs:
           cd ./scrapegraph-py
           uv sync
       - name: Restore build artifacts
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ./scrapegraph-py/dist
           key: ${{ runner.os }}-build-${{ hashFiles('./scrapegraph-py/dist/**') }}
