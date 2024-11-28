@@ -1,5 +1,5 @@
 {
-  "name": "scrapegraph-sdk",
+  "name": "scrapegraph-js",
   "author": "ScrapeGraphAI",
   "version": "0.0.1",
   "description": "Scrape and extract structured data from a webpage using ScrapeGraph AI.",
@@ -23,7 +23,8 @@
   "module": "index.js",
   "type": "module",
   "dependencies": {
-    "axios": "^1.6.0"
+    "axios": "^1.6.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "dotenv": "^16.4.5"
