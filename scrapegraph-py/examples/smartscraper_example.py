@@ -16,8 +16,4 @@ response = sgai_client.smartscraper(
 print(f"Request ID: {response['request_id']}")
 print(f"Result: {response['result']}")
 
-# Get previous results using get_smartscraper
-# result = sgai_client.get_smartscraper(request_id=response['request_id'])
-# print(f"\nRetrieved Result: {result}")
-
 sgai_client.close()
