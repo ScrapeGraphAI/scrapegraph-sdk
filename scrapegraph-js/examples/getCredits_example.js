@@ -1,4 +1,4 @@
-import { getCredits } from "scrapegraph-sdk";
+import { getCredits } from 'scrapegraph-sdk';
 import 'dotenv/config';
 
 try {
