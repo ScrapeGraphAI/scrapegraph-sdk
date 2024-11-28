@@ -11,33 +11,33 @@ all: lint type-check test docs
 
 # Install project dependencies
 install:
-	poetry install
+	uv sync
 
 # Linting and Formatting Checks
 lint:
-	poetry run ruff check $(PACKAGE_NAME) $(TEST_DIR)
-	poetry run black --check $(PACKAGE_NAME) $(TEST_DIR)
-	poetry run isort --check-only $(PACKAGE_NAME) $(TEST_DIR)
+	uv run ruff check $(PACKAGE_NAME) $(TEST_DIR)
+	uv run black --check $(PACKAGE_NAME) $(TEST_DIR)
+	uv run isort --check-only $(PACKAGE_NAME) $(TEST_DIR)
 
 # Type Checking with MyPy
 type-check:
-	poetry run mypy $(PACKAGE_NAME) $(TEST_DIR)
+	uv run mypy $(PACKAGE_NAME) $(TEST_DIR)
 
 # Run Tests with Coverage
 test:
-	poetry run pytest --cov=$(PACKAGE_NAME) --cov-report=xml $(TEST_DIR)/
+	uv run pytest --cov=$(PACKAGE_NAME) --cov-report=xml $(TEST_DIR)/
 
 # Build Documentation using MkDocs
 docs:
-	poetry run mkdocs build
+	uv run mkdocs build
 
 # Serve Documentation Locally
 serve-docs:
-	poetry run mkdocs serve
+	uv run mkdocs serve
 
 # Run Pre-Commit Hooks
 pre-commit:
-	poetry run pre-commit run --all-files
+	uv run pre-commit run --all-files
 
 # Clean Up Generated Files
 clean:
@@ -52,4 +52,4 @@ clean:
 
 # Build the Package
 build:
-	poetry build
+	uv build
