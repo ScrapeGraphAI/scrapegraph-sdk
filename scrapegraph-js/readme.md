@@ -1,150 +1,200 @@
-# ScrapeGraph JS SDK
+# 🌐 ScrapeGraph JavaScript SDK
 
-A JavaScript SDK for interacting with the ScrapeGraph AI API. This SDK provides easy-to-use functions for web scraping, managing credits, and submitting feedback.
+[![npm version](https://badge.fury.io/js/scrapegraph-js.svg)](https://badge.fury.io/js/scrapegraph-js)  
+[![TypeScript Support](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)  
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)  
+[![Build Status](https://github.com/ScrapeGraphAI/scrapegraph-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/ScrapeGraphAI/scrapegraph-sdk/actions)  
+[![Documentation Status](https://img.shields.io/badge/docs-latest-brightgreen.svg)](https://docs.scrapegraphai.com)
 
-## Installation
+Official JavaScript/TypeScript SDK for the ScrapeGraph AI API - Smart web scraping powered by AI.
 
-Install the package using npm:
+## 🚀 Features
+
+- ✨ Smart web scraping with AI  
+- 🔄 Fully asynchronous design  
+- 📊 TypeScript-ready with strongly typed responses  
+- 🔍 Detailed error handling  
+- ⚡ Automatic retries and logging  
+- 🔐 Secure API authentication  
+
+## 📦 Installation
+
+Install the package using npm or yarn:
 
 ```bash
+# Using npm
 npm install scrapegraph-js
-```
 
-## Usage
 
-> [!WARNING]  
-> Remember not to write API keys directly in the code; instead, store them securely in `.env` files.
+## 🔧 Quick Start
 
-First, import the required functions:
+> **Note**: Store your API keys securely in environment variables. Use `.env` files and libraries like `dotenv` to load them into your app.
+
+### Basic Example
 
 ```javascript
-import { smartScraper, getSmartScraperRequest, getCredits, sendFeedback } from 'scrapegraph-sdk';
+import { smartScraper } from 'scrapegraph-js';
+
+// Initialize variables
+const apiKey = process.env.SGAI_APIKEY; // Set your API key as an environment variable
+const websiteUrl = 'https://example.com';
+const prompt = 'What does the company do?';
+
+(async () => {
+  try {
+    const response = await smartScraper(apiKey, websiteUrl, prompt);
+    console.log(response.result);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+})();
 ```
+
+## 🎯 Examples
 
 ### Scraping Websites
 
-#### Basic scraping
+#### Basic Scraping
 
 ```javascript
-import { smartScraper } from 'scrapegraph-sdk';
+import { smartScraper } from 'scrapegraph-js';
 
-const apiKey = process.env.SGAI_APIKEY;
-const url = 'https://scrapegraphai.com';
-const prompt = 'What does the company do?';
+const apiKey = 'your-api-key';
+const url = 'https://example.com';
+const prompt = 'Extract the main heading and description.';
 
-try {
-  const response = await smartScraper(apiKey, url, prompt);
-  console.log(response);
-} catch (error) {
-  console.error(error);
-}
+(async () => {
+  try {
+    const response = await smartScraper(apiKey, url, prompt);
+    console.log(response.result);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+})();
 ```
 
-#### Scraping with custom output schema
+#### Scraping with Custom Output Schema
 
-```javascript
-import { smartScraper } from 'scrapegraph-sdk';
+```typescript
+import { smartScraper } from 'scrapegraph-js';
 
-const apiKey = 'your_api_key';
-const url = 'https://scrapegraphai.com';
-const prompt = 'What does the company do?';
-const schema = //TODO
-
-try {
-  const response = await smartScraper(apiKey, url, prompt, schema);
-  console.log(response);
-} catch (error) {
-  console.error(error);
+interface WebsiteData {
+  title: string;
+  description: string;
 }
+
+const apiKey = 'your-api-key';
+const url = 'https://example.com';
+const prompt = 'Extract the title and description.';
+
+(async () => {
+  try {
+    const response = await smartScraper<WebsiteData>(apiKey, url, prompt);
+    console.log(response.result.title, response.result.description);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+})();
 ```
 
-### Checking Credits
+### Checking API Credits
 
 ```javascript
-import { getCredist } from 'scrapegraph-sdk';
+import { getCredits } from 'scrapegraph-js';
 
-const apiKey = 'your_api_key';
+const apiKey = 'your-api-key';
 
-try {
-	const myCredit = await getCredits(apiKey);
-	console.log(myCredit)
-} catch (error) {
-	console.error(error)
-}
+(async () => {
+  try {
+    const credits = await getCredits(apiKey);
+    console.log('Available credits:', credits);
+  } catch (error) {
+    console.error('Error fetching credits:', error);
+  }
+})();
 ```
 
 ### Submitting Feedback
 
 ```javascript
-import { sendFeedback } from 'scrapegraph-sdk';
+import { sendFeedback } from 'scrapegraph-js';
 
-const apiKey = 'your_api_key';
+const apiKey = 'your-api-key';
 const requestId = '16a63a80-c87f-4cde-b005-e6c3ecda278b';
 const rating = 5;
-const feedbackMessage = 'This is a test feedback message.';
+const feedbackText = 'This is a test feedback message.';
 
-try {
-  const feedback_response = await sendFeedback(apiKey, requestId, rating, feedbackMessage);
-  console.log(feedback_response);
-} catch (error) {
-  console.error(error)
-}
+(async () => {
+  try {
+    const response = await sendFeedback(apiKey, requestId, rating, feedbackText);
+    console.log('Feedback response:', response);
+  } catch (error) {
+    console.error('Error sending feedback:', error);
+  }
+})();
 ```
 
-## API Reference
+## 📚 Documentation
 
-### scrape(apiKey, url[, options])
+For detailed documentation, visit [docs.scrapegraphai.com](https://docs.scrapegraphai.com)
 
-Scrapes a website and returns the extracted data.
+## 🛠️ Development
 
-Parameters:
-- `apiKey` (string): Your ScrapeGraph AI API key
-- `url` (string): The URL to scrape
-- `options` (object, optional):
-  - `elements` (array): Specific elements to extract
-  - `wait_for` (string): CSS selector to wait for before scraping
-  - `javascript` (boolean): Enable JavaScript rendering
+### Setup
 
-### credits(apiKey)
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/ScrapeGraphAI/scrapegraph-sdk.git
+   cd scrapegraph-sdk/scrapegraph-js
+   ```
 
-Retrieves your current credit balance.
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-Parameters:
-- `apiKey` (string): Your ScrapeGraph AI API key
+3. Run linting and testing:
+   ```bash
+   npm run lint
+   npm test
+   ```
 
-### feedback(apiKey, requestId, rating, feedbackText)
+### Running Tests
 
-Submits feedback for a scraping request.
+```bash
+# Run all tests
+npm test
 
-Parameters:
-- `apiKey` (string): Your ScrapeGraph AI API key
-- `requestId` (string): The request ID from the scrape response
-- `rating` (number): Rating score
-- `feedbackText` (string) (optional): Feedback message
-
-## Error Handling
-
-All functions return javascript `Error` object with imformation. In case of errors, the response will include error details:
-
-// TODO error list
-
-```javascript
-{
-  "statusCode": 400,
-  "title": "HTTP error occurred"
-  "details": "Error details",
-  
-}
+# Run tests with coverage
+npm run test:coverage
 ```
 
-## License
+## 📝 License
 
-MIT
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Support
+## 🤝 Contributing
 
-For support, please visit [ScrapeGraph AI Documentation](https://sgai-api.onrender.com/docs).
+Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
 
+1. Fork the repository  
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)  
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)  
+4. Push to the branch (`git push origin feature/AmazingFeature`)  
+5. Open a Pull Request  
 
+## 🔗 Links
 
+- [Website](https://scrapegraphai.com)  
+- [Documentation](https://scrapegraphai.com/documentation)  
+- [GitHub](https://github.com/ScrapeGraphAI/scrapegraph-sdk)  
 
+## 💬 Support
+
+- 📧 Email: support@scrapegraphai.com  
+- 💻 GitHub Issues: [Create an issue](https://github.com/ScrapeGraphAI/scrapegraph-sdk/issues)  
+- 🌟 Feature Requests: [Request a feature](https://github.com/ScrapeGraphAI/scrapegraph-sdk/issues/new)
+
+---
+
+Made with ❤️ by [ScrapeGraph AI](https://scrapegraphai.com)
