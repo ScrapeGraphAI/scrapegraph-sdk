@@ -1,252 +1,170 @@
-# ScrapeGraph API Python SDK
+# 🌐 ScrapeGraph Python SDK
 
-The official Python SDK for interacting with the ScrapeGraphAI API - a powerful web scraping and data extraction service.
+[![PyPI version](https://badge.fury.io/py/scrapegraph-py.svg)](https://badge.fury.io/py/scrapegraph-py)
+[![Python Support](https://img.shields.io/pypi/pyversions/scrapegraph-py.svg)](https://pypi.org/project/scrapegraph-py/)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Documentation Status](https://readthedocs.org/projects/scrapegraph-py/badge/?version=latest)](https://scrapegraph-py.readthedocs.io/en/latest/?badge=latest)
 
-## Installation
+Official Python SDK for the ScrapeGraph AI API - Smart web scraping powered by AI.
 
-Install the package using pip:
-```bash
+## 🚀 Features
+
+- ✨ Smart web scraping with AI
+- 🔄 Both sync and async clients
+- 📊 Structured output with Pydantic schemas
+- 🔍 Detailed logging with emojis
+- ⚡ Automatic retries and error handling
+- 🔐 Secure API authentication
+
+## 📦 Installation
+
+### Using pip
+
+```
 pip install scrapegraph-py
 ```
 
-## Authentication
+### Using Poetry (Recommended)
 
-To use the ScrapeGraph API, you'll need an API key. You can manage this in two ways:
+```
+# Install poetry if you haven't already
+pip install poetry
 
-1. Environment variable:
-```bash
-export SCRAPEGRAPH_API_KEY="your-api-key-here"
+# Install dependencies
+poetry install
+
+# Install pre-commit hooks
+poetry run pre-commit install
 ```
 
-2. `.env` file:
-```plaintext
-SCRAPEGRAPH_API_KEY="your-api-key-here"
-```
+## 🔧 Quick Start
 
-## Features
-
-The SDK provides four main functionalities:
-
-1. Web Scraping (basic and structured)
-2. Credits checking
-3. Feedback submission
-4. API status checking
-
-## Usage
-
-### Basic Web Scraping
+> [!NOTE]
+> If you prefer, you can use the environment variables to configure the API key and load them using `load_dotenv()`
 
 ```python
-import os
-from scrapegraph_py import ScrapeGraphClient, smart_scraper
-from dotenv import load_dotenv
+from scrapegraph_py import SyncClient
+from scrapegraph_py.logger import get_logger
 
-load_dotenv()
-api_key = os.getenv("SCRAPEGRAPH_API_KEY")
-client = ScrapeGraphClient(api_key)
+# Enable debug logging
+logger = get_logger(level="DEBUG")
 
-url = "https://scrapegraphai.com/"
-prompt = "What does the company do?"
+# Initialize client
+client = SyncClient(api_key="sgai-your-api-key")
 
-result = smart_scraper(client, url, prompt)
-print(result)
-```
-
-### Local HTML Scraping
-
-You can also scrape content from local HTML files:
-
-```python
-from scrapegraph_py import ScrapeGraphClient, scrape_text
-from bs4 import BeautifulSoup
-import os
-
-# Load environment variables
-from dotenv import load_dotenv
-load_dotenv()
-api_key = os.getenv("SCRAPEGRAPH_API_KEY")
-
-client = ScrapeGraphClient(api_key)
-
-def scrape_local_html(client: ScrapeGraphClient, file_path: str, prompt: str):
-    with open(file_path, 'r', encoding='utf-8') as file:
-        html_content = file.read()
-    
-    # Use BeautifulSoup to extract text content
-    soup = BeautifulSoup(html_content, 'html.parser')
-    text_content = soup.get_text(separator='\n', strip=True)
-    
-    # Use ScrapeGraph AI to analyze the text
-    return scrape_text(client, text_content, prompt)
-
-# Usage
-result = scrape_local_html(
-    client,
-    'sample.html',
-    "Extract main content and important information"
+# Make a request
+response = client.smartscraper(
+    website_url="https://example.com",
+    user_prompt="Extract the main heading and description"
 )
-print("Extracted Data:", result)
-```
 
-### Structured Data Extraction
-
-For more structured data extraction, you can define a Pydantic schema:
-
-```python
-from pydantic import BaseModel, Field
-from scrapegraph_py import scrape
-import os
-
-# Load environment variables
-from dotenv import load_dotenv
-load_dotenv()
-api_key = os.getenv("SCRAPEGRAPH_API_KEY")
-
-class CompanyInfoSchema(BaseModel):
-    company_name: str = Field(description="The name of the company")
-    description: str = Field(description="A description of the company")
-    main_products: list[str] = Field(description="The main products of the company")
-
-# Scrape with schema
-result = scrape(
-    api_key=api_key,
-    url="https://scrapegraphai.com/",
-    prompt="What does the company do?",
-    schema=CompanyInfoSchema
-)
-print(result)
-```
-
-### Check Credits
-
-Monitor your API usage:
-
-```python
-from scrapegraph_py import credits
-import os
-
-# Load environment variables
-from dotenv import load_dotenv
-load_dotenv()
-api_key = os.getenv("SCRAPEGRAPH_API_KEY")
-
-response = credits(api_key)
 print(response)
 ```
 
-### Provide Feedback and Check Status
+## 🎯 Examples
 
-You can provide feedback on scraping results and check the API status:
+### Async Usage
 
 ```python
-from scrapegraph_py import feedback, status
-import os
+import asyncio
+from scrapegraph_py import AsyncClient
 
-# Load environment variables
-from dotenv import load_dotenv
-load_dotenv()
-api_key = os.getenv("SCRAPEGRAPH_API_KEY")
+async def main():
+    async with AsyncClient(api_key="sgai-your-api-key") as client:
+        response = await client.smartscraper(
+            website_url="https://example.com",
+            user_prompt="Extract the main heading"
+        )
+        print(response)
 
-# Check API status
-status_response = status(api_key)
-print(f"API Status: {status_response}")
+asyncio.run(main())
+```
 
-# Submit feedback
-feedback_response = feedback(
-    api_key=api_key,
-    request_id="your-request-id",  # UUID from your scraping request
-    rating=5,  # Rating from 1-5
-    message="Great results!"
+<details>
+<summary><b>With Output Schema</b></summary>
+
+```python
+from pydantic import BaseModel, Field
+from scrapegraph_py import SyncClient
+
+class WebsiteData(BaseModel):
+    title: str = Field(description="The page title")
+    description: str = Field(description="The meta description")
+
+client = SyncClient(api_key="sgai-your-api-key")
+response = client.smartscraper(
+    website_url="https://example.com",
+    user_prompt="Extract the title and description",
+    output_schema=WebsiteData
 )
-print(f"Feedback Response: {feedback_response}")
 ```
+</details>
 
-## Expected Output Example
+## 📚 Documentation
 
-The following is an example of the expected output when scraping articles from a webpage:
+For detailed documentation, visit [docs.scrapegraphai.com](https://docs.scrapegraphai.com)
 
-```json
-{
-  "articles": [
-    {
-      "title": "Thousands of People Are Cloning Their Dead Pets. This Is the Woman They Call First",
-      "url": "https://www.wired.com/story/your-next-job-pet-cloner/"
-    },
-    {
-      "title": "The Quantum Geometry That Exists Outside of Space and Time",
-      "url": "https://www.wired.com/story/physicists-reveal-a-quantum-geometry-that-exists-outside-of-space-and-time/"
-    },
-    {
-      "title": "How a PhD Student Discovered a Lost Mayan City From Hundreds of Miles Away",
-      "url": "https://www.wired.com/story/lost-maya-city-valeriana-interview/"
-    },
-    {
-      "title": "The Maker of Ozempic Is Trying to Block Compounded Versions of Its Blockbuster Drug",
-      "url": "https://www.wired.com/story/novo-nordisk-ozempic-compounded-fda-block-pharmacies/"
-    }
-  ]
-}
-```
+## 🛠️ Development
 
-## Development
-
-### Requirements
-
-- Python 3.9+
-- [Rye](https://rye-up.com/) for dependency management (optional)
-
-### Project Structure
-
-```
-scrapegraph_py/
-├── __init__.py
-├── credits.py      # Credits checking functionality
-├── scrape.py      # Core scraping functionality
-└── feedback.py    # Feedback submission functionality
-
-examples/
-├── credits_example.py
-├── feedback_example.py
-├── scrape_example.py
-└── scrape_schema_example.py
-
-tests/
-├── test_credits.py
-├── test_feedback.py
-└── test_scrape.py
-```
-
-### Setting up the Development Environment
+### Setup
 
 1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/scrapegraph-py.git
-cd scrapegraph-py
+```
+git clone https://github.com/ScrapeGraphAI/scrapegraph-sdk.git
+cd scrapegraph-sdk
 ```
 
 2. Install dependencies:
-```bash
-# If using Rye
-rye sync
-
-# If using pip
-pip install -r requirements-dev.lock
+```
+poetry install
 ```
 
-3. Create a `.env` file in the root directory:
-```plaintext
-SCRAPEGRAPH_API_KEY="your-api-key-here"
+3. Install pre-commit hooks:
+```
+poetry run pre-commit install
 ```
 
-## License
+### Running Tests
 
-This project is licensed under the MIT License.
+```
+# Run all tests
+poetry run pytest
 
-## Support
+# Run with coverage
+poetry run pytest --cov=scrapegraph_py
 
-For support:
-- Visit [ScrapeGraph AI](https://scrapegraphai.com/)
-- Contact our support team
-- Check the examples in the `examples/` directory
+# Run specific test file
+poetry run pytest tests/test_client.py
+```
 
+## 📝 License
 
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 🔗 Links
+
+- [Website](https://scrapegraphai.com)
+- [Documentation](https://docs.scrapegraphai.com)
+- [API Reference](https://docs.scrapegraphai.com/api)
+- [GitHub](https://github.com/ScrapeGraphAI/scrapegraph-sdk)
+
+## 💬 Support
+
+- 📧 Email: support@scrapegraphai.com
+- 💻 GitHub Issues: [Create an issue](https://github.com/ScrapeGraphAI/scrapegraph-sdk/issues)
+- 🌟 Feature Requests: [Request a feature](https://github.com/ScrapeGraphAI/scrapegraph-sdk/issues/new)
+
+---
+
+Made with ❤️ by [ScrapeGraph AI](https://scrapegraphai.com)
