@@ -1,5 +1,7 @@
 import axios from 'axios';
-import handleError from './utils/handleError.js'
+import handleError from './utils/handleError.js';
+import { ZodType } from 'zod';
+import { zodToJsonSchema } from 'zod-to-json-schema';
 
 /**
  * Scrape and extract structured data from a webpage using ScrapeGraph AI.
@@ -25,12 +27,11 @@ export async function smartScraper(apiKey, url, prompt, schema = null) {
   };
 
   if (schema) {
-    payload.output_schema = {
-      description: schema.title || 'Schema',
-      name: schema.title || 'Schema',
-      properties: schema.properties || {},
-      required: schema.required || []
-    };
+    if (schema instanceof ZodType) {
+      payload.output_schema = zodToJsonSchema(schema);
+    } else {
+      throw new Error('The schema must be an instance of a valid Zod schema');
+    }
   }
 
   try {
