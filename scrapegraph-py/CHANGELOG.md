@@ -1,3 +1,29 @@
+## [1.2.1](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.2.0...v1.2.1) (2024-11-29)
+
+
+### Bug Fixes
+
+* readme js sdk ([3c2178e](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/3c2178e04e873885abc8aca0312f5a4a1dd9cdd0))
+* removed wrong information ([88a2f50](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/88a2f509dc34ad69f41fe6d13f31de191895bc1a))
+
+
+### chore
+
+* changed pakage name ([9e9e138](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/9e9e138617658e068a1c77a4dbac24b4d550d42a))
+* fix pylint scripts ([5913d5f](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/5913d5f0d697196469f8ec952e1a65e1c7f49621))
+
+
+### Docs
+
+* improved examples ([a9c1fa5](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/a9c1fa5dcd7610b2b0c217d39fb2b77a67aa3fac))
+* updated precommit and installation guide ([c16705b](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/c16705b8f405f57d2cb1719099d4b566186a7257))
+* updated readme ([ee9efa6](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/ee9efa608b9a284861f712ab2a69d49da3d26523))
+
+
+### Refactor
+
+* code refactoring ([01ca238](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/01ca2384f098ecbb063ac4681e6d32f590a03f42))
+
 ## [1.2.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.1.0...v1.2.0) (2024-11-28)
 
 
