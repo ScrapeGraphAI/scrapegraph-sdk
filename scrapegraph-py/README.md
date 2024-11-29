@@ -155,10 +155,9 @@ Contributions are welcome! Please feel free to submit a Pull Request. For major 
 
 ## 🔗 Links
 
-- [Website](https://scrapegraphai.com)
-- [Documentation](https://docs.scrapegraphai.com)
-- [API Reference](https://docs.scrapegraphai.com/api)
-- [GitHub](https://github.com/ScrapeGraphAI/scrapegraph-sdk)
+- [Website](https://scrapegraphai.com)  
+- [Documentation](https://scrapegraphai.com/documentation)  
+- [GitHub](https://github.com/ScrapeGraphAI/scrapegraph-sdk)  
 
 ## 💬 Support
 
