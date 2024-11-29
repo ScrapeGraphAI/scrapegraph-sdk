@@ -1,3 +1,10 @@
+## [1.2.2](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.2.1...v1.2.2) (2024-11-29)
+
+
+### Bug Fixes
+
+* add enw timeout ([46ebd9d](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/46ebd9dc9897ca2ef9460a3e46b3a24abe90f943))
+
 ## [1.2.1](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.2.0...v1.2.1) (2024-11-29)
 
 
