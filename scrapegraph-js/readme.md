@@ -77,9 +77,34 @@ const prompt = 'Extract the main heading and description.';
 ```
 
 #### Scraping with Custom Output Schema
+> [!NOTE]  
+> To use this feature, it is necessary to employ the [Zod](https://www.npmjs.com/package/zod) package for schema creation.
+
+Here is a real-world example:
 
 ```javascript
-//TODO
+import { smartScraper } from 'scrapegraph-js';
+import { z } from 'zod';
+import 'dotenv/config';
+
+const apiKey = 'your-api-key';
+const url = 'https://scrapegraphai.com/';
+const prompt = 'What does the company do? and ';
+
+const schema = z.object({
+  title: z.string().describe('The title of the webpage'),
+  description: z.string().describe('The description of the webpage'),
+  summary: z.string().describe('A brief summary of the webpage')
+});
+
+(async () => {
+  try {
+    const response = await smartScraper(apiKey, url, prompt, schema);
+    console.log(response.result);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+})();
 ```
 
 ### Checking API Credits
