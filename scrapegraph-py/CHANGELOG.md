@@ -1,3 +1,10 @@
+## [1.3.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.2.2...v1.3.0) (2024-11-30)
+
+
+### Features
+
+* add integration for env variables ([6a351f3](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/6a351f3ef70a1f00b5f5de5aaba2f408b6bf07dd))
+
 ## [1.2.2](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.2.1...v1.2.2) (2024-11-29)
 
 
