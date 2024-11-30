@@ -8,6 +8,10 @@
     "url": "https://github.com/ScrapeGraphAI/scrapegraph-sdk",
     "directory": "scrapegraph-js"
   },
+  "scripts": {
+    "format": "prettier --write --cache --cache-strategy metadata . !dist",
+    "lint": "eslint ."
+  },
   "license": "MIT",
   "homepage": "https://github.com/ScrapeGraphAI/scrapegraph-sdk/tree/main/scrapegraph-js",
   "keywords": [
@@ -28,6 +32,12 @@
     "zod-to-json-schema": "^3.23.5"
   },
   "devDependencies": {
-    "dotenv": "^16.4.5"
+    "@eslint/js": "^9.16.0",
+    "dotenv": "^16.4.5",
+    "eslint": "^9.16.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "globals": "^15.12.0",
+    "prettier": "3.4.1"
   }
 }
