@@ -1,3 +1,31 @@
+## [1.4.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.3.0...v1.4.0) (2024-11-30)
+
+
+### Features
+
+* added example of the smartScraper function using a schema ([baf933b](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/baf933b0826b63d4ecf61c8593676357619a1c73))
+* implemented support for requests with schema ([10a1a5a](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/10a1a5a477a6659aabf3afebfffdbefc14d12d3e))
+
+
+### Bug Fixes
+
+* the "workspace" key has been removed because it was conflicting with the package.json file in the scrapegraph-js folder. ([1299173](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/129917377b6a685d769a480b717bf980d3199833))
+
+
+### chore
+
+* added Zod package dependency ([ee5738b](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/ee5738bd737cd07a553d148403a4bbb5e80e5be3))
+
+
+### Docs
+
+* added an example of the smartScraper functionality using a schema ([cf2f28f](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/cf2f28fa029df0acb7058fde8239046d77ef0a8a))
+
+
+### Refactor
+
+* code refactoring ([a2b57c7](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/a2b57c7e482dfb5c7c1a125d1684e0367088c83b))
+
 ## [1.3.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.2.2...v1.3.0) (2024-11-30)
 
 
