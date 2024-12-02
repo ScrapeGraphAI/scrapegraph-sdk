@@ -22,7 +22,7 @@ class SyncClient:
     def from_env(
         cls,
         verify_ssl: bool = True,
-        timeout: float = 30,
+        timeout: float = 120,
         max_retries: int = 3,
         retry_delay: float = 1.0,
     ):
