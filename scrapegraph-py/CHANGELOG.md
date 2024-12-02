@@ -1,3 +1,10 @@
+## [1.4.2](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.4.1...v1.4.2) (2024-12-02)
+
+
+### Bug Fixes
+
+* timeout ([589aa49](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/589aa49d4434f7112a840d178e5e48918b7799e1))
+
 ## [1.4.1](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.4.0...v1.4.1) (2024-12-02)
 
 
