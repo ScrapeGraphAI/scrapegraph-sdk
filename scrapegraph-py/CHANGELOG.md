@@ -1,3 +1,15 @@
+## [1.4.1](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.4.0...v1.4.1) (2024-12-02)
+
+
+### Bug Fixes
+
+* sync client ([690e87b](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/690e87b52505f12da172147a78007497f6edf54c))
+
+
+### chore
+
+* set up eslint and prettier for code linting and formatting ([13cf1e5](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/13cf1e5c28ec739d2d35617bd57d7cf8203c3f7e))
+
 ## [1.4.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.3.0...v1.4.0) (2024-11-30)
 
 
