@@ -22,7 +22,7 @@ class AsyncClient:
         self,
         api_key: str,
         verify_ssl: bool = True,
-        timeout: float = 30,
+        timeout: float = 120,
         max_retries: int = 3,
         retry_delay: float = 1.0,
     ):
@@ -53,6 +53,34 @@ class AsyncClient:
         )
 
         logger.info("✅ AsyncClient initialized successfully")
+
+    @classmethod
+    def from_env(
+        cls,
+        verify_ssl: bool = True,
+        timeout: float = 120,
+        max_retries: int = 3,
+        retry_delay: float = 1.0,
+    ):
+        """Initialize AsyncClient using API key from environment variable.
+
+        Args:
+            verify_ssl: Whether to verify SSL certificates
+            timeout: Request timeout in seconds
+            max_retries: Maximum number of retry attempts
+            retry_delay: Delay between retries in seconds
+        """
+        from os import getenv
+        api_key = getenv("SGAI_API_KEY")
+        if not api_key:
+            raise ValueError("SGAI_API_KEY environment variable not set")
+        return cls(
+            api_key=api_key,
+            verify_ssl=verify_ssl,
+            timeout=timeout,
+            max_retries=max_retries,
+            retry_delay=retry_delay,
+        )
 
     async def _make_request(self, method: str, url: str, **kwargs) -> Any:
         """Make HTTP request with retry logic."""
