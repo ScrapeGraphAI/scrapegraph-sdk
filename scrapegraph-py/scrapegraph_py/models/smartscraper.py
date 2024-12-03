@@ -3,7 +3,6 @@
 from typing import Optional, Type
 from uuid import UUID
 
-import validators
 from pydantic import BaseModel, Field, model_validator
 
 
@@ -25,9 +24,13 @@ class SmartScraperRequest(BaseModel):
 
     @model_validator(mode="after")
     def validate_url(self) -> "SmartScraperRequest":
-        url = self.website_url
-        if not validators.url(url):
-            raise ValueError(f"Invalid URL: {url}")
+        if self.website_url is None or not self.website_url.strip():
+            raise ValueError("Website URL cannot be empty")
+        if not (
+            self.website_url.startswith("http://")
+            or self.website_url.startswith("https://")
+        ):
+            raise ValueError("Invalid URL")
         return self
 
     def model_dump(self, *args, **kwargs) -> dict:
