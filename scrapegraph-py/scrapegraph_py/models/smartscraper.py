@@ -49,6 +49,7 @@ class GetSmartScraperRequest(BaseModel):
     @model_validator(mode="after")
     def validate_request_id(self) -> "GetSmartScraperRequest":
         try:
+            # Validate the request_id is a valid UUID
             UUID(self.request_id)
         except ValueError:
             raise ValueError("request_id must be a valid UUID")
