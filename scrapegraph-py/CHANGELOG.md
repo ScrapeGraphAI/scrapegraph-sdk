@@ -1,3 +1,20 @@
+## [1.4.3](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.4.2...v1.4.3) (2024-12-03)
+
+
+### Bug Fixes
+
+* updated comment ([8250818](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/825081883940bc1caa37f4f13e10f710770aeb9c))
+
+
+### chore
+
+* improved url validation ([83eac53](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/83eac530269a767e5469c4aded1656fe00a2cdc0))
+
+
+### CI
+
+* **release:** 1.4.3-beta.1 [skip ci] ([cd1169b](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/cd1169b584ffa621d99961e2e95db96a28037e13))
+
 ## [1.4.3-beta.1](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.4.2...v1.4.3-beta.1) (2024-12-03)
 
 
