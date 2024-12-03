@@ -9,9 +9,6 @@
   },
   "author": "ScrapeGraphAI",
   "license": "MIT",
-  "workspaces": [
-    "scrapegraph-js"
-  ],
   "scripts": {
     "semantic-release": "semantic-release"
   },

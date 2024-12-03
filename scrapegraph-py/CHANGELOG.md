@@ -1,3 +1,90 @@
+## [1.4.2](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.4.1...v1.4.2) (2024-12-02)
+
+
+### Bug Fixes
+
+* timeout ([589aa49](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/589aa49d4434f7112a840d178e5e48918b7799e1))
+
+## [1.4.1](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.4.0...v1.4.1) (2024-12-02)
+
+
+### Bug Fixes
+
+* sync client ([690e87b](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/690e87b52505f12da172147a78007497f6edf54c))
+
+
+### chore
+
+* set up eslint and prettier for code linting and formatting ([13cf1e5](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/13cf1e5c28ec739d2d35617bd57d7cf8203c3f7e))
+
+## [1.4.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.3.0...v1.4.0) (2024-11-30)
+
+
+### Features
+
+* added example of the smartScraper function using a schema ([baf933b](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/baf933b0826b63d4ecf61c8593676357619a1c73))
+* implemented support for requests with schema ([10a1a5a](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/10a1a5a477a6659aabf3afebfffdbefc14d12d3e))
+
+
+### Bug Fixes
+
+* the "workspace" key has been removed because it was conflicting with the package.json file in the scrapegraph-js folder. ([1299173](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/129917377b6a685d769a480b717bf980d3199833))
+
+
+### chore
+
+* added Zod package dependency ([ee5738b](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/ee5738bd737cd07a553d148403a4bbb5e80e5be3))
+
+
+### Docs
+
+* added an example of the smartScraper functionality using a schema ([cf2f28f](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/cf2f28fa029df0acb7058fde8239046d77ef0a8a))
+
+
+### Refactor
+
+* code refactoring ([a2b57c7](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/a2b57c7e482dfb5c7c1a125d1684e0367088c83b))
+
+## [1.3.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.2.2...v1.3.0) (2024-11-30)
+
+
+### Features
+
+* add integration for env variables ([6a351f3](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/6a351f3ef70a1f00b5f5de5aaba2f408b6bf07dd))
+
+## [1.2.2](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.2.1...v1.2.2) (2024-11-29)
+
+
+### Bug Fixes
+
+* add enw timeout ([46ebd9d](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/46ebd9dc9897ca2ef9460a3e46b3a24abe90f943))
+
+## [1.2.1](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.2.0...v1.2.1) (2024-11-29)
+
+
+### Bug Fixes
+
+* readme js sdk ([3c2178e](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/3c2178e04e873885abc8aca0312f5a4a1dd9cdd0))
+* removed wrong information ([88a2f50](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/88a2f509dc34ad69f41fe6d13f31de191895bc1a))
+
+
+### chore
+
+* changed pakage name ([9e9e138](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/9e9e138617658e068a1c77a4dbac24b4d550d42a))
+* fix pylint scripts ([5913d5f](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/5913d5f0d697196469f8ec952e1a65e1c7f49621))
+
+
+### Docs
+
+* improved examples ([a9c1fa5](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/a9c1fa5dcd7610b2b0c217d39fb2b77a67aa3fac))
+* updated precommit and installation guide ([c16705b](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/c16705b8f405f57d2cb1719099d4b566186a7257))
+* updated readme ([ee9efa6](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/ee9efa608b9a284861f712ab2a69d49da3d26523))
+
+
+### Refactor
+
+* code refactoring ([01ca238](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/01ca2384f098ecbb063ac4681e6d32f590a03f42))
+
 ## [1.2.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.1.0...v1.2.0) (2024-11-28)
 
 

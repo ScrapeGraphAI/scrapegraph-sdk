@@ -18,11 +18,39 @@ from scrapegraph_py.utils.helpers import handle_sync_response, validate_api_key
 
 
 class SyncClient:
+    @classmethod
+    def from_env(
+        cls,
+        verify_ssl: bool = True,
+        timeout: float = 120,
+        max_retries: int = 3,
+        retry_delay: float = 1.0,
+    ):
+        """Initialize SyncClient using API key from environment variable.
+
+        Args:
+            verify_ssl: Whether to verify SSL certificates
+            timeout: Request timeout in seconds
+            max_retries: Maximum number of retry attempts
+            retry_delay: Delay between retries in seconds
+        """
+        from os import getenv
+        api_key = getenv("SGAI_API_KEY")
+        if not api_key:
+            raise ValueError("SGAI_API_KEY environment variable not set")
+        return cls(
+            api_key=api_key,
+            verify_ssl=verify_ssl,
+            timeout=timeout,
+            max_retries=max_retries,
+            retry_delay=retry_delay,
+        )
+
     def __init__(
         self,
         api_key: str,
         verify_ssl: bool = True,
-        timeout: float = 30,
+        timeout: float = 120,
         max_retries: int = 3,
         retry_delay: float = 1.0,
     ):
