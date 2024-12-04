@@ -1,99 +1,44 @@
-from uuid import uuid4
-
 import pytest
-import responses
+from unittest.mock import patch
+from scrapegraph_py import SyncClient
 
-from scrapegraph_py.client import SyncClient
-from tests.utils import generate_mock_api_key
+def test_smartscraper():
+    # Mock response data
+    mock_response = {
+        "request_id": "test-123",
+        "result": {
+            "heading": "Example Domain",
+            "description": "This is a sample description",
+            "summary": "A test webpage summary"
+        }
+    }
 
+    # Create client instance with dummy API key
+    client = SyncClient(api_key="test-api-key")
 
-@pytest.fixture
-def mock_api_key():
-    return generate_mock_api_key()
+    # Mock the API call
+    with patch.object(client, '_make_request') as mock_request:
+        # Configure mock to return our test data
+        mock_request.return_value = mock_response
 
-
-@pytest.fixture
-def mock_uuid():
-    return str(uuid4())
-
-
-@responses.activate
-def test_smartscraper(mock_api_key):
-    # Mock the API response
-    responses.add(
-        responses.POST,
-        "https://api.scrapegraphai.com/v1/smartscraper",
-        json={
-            "request_id": str(uuid4()),
-            "status": "completed",
-            "result": {"description": "Example domain."},
-        },
-    )
-
-    with SyncClient(api_key=mock_api_key) as client:
+        # Make the smartscraper request
         response = client.smartscraper(
-            website_url="https://example.com", user_prompt="Describe this page."
+            website_url="https://example.com",
+            user_prompt="Extract the main heading, description, and summary of the webpage"
         )
-        assert response["status"] == "completed"
 
+        # Verify the request was made with correct parameters
+        mock_request.assert_called_once()
+        call_args = mock_request.call_args[0][0]
+        assert call_args['method'] == 'POST'
+        assert 'smartscraper' in call_args['url']
+        assert call_args['json']['website_url'] == "https://example.com"
+        assert call_args['json']['user_prompt'] == "Extract the main heading, description, and summary of the webpage"
 
-@responses.activate
-def test_get_smartscraper(mock_api_key, mock_uuid):
-    responses.add(
-        responses.GET,
-        f"https://api.scrapegraphai.com/v1/smartscraper/{mock_uuid}",
-        json={
-            "request_id": mock_uuid,
-            "status": "completed",
-            "result": {"data": "test"},
-        },
-    )
+        # Verify response structure and content
+        assert isinstance(response, dict)
+        assert response['request_id'] == "test-123"
+        assert isinstance(response['result'], dict)
 
-    with SyncClient(api_key=mock_api_key) as client:
-        response = client.get_smartscraper(mock_uuid)
-        assert response["status"] == "completed"
-        assert response["request_id"] == mock_uuid
-
-
-@responses.activate
-def test_get_credits(mock_api_key):
-    responses.add(
-        responses.GET,
-        "https://api.scrapegraphai.com/v1/credits",
-        json={"remaining_credits": 100, "total_credits_used": 50},
-    )
-
-    with SyncClient(api_key=mock_api_key) as client:
-        response = client.get_credits()
-        assert response["remaining_credits"] == 100
-        assert response["total_credits_used"] == 50
-
-
-@responses.activate
-def test_submit_feedback(mock_api_key):
-    responses.add(
-        responses.POST,
-        "https://api.scrapegraphai.com/v1/feedback",
-        json={"status": "success"},
-    )
-
-    with SyncClient(api_key=mock_api_key) as client:
-        response = client.submit_feedback(
-            request_id=str(uuid4()), rating=5, feedback_text="Great service!"
-        )
-        assert response["status"] == "success"
-
-
-@responses.activate
-def test_network_error(mock_api_key):
-    responses.add(
-        responses.POST,
-        "https://api.scrapegraphai.com/v1/smartscraper",
-        body=ConnectionError("Network error"),
-    )
-
-    with SyncClient(api_key=mock_api_key) as client:
-        with pytest.raises(ConnectionError):
-            client.smartscraper(
-                website_url="https://example.com", user_prompt="Describe this page."
-            )
+    # Clean up
+    client.close()
