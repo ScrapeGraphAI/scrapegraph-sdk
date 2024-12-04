@@ -1,3 +1,10 @@
+## [1.5.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.4.3...v1.5.0) (2024-12-04)
+
+
+### Features
+
+* splitted files ([2791691](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/2791691a9381063cc38ac4f4fe7c884166c93116))
+
 ## [1.4.3](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.4.2...v1.4.3) (2024-12-03)
 
 
