@@ -1,3 +1,10 @@
+## [1.4.3-beta.3](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.4.3-beta.2...v1.4.3-beta.3) (2024-12-05)
+
+
+### Bug Fixes
+
+* updated env variable loading ([2643f11](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/2643f11c968f0daab26529d513f08c2817763b50))
+
 ## [1.4.3-beta.2](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.4.3-beta.1...v1.4.3-beta.2) (2024-12-05)
 
 
