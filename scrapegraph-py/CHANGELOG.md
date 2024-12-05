@@ -1,3 +1,10 @@
+## [1.4.3-beta.2](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.4.3-beta.1...v1.4.3-beta.2) (2024-12-05)
+
+
+### Bug Fixes
+
+* logger working properly now ([9712d4c](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/9712d4c39eea860f813e86a5e2ffc14db6d3a655))
+
 ## [1.4.3-beta.1](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.4.2...v1.4.3-beta.1) (2024-12-03)
 
 
