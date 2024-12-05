@@ -1,10 +1,10 @@
-from scrapegraph_py import SyncClient
-from scrapegraph_py.logger import get_logger
+from scrapegraph_py import Client
+from scrapegraph_py.logger import sgai_logger
 
-get_logger(level="DEBUG")
+sgai_logger.set_level("DEBUG")
 
 # Initialize the client
-sgai_client = SyncClient(api_key="your-api-key-here")
+sgai_client = Client(api_key="your-api-key-here")
 
 # Check remaining credits
 credits = sgai_client.get_credits()

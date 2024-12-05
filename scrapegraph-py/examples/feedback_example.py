@@ -1,13 +1,17 @@
-from scrapegraph_py import SyncClient
-from scrapegraph_py.logger import get_logger
+from scrapegraph_py import Client
+from scrapegraph_py.logger import sgai_logger
 
-get_logger(level="DEBUG")
+sgai_logger.set_logging(level="INFO")
 
 # Initialize the client
-sgai_client = SyncClient(api_key="your-api-key-here")
+sgai_client = Client(api_key="your-api-key-here")
 
 # Example request_id (replace with an actual request_id from a previous request)
 request_id = "your-request-id-here"
+
+# Check remaining credits
+credits = sgai_client.get_credits()
+print(f"Credits Info: {credits}")
 
 # Submit feedback for a previous request
 feedback_response = sgai_client.submit_feedback(
