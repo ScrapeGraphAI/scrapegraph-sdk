@@ -1,3 +1,24 @@
+## [1.6.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.5.0...v1.6.0) (2024-12-05)
+
+
+### Features
+
+* changed SyncClient to Client ([9e1e496](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/9e1e496059cd24810a96b818da1811830586f94b))
+
+
+### Bug Fixes
+
+* logger working properly now ([9712d4c](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/9712d4c39eea860f813e86a5e2ffc14db6d3a655))
+* updated env variable loading ([2643f11](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/2643f11c968f0daab26529d513f08c2817763b50))
+
+
+### CI
+
+* **release:** 1.4.3-beta.2 [skip ci] ([8ab6147](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/8ab61476b6763b936e2e7d423b04bb51983fb8ea))
+* **release:** 1.4.3-beta.3 [skip ci] ([1bc26c7](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/1bc26c738443f7f52492a7b2cbe7c9f335315797))
+* **release:** 1.5.0-beta.1 [skip ci] ([8900f7b](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/8900f7bf53239b6a73fb41196f5327d05763bae4))
+* **release:** 1.6.0-beta.1 [skip ci] ([636db26](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/636db26649dfac76503b556d5f724faf32e3522c))
+
 ## [1.6.0-beta.1](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.5.0...v1.6.0-beta.1) (2024-12-05)
 
 
