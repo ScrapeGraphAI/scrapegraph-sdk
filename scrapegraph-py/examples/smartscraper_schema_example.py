@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 
-from scrapegraph_py import SyncClient
+from scrapegraph_py import Client
 
 
 # Define a Pydantic model for the output schema
@@ -11,7 +11,7 @@ class WebpageSchema(BaseModel):
 
 
 # Initialize the client
-sgai_client = SyncClient(api_key="your-api-key-here")
+sgai_client = Client(api_key="your-api-key-here")
 
 # SmartScraper request with output schema
 response = sgai_client.smartscraper(

@@ -1,5 +1,7 @@
 import asyncio
+
 from pydantic import BaseModel, Field
+
 from scrapegraph_py import AsyncClient
 
 
@@ -26,6 +28,7 @@ async def main():
     print(f"Result: {response['result']}")
 
     await sgai_client.close()
+
 
 if __name__ == "__main__":
     asyncio.run(main())
