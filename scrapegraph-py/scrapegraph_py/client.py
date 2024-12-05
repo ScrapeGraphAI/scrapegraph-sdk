@@ -1,4 +1,4 @@
-# Sync client implementation goes here
+# Client implementation goes here
 from typing import Any, Optional
 
 import requests
@@ -17,7 +17,7 @@ from scrapegraph_py.models.smartscraper import (
 from scrapegraph_py.utils.helpers import handle_sync_response, validate_api_key
 
 
-class SyncClient:
+class Client:
     @classmethod
     def from_env(
         cls,
@@ -26,7 +26,7 @@ class SyncClient:
         max_retries: int = 3,
         retry_delay: float = 1.0,
     ):
-        """Initialize SyncClient using API key from environment variable.
+        """Initialize Client using API key from environment variable.
 
         Args:
             verify_ssl: Whether to verify SSL certificates
@@ -55,7 +55,7 @@ class SyncClient:
         max_retries: int = 3,
         retry_delay: float = 1.0,
     ):
-        """Initialize SyncClient with configurable parameters.
+        """Initialize Client with configurable parameters.
 
         Args:
             api_key: API key for authentication. If None, will try to load from environment
@@ -64,7 +64,7 @@ class SyncClient:
             max_retries: Maximum number of retry attempts
             retry_delay: Delay between retries in seconds
         """
-        logger.info("🔑 Initializing SyncClient")
+        logger.info("🔑 Initializing Client")
 
         # Try to get API key from environment if not provided
         if api_key is None:
@@ -107,7 +107,7 @@ class SyncClient:
         if not verify_ssl:
             urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-        logger.info("✅ SyncClient initialized successfully")
+        logger.info("✅ Client initialized successfully")
 
     def _make_request(self, method: str, url: str, **kwargs) -> Any:
         """Make HTTP request with error handling."""
@@ -211,7 +211,7 @@ class SyncClient:
 
     def close(self):
         """Close the session to free up resources"""
-        logger.info("🔒 Closing SyncClient session")
+        logger.info("🔒 Closing Client session")
         self.session.close()
         logger.debug("✅ Session closed successfully")
 
