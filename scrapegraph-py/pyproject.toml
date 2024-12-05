@@ -42,7 +42,7 @@ dependencies = [
     "python-dotenv>=1.0.1",
     "aiohttp>=3.11.8",
     "requests>=2.32.3",
-    "validators>=0.34.0",
+    "beautifulsoup4>=4.12.3",
 ]
 
 [project.optional-dependencies]
