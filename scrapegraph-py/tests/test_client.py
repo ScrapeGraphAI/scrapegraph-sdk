@@ -97,3 +97,78 @@ def test_network_error(mock_api_key):
             client.smartscraper(
                 website_url="https://example.com", user_prompt="Describe this page."
             )
+
+
+@responses.activate
+def test_markdownify(mock_api_key):
+    responses.add(
+        responses.POST,
+        "https://api.scrapegraphai.com/v1/markdownify",
+        json={
+            "request_id": str(uuid4()),
+            "status": "completed",
+            "result": "# Example Page\n\nThis is markdown content.",
+        },
+    )
+
+    with Client(api_key=mock_api_key) as client:
+        response = client.markdownify(website_url="https://example.com")
+        assert response["status"] == "completed"
+        assert "# Example Page" in response["result"]
+
+
+@responses.activate
+def test_get_markdownify(mock_api_key, mock_uuid):
+    responses.add(
+        responses.GET,
+        f"https://api.scrapegraphai.com/v1/markdownify/{mock_uuid}",
+        json={
+            "request_id": mock_uuid,
+            "status": "completed",
+            "result": "# Example Page\n\nThis is markdown content.",
+        },
+    )
+
+    with Client(api_key=mock_api_key) as client:
+        response = client.get_markdownify(mock_uuid)
+        assert response["status"] == "completed"
+        assert response["request_id"] == mock_uuid
+
+
+@responses.activate
+def test_localscraper(mock_api_key):
+    responses.add(
+        responses.POST,
+        "https://api.scrapegraphai.com/v1/localscraper",
+        json={
+            "request_id": str(uuid4()),
+            "status": "completed",
+            "result": {"extracted_info": "Test content"},
+        },
+    )
+
+    with Client(api_key=mock_api_key) as client:
+        response = client.localscraper(
+            user_prompt="Extract info",
+            website_html="<html><body><p>Test content</p></body></html>",
+        )
+        assert response["status"] == "completed"
+        assert "extracted_info" in response["result"]
+
+
+@responses.activate
+def test_get_localscraper(mock_api_key, mock_uuid):
+    responses.add(
+        responses.GET,
+        f"https://api.scrapegraphai.com/v1/localscraper/{mock_uuid}",
+        json={
+            "request_id": mock_uuid,
+            "status": "completed",
+            "result": {"extracted_info": "Test content"},
+        },
+    )
+
+    with Client(api_key=mock_api_key) as client:
+        response = client.get_localscraper(mock_uuid)
+        assert response["status"] == "completed"
+        assert response["request_id"] == mock_uuid
