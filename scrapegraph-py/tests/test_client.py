@@ -3,7 +3,7 @@ from uuid import uuid4
 import pytest
 import responses
 
-from scrapegraph_py.client import SyncClient
+from scrapegraph_py.client import Client
 from tests.utils import generate_mock_api_key
 
 
@@ -30,7 +30,7 @@ def test_smartscraper(mock_api_key):
         },
     )
 
-    with SyncClient(api_key=mock_api_key) as client:
+    with Client(api_key=mock_api_key) as client:
         response = client.smartscraper(
             website_url="https://example.com", user_prompt="Describe this page."
         )
@@ -49,7 +49,7 @@ def test_get_smartscraper(mock_api_key, mock_uuid):
         },
     )
 
-    with SyncClient(api_key=mock_api_key) as client:
+    with Client(api_key=mock_api_key) as client:
         response = client.get_smartscraper(mock_uuid)
         assert response["status"] == "completed"
         assert response["request_id"] == mock_uuid
@@ -63,7 +63,7 @@ def test_get_credits(mock_api_key):
         json={"remaining_credits": 100, "total_credits_used": 50},
     )
 
-    with SyncClient(api_key=mock_api_key) as client:
+    with Client(api_key=mock_api_key) as client:
         response = client.get_credits()
         assert response["remaining_credits"] == 100
         assert response["total_credits_used"] == 50
@@ -77,7 +77,7 @@ def test_submit_feedback(mock_api_key):
         json={"status": "success"},
     )
 
-    with SyncClient(api_key=mock_api_key) as client:
+    with Client(api_key=mock_api_key) as client:
         response = client.submit_feedback(
             request_id=str(uuid4()), rating=5, feedback_text="Great service!"
         )
@@ -92,7 +92,7 @@ def test_network_error(mock_api_key):
         body=ConnectionError("Network error"),
     )
 
-    with SyncClient(api_key=mock_api_key) as client:
+    with Client(api_key=mock_api_key) as client:
         with pytest.raises(ConnectionError):
             client.smartscraper(
                 website_url="https://example.com", user_prompt="Describe this page."

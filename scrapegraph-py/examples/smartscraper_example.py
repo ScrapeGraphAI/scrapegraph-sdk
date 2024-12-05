@@ -1,10 +1,10 @@
-from scrapegraph_py import SyncClient
+from scrapegraph_py import Client
 from scrapegraph_py.logger import sgai_logger
 
 sgai_logger.set_logging(level="INFO")
 
 # Initialize the client with explicit API key
-sgai_client = SyncClient(api_key="your-api-key-here")
+sgai_client = Client(api_key="your-api-key-here")
 
 # SmartScraper request
 response = sgai_client.smartscraper(
