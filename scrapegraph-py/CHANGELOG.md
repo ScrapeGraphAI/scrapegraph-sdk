@@ -1,3 +1,13 @@
+
+## [1.5.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.4.3...v1.5.0) (2024-12-04)
+
+
+### Features
+
+* splitted files ([2791691](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/2791691a9381063cc38ac4f4fe7c884166c93116))
+
+## [1.4.3](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.4.2...v1.4.3) (2024-12-03)
+
 ## [1.4.3-beta.3](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.4.3-beta.2...v1.4.3-beta.3) (2024-12-05)
 
 
@@ -11,6 +21,20 @@
 ### Bug Fixes
 
 * logger working properly now ([9712d4c](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/9712d4c39eea860f813e86a5e2ffc14db6d3a655))
+
+### Bug Fixes
+
+* updated comment ([8250818](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/825081883940bc1caa37f4f13e10f710770aeb9c))
+
+
+### chore
+
+* improved url validation ([83eac53](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/83eac530269a767e5469c4aded1656fe00a2cdc0))
+
+
+### CI
+
+* **release:** 1.4.3-beta.1 [skip ci] ([cd1169b](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/cd1169b584ffa621d99961e2e95db96a28037e13))
 
 ## [1.4.3-beta.1](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.4.2...v1.4.3-beta.1) (2024-12-03)
 
