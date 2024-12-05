@@ -101,3 +101,78 @@ async def test_api_error(mock_api_key):
                 )
             assert exc_info.value.status_code == 400
             assert "Bad request" in str(exc_info.value)
+
+
+@pytest.mark.asyncio
+async def test_markdownify(mock_api_key):
+    with aioresponses() as mocked:
+        mocked.post(
+            "https://api.scrapegraphai.com/v1/markdownify",
+            payload={
+                "request_id": str(uuid4()),
+                "status": "completed",
+                "result": "# Example Page\n\nThis is markdown content.",
+            },
+        )
+
+        async with AsyncClient(api_key=mock_api_key) as client:
+            response = await client.markdownify(website_url="https://example.com")
+            assert response["status"] == "completed"
+            assert "# Example Page" in response["result"]
+
+
+@pytest.mark.asyncio
+async def test_get_markdownify(mock_api_key, mock_uuid):
+    with aioresponses() as mocked:
+        mocked.get(
+            f"https://api.scrapegraphai.com/v1/markdownify/{mock_uuid}",
+            payload={
+                "request_id": mock_uuid,
+                "status": "completed",
+                "result": "# Example Page\n\nThis is markdown content.",
+            },
+        )
+
+        async with AsyncClient(api_key=mock_api_key) as client:
+            response = await client.get_markdownify(mock_uuid)
+            assert response["status"] == "completed"
+            assert response["request_id"] == mock_uuid
+
+
+@pytest.mark.asyncio
+async def test_localscraper(mock_api_key):
+    with aioresponses() as mocked:
+        mocked.post(
+            "https://api.scrapegraphai.com/v1/localscraper",
+            payload={
+                "request_id": str(uuid4()),
+                "status": "completed",
+                "result": {"extracted_info": "Test content"},
+            },
+        )
+
+        async with AsyncClient(api_key=mock_api_key) as client:
+            response = await client.localscraper(
+                user_prompt="Extract info",
+                website_html="<html><body><p>Test content</p></body></html>",
+            )
+            assert response["status"] == "completed"
+            assert "extracted_info" in response["result"]
+
+
+@pytest.mark.asyncio
+async def test_get_localscraper(mock_api_key, mock_uuid):
+    with aioresponses() as mocked:
+        mocked.get(
+            f"https://api.scrapegraphai.com/v1/localscraper/{mock_uuid}",
+            payload={
+                "request_id": mock_uuid,
+                "status": "completed",
+                "result": {"extracted_info": "Test content"},
+            },
+        )
+
+        async with AsyncClient(api_key=mock_api_key) as client:
+            response = await client.get_localscraper(mock_uuid)
+            assert response["status"] == "completed"
+            assert response["request_id"] == mock_uuid
