@@ -1,3 +1,10 @@
+## [1.5.0-beta.1](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.4.3-beta.3...v1.5.0-beta.1) (2024-12-05)
+
+
+### Features
+
+* changed SyncClient to Client ([9e1e496](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/9e1e496059cd24810a96b818da1811830586f94b))
+
 ## [1.4.3-beta.3](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.4.3-beta.2...v1.4.3-beta.3) (2024-12-05)
 
 
