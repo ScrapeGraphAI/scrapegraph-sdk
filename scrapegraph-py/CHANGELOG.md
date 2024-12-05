@@ -1,3 +1,15 @@
+## [1.7.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.6.0...v1.7.0) (2024-12-05)
+
+
+### Features
+
+* add markdownify and localscraper ([6296510](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/6296510b22ce511adde4265532ac6329a05967e0))
+
+
+### CI
+
+* **release:** 1.7.0-beta.1 [skip ci] ([5e65800](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/5e6580067903644ac0c47b2c2f8d27a3e9dd2ae2))
+
 ## [1.7.0-beta.1](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.6.0...v1.7.0-beta.1) (2024-12-05)
 
 
