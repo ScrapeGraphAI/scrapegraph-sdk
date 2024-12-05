@@ -13,11 +13,36 @@ Thank you for your interest in contributing to **ScrapeGraphAI**! We welcome con
 
 ## Getting Started
 
-To get started with contributing, follow these steps:
+### Development Setup
 
 1. Fork the repository on GitHub **(FROM pre/beta branch)**.
-2. Clone your forked repository to your local machine.
-3. Install the necessary dependencies from requirements.txt or via pyproject.toml as you prefere :).
+2. Clone your forked repository:
+   ```bash
+   git clone https://github.com/ScrapeGraphAI/scrapegraph-sdk.git
+   cd scrapegraph-sdk/scrapegraph-py
+   ```
+
+3. Install dependencies using uv (recommended):
+   ```bash
+   # Install uv if you haven't already
+   pip install uv
+
+   # Install dependencies
+   uv sync
+
+   # Install pre-commit hooks
+   uv run pre-commit install
+   ```
+
+4. Run tests:
+   ```bash
+   # Run all tests
+   uv run pytest
+
+   # Run specific test file
+   uv run pytest tests/test_client.py
+   ```
+
 4. Make your changes or additions.
 5. Test your changes thoroughly.
 6. Commit your changes with descriptive commit messages.
