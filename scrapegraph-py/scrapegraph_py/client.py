@@ -35,6 +35,7 @@ class SyncClient:
             retry_delay: Delay between retries in seconds
         """
         from os import getenv
+
         api_key = getenv("SGAI_API_KEY")
         if not api_key:
             raise ValueError("SGAI_API_KEY environment variable not set")
@@ -48,7 +49,7 @@ class SyncClient:
 
     def __init__(
         self,
-        api_key: str,
+        api_key: str = None,
         verify_ssl: bool = True,
         timeout: float = 120,
         max_retries: int = 3,
@@ -57,13 +58,24 @@ class SyncClient:
         """Initialize SyncClient with configurable parameters.
 
         Args:
-            api_key: API key for authentication
+            api_key: API key for authentication. If None, will try to load from environment
             verify_ssl: Whether to verify SSL certificates
             timeout: Request timeout in seconds
             max_retries: Maximum number of retry attempts
             retry_delay: Delay between retries in seconds
         """
         logger.info("🔑 Initializing SyncClient")
+
+        # Try to get API key from environment if not provided
+        if api_key is None:
+            from os import getenv
+
+            api_key = getenv("SGAI_API_KEY")
+            if not api_key:
+                raise ValueError(
+                    "SGAI_API_KEY not provided and not found in environment"
+                )
+
         validate_api_key(api_key)
         logger.debug(
             f"🛠️ Configuration: verify_ssl={verify_ssl}, timeout={timeout}, max_retries={max_retries}"
