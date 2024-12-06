@@ -7,6 +7,8 @@
 
 Official SDKs for the ScrapeGraph AI API - Intelligent web scraping powered by AI. Extract structured data from any webpage with natural language prompts.
 
+The credits can be bougth [here](https://scrapegraphai.com)!
+
 ## 🚀 Quick Links
 
 - [Python SDK Documentation](scrapegraph-py/README.md)
