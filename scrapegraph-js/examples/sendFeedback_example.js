@@ -10,5 +10,5 @@ try {
   const feedback_response = await sendFeedback(apiKey, requestId, rating, feedbackMessage);
   console.log(feedback_response);
 } catch (error) {
-  console.error(error)
+  console.error(error);
 }
