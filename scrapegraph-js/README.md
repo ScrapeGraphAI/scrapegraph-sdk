@@ -36,7 +36,6 @@ yarn add scrapegraph-js
 
 ```javascript
 import { smartScraper } from 'scrapegraph-js';
-import 'dotenv/config';
 
 // Initialize variables
 const apiKey = process.env.SGAI_APIKEY; // Set your API key as an environment variable
@@ -85,7 +84,6 @@ Here is a real-world example:
 ```javascript
 import { smartScraper } from 'scrapegraph-js';
 import { z } from 'zod';
-import 'dotenv/config';
 
 const apiKey = 'your-api-key';
 const url = 'https://scrapegraphai.com/';
@@ -106,6 +104,25 @@ const schema = z.object({
   }
 })();
 ```
+
+### Markdownify
+Converts a webpage into clean, well-structured markdown format.
+```javascript
+import { smartScraper } from 'scrapegraph-js';
+
+const apiKey = "your_api_key";
+const url = 'https://scrapegraphai.com/';
+
+(async () => {
+  try {
+    const response = await markdownify(apiKey, url);
+    console.log(response);
+  } catch (error) {
+    console.error(error);
+  }
+})();
+```
+
 
 ### Checking API Credits
 
