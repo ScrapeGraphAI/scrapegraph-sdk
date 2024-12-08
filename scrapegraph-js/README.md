@@ -35,6 +35,7 @@ yarn add scrapegraph-js
 
 ```javascript
 import { smartScraper } from 'scrapegraph-js';
+import 'dotenv/config';
 
 // Initialize variables
 const apiKey = process.env.SGAI_APIKEY; // Set your API key as an environment variable
@@ -105,12 +106,43 @@ const schema = z.object({
 })();
 ```
 
+### Scraping local HTML
+
+Extract structured data from local HTML content
+
+```javascript
+import { localScraper } from 'scrapegraph-js';
+
+const apiKey = 'your_api_key';
+const prompt = 'What does the company do?';
+
+const websiteHtml = `<html>
+                      <body>
+                        <h1>Company Name</h1>
+                        <p>We are a technology company focused on AI solutions.</p>
+                        <div class="contact">
+                          <p>Email: contact@example.com</p>
+                        </div>
+                      </body>
+                    </html>`;
+(async () => {
+  try {
+    const response = await localScraper(apiKey, websiteHtml, prompt);
+    console.log(response);
+  } catch (error) {
+    console.error(error);
+  }
+})();
+```
+
 ### Markdownify
+
 Converts a webpage into clean, well-structured markdown format.
+
 ```javascript
 import { smartScraper } from 'scrapegraph-js';
 
-const apiKey = "your_api_key";
+const apiKey = 'your_api_key';
 const url = 'https://scrapegraphai.com/';
 
 (async () => {
@@ -122,7 +154,6 @@ const url = 'https://scrapegraphai.com/';
   }
 })();
 ```
-
 
 ### Checking API Credits
 
