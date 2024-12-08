@@ -31,7 +31,7 @@ class UnexpectedError extends Error {
 
 export default function handleError(error) {
   if (error.response) {
-    throw new HttpError(error.response.status, error.response.statusText, error.response.data.detail)
+    throw new HttpError(error.response.status, error.response.statusText, error.response.data.detail);
   } else if (error.request) {
     throw new NetworkError('Impossible to contact the server. Check your internet connection.');
   } else {

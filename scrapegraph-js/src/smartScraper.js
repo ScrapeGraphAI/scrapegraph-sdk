@@ -5,7 +5,7 @@ import { zodToJsonSchema } from 'zod-to-json-schema';
 
 /**
  * Scrape and extract structured data from a webpage using ScrapeGraph AI.
- * 
+ *
  * @param {string} apiKey - Your ScrapeGraph AI API key
  * @param {string} url - The URL of the webpage to scrape
  * @param {string} prompt - Natural language prompt describing what data to extract
@@ -18,12 +18,12 @@ export async function smartScraper(apiKey, url, prompt, schema = null) {
   const headers = {
     'accept': 'application/json',
     'SGAI-APIKEY': apiKey,
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
   };
 
   const payload = {
     website_url: url,
-    user_prompt: prompt
+    user_prompt: prompt,
   };
 
   if (schema) {
@@ -38,13 +38,13 @@ export async function smartScraper(apiKey, url, prompt, schema = null) {
     const response = await axios.post(endpoint, payload, { headers });
     return response.data;
   } catch (error) {
-    handleError(error)
+    handleError(error);
   }
 }
 
 /**
  * Retrieve the status or the result of a smartScraper request. It also allows you to see the result of old requests.
- * 
+ *
  * @param {string} apiKey - Your ScrapeGraph AI API key
  * @param {string} requestId - The request ID associated with the output of a smartScraper request.
  * @returns {Promise<string>} Information related to the status or result of a scraping request.
@@ -60,6 +60,6 @@ export async function getSmartScraperRequest(apiKey, requestId) {
     const response = await axios.get(endpoint, { headers });
     return response.data;
   } catch (error) {
-    handleError(error)
+    handleError(error);
   }
 }
