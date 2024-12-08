@@ -9,7 +9,7 @@ import handleError from './utils/handleError.js';
  * @returns {Promise<string>} A promise that resolves to the markdown representation of the webpage.
  * @throws {Error} Throws an error if the HTTP request fails.
  */
-export async function markdownify(apiKey, url){
+export async function markdownify(apiKey, url) {
   const endpoint = 'https://api.scrapegraphai.com/v1/markdownify';
   const headers = {
     'accept': 'application/json',
@@ -24,7 +24,7 @@ export async function markdownify(apiKey, url){
     const response = await axios.post(endpoint, payload, { headers });
     return response.data;
   } catch (error) {
-    handleError(error)
+    handleError(error);
   }
 }
 
@@ -36,7 +36,7 @@ export async function markdownify(apiKey, url){
  * @returns {Promise<string>} A promise that resolves with details about the status or outcome of the specified request.
  * @throws {Error} Throws an error if the HTTP request fails.
  */
-export async function getMarkdownifyRequest(apiKey, requestId){
+export async function getMarkdownifyRequest(apiKey, requestId) {
   const endpoint = 'https://api.scrapegraphai.com/v1/markdownify/' + requestId;
   const headers = {
     'accept': 'application/json',
@@ -47,6 +47,6 @@ export async function getMarkdownifyRequest(apiKey, requestId){
     const response = await axios.get(endpoint, { headers });
     return response.data;
   } catch (error) {
-    handleError(error)
+    handleError(error);
   }
 }
