@@ -9,11 +9,11 @@ Official JavaScript/TypeScript SDK for the ScrapeGraph AI API - Smart web scrapi
 
 ## 🚀 Features
 
-- ✨ Smart web scraping with AI  
-- 🔄 Fully asynchronous design 
-- 🔍 Detailed error handling  
-- ⚡ Automatic retries and logging  
-- 🔐 Secure API authentication  
+- ✨ Smart web scraping with AI
+- 🔄 Fully asynchronous design
+- 🔍 Detailed error handling
+- ⚡ Automatic retries and logging
+- 🔐 Secure API authentication
 
 ## 📦 Installation
 
@@ -23,10 +23,9 @@ Install the package using npm or yarn:
 # Using npm
 npm i scrapegraph-js
 
-# Using yarn 
+# Using yarn
 yarn add scrapegraph-js
 ```
-
 
 ## 🔧 Quick Start
 
@@ -36,7 +35,6 @@ yarn add scrapegraph-js
 
 ```javascript
 import { smartScraper } from 'scrapegraph-js';
-import 'dotenv/config';
 
 // Initialize variables
 const apiKey = process.env.SGAI_APIKEY; // Set your API key as an environment variable
@@ -77,6 +75,7 @@ const prompt = 'Extract the main heading and description.';
 ```
 
 #### Scraping with Custom Output Schema
+
 > [!NOTE]  
 > To use this feature, it is necessary to employ the [Zod](https://www.npmjs.com/package/zod) package for schema creation.
 
@@ -85,7 +84,6 @@ Here is a real-world example:
 ```javascript
 import { smartScraper } from 'scrapegraph-js';
 import { z } from 'zod';
-import 'dotenv/config';
 
 const apiKey = 'your-api-key';
 const url = 'https://scrapegraphai.com/';
@@ -94,7 +92,7 @@ const prompt = 'What does the company do? and ';
 const schema = z.object({
   title: z.string().describe('The title of the webpage'),
   description: z.string().describe('The description of the webpage'),
-  summary: z.string().describe('A brief summary of the webpage')
+  summary: z.string().describe('A brief summary of the webpage'),
 });
 
 (async () => {
@@ -106,6 +104,25 @@ const schema = z.object({
   }
 })();
 ```
+
+### Markdownify
+Converts a webpage into clean, well-structured markdown format.
+```javascript
+import { smartScraper } from 'scrapegraph-js';
+
+const apiKey = "your_api_key";
+const url = 'https://scrapegraphai.com/';
+
+(async () => {
+  try {
+    const response = await markdownify(apiKey, url);
+    console.log(response);
+  } catch (error) {
+    console.error(error);
+  }
+})();
+```
+
 
 ### Checking API Credits
 
@@ -153,12 +170,14 @@ For detailed documentation, visit [docs.scrapegraphai.com](https://docs.scrapegr
 ### Setup
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/ScrapeGraphAI/scrapegraph-sdk.git
    cd scrapegraph-sdk/scrapegraph-js
    ```
 
 2. Install dependencies:
+
    ```bash
    npm install
    ```
@@ -187,22 +206,22 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
 
-1. Fork the repository  
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)  
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)  
-4. Push to the branch (`git push origin feature/AmazingFeature`)  
-5. Open a Pull Request  
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ## 🔗 Links
 
-- [Website](https://scrapegraphai.com)  
-- [Documentation](https://scrapegraphai.com/documentation)  
-- [GitHub](https://github.com/ScrapeGraphAI/scrapegraph-sdk)  
+- [Website](https://scrapegraphai.com)
+- [Documentation](https://scrapegraphai.com/documentation)
+- [GitHub](https://github.com/ScrapeGraphAI/scrapegraph-sdk)
 
 ## 💬 Support
 
-- 📧 Email: support@scrapegraphai.com  
-- 💻 GitHub Issues: [Create an issue](https://github.com/ScrapeGraphAI/scrapegraph-sdk/issues)  
+- 📧 Email: support@scrapegraphai.com
+- 💻 GitHub Issues: [Create an issue](https://github.com/ScrapeGraphAI/scrapegraph-sdk/issues)
 - 🌟 Feature Requests: [Request a feature](https://github.com/ScrapeGraphAI/scrapegraph-sdk/issues/new)
 
 ---

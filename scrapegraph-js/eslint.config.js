@@ -7,5 +7,5 @@ export default [
   { languageOptions: { globals: { ...globals.browser, ...globals.node } } },
   pluginJs.configs.recommended,
   eslintPluginPrettierRecommended,
-  { ignorePatterns: ['node_modules/'] },
+  { ignores: ['node_modules/'] },
 ];
