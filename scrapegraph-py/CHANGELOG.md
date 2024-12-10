@@ -1,3 +1,10 @@
+## [1.9.0-beta.2](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.9.0-beta.1...v1.9.0-beta.2) (2024-12-10)
+
+
+### Bug Fixes
+
+* add new python compatibility ([77b67f6](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/77b67f646d75abd3a558b40cb31c52c12cc7182e))
+
 ## [1.9.0-beta.1](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.8.0...v1.9.0-beta.1) (2024-12-10)
 
 
