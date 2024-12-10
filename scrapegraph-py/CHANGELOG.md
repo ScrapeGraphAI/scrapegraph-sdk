@@ -1,3 +1,20 @@
+## [1.9.0-beta.1](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.8.0...v1.9.0-beta.1) (2024-12-10)
+
+
+### Features
+
+* add localScraper functionality ([8701eb2](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/8701eb2ca7f108b922eb1617c850a58c0f88f8f9))
+* revert to old release ([d88a3ac](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/d88a3ac6969a0abdf1f6b8eccde9ad8284d41d20))
+
+
+### Bug Fixes
+
+* .toml file ([e719881](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/e7198817d8dac802361ab84bc4d5d961fb926767))
+* add revert ([09257e0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/09257e08246d8aee96b3944ac14cc14b88e5f818))
+* minor fix version ([0b972c6](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/0b972c69a9ea843d8ec89327f35c287b0d7a2bb4))
+* pyproject ([2440f7f](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/2440f7f2a5179c6e3a86faf4eefa1d5edf7524c8))
+* python version ([24366b0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/24366b08eefe0789da9a0ccafb8058e8744ee58b))
+
 ## [1.8.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.7.0...v1.8.0) (2024-12-08)
 
 
