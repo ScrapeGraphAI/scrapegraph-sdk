@@ -6,11 +6,15 @@ name: Upload Python Package
 on:
   release:
     types: [published]
+    paths:
+      - 'scrapegraph-py/**'
 
 jobs:
   deploy:
 
     runs-on: ubuntu-latest
+    # Only run if scrapegraph-py has changes
+    if: contains(github.event.release.body, 'scrapegraph-py/')
 
     steps:
     - uses: actions/checkout@v4
