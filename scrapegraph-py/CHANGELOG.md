@@ -1,3 +1,21 @@
+## [1.8.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.7.0...v1.8.0) (2024-12-08)
+
+
+### Features
+
+* add markdownify functionality ([239d27a](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/239d27aac28c6b132aba54bbb1fa0216cc59ce89))
+
+
+### Bug Fixes
+
+* fixed configuration for ignored files ([bc08dcb](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/bc08dcb21536a146fd941119931bc8e89e8e42c6))
+* fixed schema example ([365378a](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/365378a0c8c9125800ed6d74629d87776cf484a0))
+
+
+### Docs
+
+* improved main readme ([50fdf92](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/50fdf920e1d00e8f457138f9e68df74354696fc0))
+
 ## [1.7.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.6.0...v1.7.0) (2024-12-05)
 
 
