@@ -1,3 +1,10 @@
+## [1.9.0-beta.3](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.9.0-beta.2...v1.9.0-beta.3) (2024-12-10)
+
+
+### Bug Fixes
+
+* come back to py 3.10 ([26d3a75](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/26d3a75ed973590e21d55c985bf71f3905a3ac0e))
+
 ## [1.9.0-beta.2](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.9.0-beta.1...v1.9.0-beta.2) (2024-12-10)
 
 
