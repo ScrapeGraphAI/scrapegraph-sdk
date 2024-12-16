@@ -6,6 +6,10 @@
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Documentation Status](https://readthedocs.org/projects/scrapegraph-py/badge/?version=latest)](https://scrapegraph-py.readthedocs.io/en/latest/?badge=latest)
 
+<p align="left">
+  <img src="https://raw.githubusercontent.com/VinciGit00/Scrapegraph-ai/main/docs/assets/api-banner.png" alt="ScrapeGraph API Banner" style="width: 70%;">
+</p>
+
 Official Python SDK for the ScrapeGraph API - Smart web scraping powered by AI.
 
 ## 📦 Installation
