@@ -5,9 +5,13 @@
 [![JavaScript SDK](https://img.shields.io/badge/JavaScript_SDK-Latest-yellow)](https://github.com/ScrapeGraphAI/scrapegraph-sdk/tree/main/scrapegraph-js)
 [![Documentation](https://img.shields.io/badge/Documentation-Latest-green)](https://scrapegraphai.com/docs)
 
+<p align="left">
+  <img src="https://raw.githubusercontent.com/VinciGit00/Scrapegraph-ai/main/docs/assets/api-banner.png" alt="ScrapeGraph API Banner" style="width: 70%;">
+</p>
+
 Official SDKs for the ScrapeGraph AI API - Intelligent web scraping powered by AI. Extract structured data from any webpage with natural language prompts.
 
-The credits can be bougth [here](https://scrapegraphai.com)!
+Get your [API key](https://scrapegraphai.com)!
 
 ## 🚀 Quick Links
 
