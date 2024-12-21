@@ -3,7 +3,7 @@
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Python SDK](https://img.shields.io/badge/Python_SDK-Latest-blue)](https://github.com/ScrapeGraphAI/scrapegraph-sdk/tree/main/scrapegraph-py)
 [![JavaScript SDK](https://img.shields.io/badge/JavaScript_SDK-Latest-yellow)](https://github.com/ScrapeGraphAI/scrapegraph-sdk/tree/main/scrapegraph-js)
-[![Documentation](https://img.shields.io/badge/Documentation-Latest-green)](https://scrapegraphai.com/docs)
+[![Documentation](https://img.shields.io/badge/Documentation-Latest-green)](https://scrapegraphai.com/documentation)
 
 <p align="left">
   <img src="https://raw.githubusercontent.com/VinciGit00/Scrapegraph-ai/main/docs/assets/api-banner.png" alt="ScrapeGraph API Banner" style="width: 70%;">
