@@ -17,7 +17,7 @@ Get your [API key](https://scrapegraphai.com)!
 
 - [Python SDK Documentation](scrapegraph-py/README.md)
 - [JavaScript SDK Documentation](scrapegraph-js/README.md)
-- [API Documentation](https://scrapegraphai.com/docs)
+- [API Documentation](https://scrapegraphai.com/docs) 
 - [Website](https://scrapegraphai.com)
 
 ## 📦 Installation
@@ -73,7 +73,7 @@ Extract information from a local HTML file using AI.
 For detailed documentation and examples, visit:
 - [Python SDK Guide](scrapegraph-py/README.md)
 - [JavaScript SDK Guide](scrapegraph-js/README.md)
-- [API Documentation](https://scrapegraphai.com/docs)
+- [API Documentation](https://scrapegraphai.com/docs) 
 
 ## 💬 Support & Feedback
 
