@@ -5,7 +5,7 @@ from scrapegraph_py.logger import sgai_logger
 sgai_logger.set_logging(level="DEBUG")
 
 # Initialize the client with explicit API key
-sgai_client = Client(api_key="sgai-6a2e7715-d895-4960-a037-27ec220f00e9")
+sgai_client = Client(api_key="your_api_key")
 
 # SmartScraper request
 response = sgai_client.smartscraper(
