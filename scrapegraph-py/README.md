@@ -4,7 +4,7 @@
 [![Python Support](https://img.shields.io/pypi/pyversions/scrapegraph-py.svg)](https://pypi.org/project/scrapegraph-py/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![Documentation Status](https://readthedocs.org/projects/scrapegraph-py/badge/?version=latest)](https://scrapegraph-py.readthedocs.io/en/latest/?badge=latest) 
+[![Documentation Status](https://readthedocs.org/projects/scrapegraph-py/badge/?version=latest)](https://docs.scrapegraphai.com) 
 
 <p align="left">
   <img src="https://raw.githubusercontent.com/VinciGit00/Scrapegraph-ai/main/docs/assets/api-banner.png" alt="ScrapeGraph API Banner" style="width: 70%;">
@@ -146,7 +146,7 @@ asyncio.run(main())
 
 ## 📖 Documentation
 
-For detailed documentation, visit [scrapegraphai.com/docs](https://scrapegraphai.com/docs)
+For detailed documentation, visit [docs.scrapegraphai.com](https://docs.scrapegraphai.com)
 
 ## 🛠️ Development
 
@@ -177,7 +177,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🔗 Links
 
 - [Website](https://scrapegraphai.com)
-- [Documentation](https://scrapegraphai.com/docs) 
+- [Documentation](https://docs.scrapegraphai.com) 
 - [GitHub](https://github.com/ScrapeGraphAI/scrapegraph-sdk)
 
 ---
