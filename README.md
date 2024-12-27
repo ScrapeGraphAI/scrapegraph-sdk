@@ -3,7 +3,7 @@
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Python SDK](https://img.shields.io/badge/Python_SDK-Latest-blue)](https://github.com/ScrapeGraphAI/scrapegraph-sdk/tree/main/scrapegraph-py)
 [![JavaScript SDK](https://img.shields.io/badge/JavaScript_SDK-Latest-yellow)](https://github.com/ScrapeGraphAI/scrapegraph-sdk/tree/main/scrapegraph-js)
-[![Documentation](https://img.shields.io/badge/Documentation-Latest-green)](https://scrapegraphai.com/documentation)
+[![Documentation](https://img.shields.io/badge/Documentation-Latest-green)](https://docs.scrapegraphai.com)
 
 <p align="left">
   <img src="https://raw.githubusercontent.com/VinciGit00/Scrapegraph-ai/main/docs/assets/api-banner.png" alt="ScrapeGraph API Banner" style="width: 70%;">
@@ -17,7 +17,7 @@ Get your [API key](https://scrapegraphai.com)!
 
 - [Python SDK Documentation](scrapegraph-py/README.md)
 - [JavaScript SDK Documentation](scrapegraph-js/README.md)
-- [API Documentation](https://scrapegraphai.com/docs) 
+- [API Documentation](https://docs.scrapegraphai.com) 
 - [Website](https://scrapegraphai.com)
 
 ## 📦 Installation
@@ -73,7 +73,7 @@ Extract information from a local HTML file using AI.
 For detailed documentation and examples, visit:
 - [Python SDK Guide](scrapegraph-py/README.md)
 - [JavaScript SDK Guide](scrapegraph-js/README.md)
-- [API Documentation](https://scrapegraphai.com/docs) 
+- [API Documentation](https://docs.scrapegraphai.com) 
 
 ## 💬 Support & Feedback
 
