@@ -145,5 +145,6 @@ cython_debug/
 
 # macOS
 .DS_Store
+**/.DS_Store
 
 dev.ipynb
