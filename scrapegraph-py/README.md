@@ -10,7 +10,7 @@
   <img src="https://raw.githubusercontent.com/VinciGit00/Scrapegraph-ai/main/docs/assets/api-banner.png" alt="ScrapeGraph API Banner" style="width: 70%;">
 </p>
 
-Official Python SDK for the ScrapeGraph API - Smart web scraping powered by AI.
+Official [Python SDK ](https://scrapegraphai.com) for the ScrapeGraph API - Smart web scraping powered by AI.
 
 ## 📦 Installation
 
