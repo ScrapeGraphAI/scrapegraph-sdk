@@ -1,3 +1,10 @@
+## [1.9.0-beta.5](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.9.0-beta.4...v1.9.0-beta.5) (2025-01-03)
+
+
+### Bug Fixes
+
+* updated hatchling version ([740933a](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/740933aff79a5873e6d1c633afcedb674d1f4cf0))
+
 ## [1.9.0-beta.4](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.9.0-beta.3...v1.9.0-beta.4) (2025-01-03)
 
 
