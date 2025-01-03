@@ -17,7 +17,7 @@ def validate_api_key(api_key: str) -> bool:
         UUID(uuid_part)
     except ValueError:
         raise ValueError(
-            "Invalid API key format. API key must be 'sgai-' followed by a valid UUID."
+            "Invalid API key format. API key must be 'sgai-' followed by a valid UUID. You can get one at https://dashboard.scrapegraphai.com/"
         )
     return True
 
