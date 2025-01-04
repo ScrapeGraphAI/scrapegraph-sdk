@@ -115,14 +115,16 @@ class Client:
         logger.info("✅ Client initialized successfully")
 
     def _make_request(self, method: str, url: str, **kwargs) -> Any:
-        """Make HTTP request with error handling."""
+        """Make HTTP request with retry logic."""
+        # Calculate timeout based on batch size if present in kwargs
+        batch_size = len(kwargs.get('json', {}).get('urls', [1])) if kwargs.get('json') else 1
+        timeout = self.timeout * batch_size
+
         try:
             logger.info(f"🚀 Making {method} request to {url}")
             logger.debug(f"🔍 Request parameters: {kwargs}")
 
-            response = self.session.request(method, url, timeout=self.timeout, **kwargs)
-            logger.debug(f"📥 Response status: {response.status_code}")
-
+            response = self.session.request(method, url, timeout=timeout, **kwargs)
             result = handle_sync_response(response)
             logger.info(f"✅ Request completed successfully: {method} {url}")
             return result

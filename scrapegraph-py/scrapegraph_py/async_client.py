@@ -101,6 +101,9 @@ class AsyncClient:
 
     async def _make_request(self, method: str, url: str, **kwargs) -> Any:
         """Make HTTP request with retry logic."""
+        batch_size = len(kwargs.get('json', {}).get('urls', [1])) if kwargs.get('json') else 1
+        timeout = ClientTimeout(total=self.timeout.total * batch_size)
+        
         for attempt in range(self.max_retries):
             try:
                 logger.info(
@@ -108,7 +111,8 @@ class AsyncClient:
                 )
                 logger.debug(f"🔍 Request parameters: {kwargs}")
 
-                async with self.session.request(method, url, **kwargs) as response:
+                # Use the calculated timeout for this request
+                async with self.session.request(method, url, timeout=timeout, **kwargs) as response:
                     logger.debug(f"📥 Response status: {response.status}")
                     result = await handle_async_response(response)
                     logger.info(f"✅ Request completed successfully: {method} {url}")
