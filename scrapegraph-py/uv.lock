@@ -1485,7 +1485,7 @@ wheels = [
 
 [[package]]
 name = "scrapegraph-py"
-version = "0.0.3"
+version = "1.8.0"
 source = { editable = "." }
 dependencies = [
     { name = "aiohttp" },
