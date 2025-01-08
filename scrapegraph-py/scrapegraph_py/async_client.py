@@ -1,7 +1,6 @@
 import asyncio
 from typing import Any, Optional
 
-import aiohttp
 from aiohttp import ClientSession, ClientTimeout, TCPConnector
 from aiohttp.client_exceptions import ClientError
 from pydantic import BaseModel
@@ -27,7 +26,7 @@ class AsyncClient:
     def from_env(
         cls,
         verify_ssl: bool = True,
-        timeout: float = 120,
+        timeout: Optional[float] = None,
         max_retries: int = 3,
         retry_delay: float = 1.0,
     ):
@@ -35,7 +34,7 @@ class AsyncClient:
 
         Args:
             verify_ssl: Whether to verify SSL certificates
-            timeout: Request timeout in seconds
+            timeout: Request timeout in seconds. None means no timeout (infinite)
             max_retries: Maximum number of retry attempts
             retry_delay: Delay between retries in seconds
         """
@@ -56,7 +55,7 @@ class AsyncClient:
         self,
         api_key: str = None,
         verify_ssl: bool = True,
-        timeout: float = 120,
+        timeout: Optional[float] = None,
         max_retries: int = 3,
         retry_delay: float = 1.0,
     ):
@@ -65,7 +64,7 @@ class AsyncClient:
         Args:
             api_key: API key for authentication. If None, will try to load from environment
             verify_ssl: Whether to verify SSL certificates
-            timeout: Request timeout in seconds
+            timeout: Request timeout in seconds. None means no timeout (infinite)
             max_retries: Maximum number of retry attempts
             retry_delay: Delay between retries in seconds
         """
@@ -91,7 +90,7 @@ class AsyncClient:
         self.retry_delay = retry_delay
 
         ssl = None if verify_ssl else False
-        self.timeout = ClientTimeout(total=timeout)
+        self.timeout = ClientTimeout(total=timeout) if timeout is not None else None
 
         self.session = ClientSession(
             headers=self.headers, connector=TCPConnector(ssl=ssl), timeout=self.timeout
@@ -137,94 +136,6 @@ class AsyncClient:
                 logger.info(f"⏳ Waiting {retry_delay}s before retry {attempt + 2}")
                 await asyncio.sleep(retry_delay)
 
-    async def smartscraper(
-        self,
-        website_url: str,
-        user_prompt: str,
-        output_schema: Optional[BaseModel] = None,
-    ):
-        """Send a smartscraper request"""
-        logger.info(f"🔍 Starting smartscraper request for {website_url}")
-        logger.debug(f"📝 Prompt: {user_prompt}")
-
-        request = SmartScraperRequest(
-            website_url=website_url,
-            user_prompt=user_prompt,
-            output_schema=output_schema,
-        )
-        logger.debug("✅ Request validation passed")
-
-        try:
-            async with self.session.post(
-                f"{API_BASE_URL}/smartscraper", json=request.model_dump()
-            ) as response:
-                response.raise_for_status()
-                result = await handle_async_response(response)
-                logger.info("✨ Smartscraper request completed successfully")
-                return result
-        except aiohttp.ClientError as e:
-            logger.error(f"❌ Smartscraper request failed: {str(e)}")
-            raise ConnectionError(f"Failed to connect to API: {str(e)}")
-
-    async def get_smartscraper(self, request_id: str):
-        """Get the result of a previous smartscraper request"""
-        logger.info(f"🔍 Fetching smartscraper result for request {request_id}")
-
-        # Validate input using Pydantic model
-        GetSmartScraperRequest(request_id=request_id)
-        logger.debug("✅ Request ID validation passed")
-
-        async with self.session.get(
-            f"{API_BASE_URL}/smartscraper/{request_id}"
-        ) as response:
-            result = await handle_async_response(response)
-            logger.info(f"✨ Successfully retrieved result for request {request_id}")
-            return result
-
-    async def get_credits(self):
-        """Get credits information"""
-        logger.info("💳 Fetching credits information")
-
-        async with self.session.get(
-            f"{API_BASE_URL}/credits",
-        ) as response:
-            result = await handle_async_response(response)
-            logger.info(
-                f"✨ Credits info retrieved: {result.get('remaining_credits')} credits remaining"
-            )
-            return result
-
-    async def submit_feedback(
-        self, request_id: str, rating: int, feedback_text: Optional[str] = None
-    ):
-        """Submit feedback for a request"""
-        logger.info(f"📝 Submitting feedback for request {request_id}")
-        logger.debug(f"⭐ Rating: {rating}, Feedback: {feedback_text}")
-
-        feedback = FeedbackRequest(
-            request_id=request_id, rating=rating, feedback_text=feedback_text
-        )
-        logger.debug("✅ Feedback validation passed")
-
-        async with self.session.post(
-            f"{API_BASE_URL}/feedback", json=feedback.model_dump()
-        ) as response:
-            result = await handle_async_response(response)
-            logger.info("✨ Feedback submitted successfully")
-            return result
-
-    async def close(self):
-        """Close the session to free up resources"""
-        logger.info("🔒 Closing AsyncClient session")
-        await self.session.close()
-        logger.debug("✅ Session closed successfully")
-
-    async def __aenter__(self):
-        return self
-
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
-        await self.close()
-
     async def markdownify(self, website_url: str):
         """Send a markdownify request"""
         logger.info(f"🔍 Starting markdownify request for {website_url}")
@@ -248,6 +159,43 @@ class AsyncClient:
 
         result = await self._make_request(
             "GET", f"{API_BASE_URL}/markdownify/{request_id}"
+        )
+        logger.info(f"✨ Successfully retrieved result for request {request_id}")
+        return result
+
+    async def smartscraper(
+        self,
+        website_url: str,
+        user_prompt: str,
+        output_schema: Optional[BaseModel] = None,
+    ):
+        """Send a smartscraper request"""
+        logger.info(f"🔍 Starting smartscraper request for {website_url}")
+        logger.debug(f"📝 Prompt: {user_prompt}")
+
+        request = SmartScraperRequest(
+            website_url=website_url,
+            user_prompt=user_prompt,
+            output_schema=output_schema,
+        )
+        logger.debug("✅ Request validation passed")
+
+        result = await self._make_request(
+            "POST", f"{API_BASE_URL}/smartscraper", json=request.model_dump()
+        )
+        logger.info("✨ Smartscraper request completed successfully")
+        return result
+
+    async def get_smartscraper(self, request_id: str):
+        """Get the result of a previous smartscraper request"""
+        logger.info(f"🔍 Fetching smartscraper result for request {request_id}")
+
+        # Validate input using Pydantic model
+        GetSmartScraperRequest(request_id=request_id)
+        logger.debug("✅ Request ID validation passed")
+
+        result = await self._make_request(
+            "GET", f"{API_BASE_URL}/smartscraper/{request_id}"
         )
         logger.info(f"✨ Successfully retrieved result for request {request_id}")
         return result
@@ -288,3 +236,46 @@ class AsyncClient:
         )
         logger.info(f"✨ Successfully retrieved result for request {request_id}")
         return result
+
+    async def submit_feedback(
+        self, request_id: str, rating: int, feedback_text: Optional[str] = None
+    ):
+        """Submit feedback for a request"""
+        logger.info(f"📝 Submitting feedback for request {request_id}")
+        logger.debug(f"⭐ Rating: {rating}, Feedback: {feedback_text}")
+
+        feedback = FeedbackRequest(
+            request_id=request_id, rating=rating, feedback_text=feedback_text
+        )
+        logger.debug("✅ Feedback validation passed")
+
+        result = await self._make_request(
+            "POST", f"{API_BASE_URL}/feedback", json=feedback.model_dump()
+        )
+        logger.info("✨ Feedback submitted successfully")
+        return result
+
+    async def get_credits(self):
+        """Get credits information"""
+        logger.info("💳 Fetching credits information")
+
+        result = await self._make_request(
+            "GET",
+            f"{API_BASE_URL}/credits",
+        )
+        logger.info(
+            f"✨ Credits info retrieved: {result.get('remaining_credits')} credits remaining"
+        )
+        return result
+
+    async def close(self):
+        """Close the session to free up resources"""
+        logger.info("🔒 Closing AsyncClient session")
+        await self.session.close()
+        logger.debug("✅ Session closed successfully")
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        await self.close()

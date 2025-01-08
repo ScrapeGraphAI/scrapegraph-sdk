@@ -1,3 +1,48 @@
+## [1.9.0-beta.5](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.9.0-beta.4...v1.9.0-beta.5) (2025-01-03)
+
+
+### Bug Fixes
+
+* updated hatchling version ([740933a](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/740933aff79a5873e6d1c633afcedb674d1f4cf0))
+
+## [1.9.0-beta.4](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.9.0-beta.3...v1.9.0-beta.4) (2025-01-03)
+
+
+### Bug Fixes
+
+* improve api desc ([62243f8](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/62243f84384ae238c0bd0c48abc76a6b99376c74))
+
+## [1.9.0-beta.3](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.9.0-beta.2...v1.9.0-beta.3) (2024-12-10)
+
+
+### Bug Fixes
+
+* come back to py 3.10 ([26d3a75](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/26d3a75ed973590e21d55c985bf71f3905a3ac0e))
+
+## [1.9.0-beta.2](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.9.0-beta.1...v1.9.0-beta.2) (2024-12-10)
+
+
+### Bug Fixes
+
+* add new python compatibility ([77b67f6](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/77b67f646d75abd3a558b40cb31c52c12cc7182e))
+
+## [1.9.0-beta.1](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.8.0...v1.9.0-beta.1) (2024-12-10)
+
+
+### Features
+
+* add localScraper functionality ([8701eb2](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/8701eb2ca7f108b922eb1617c850a58c0f88f8f9))
+* revert to old release ([d88a3ac](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/d88a3ac6969a0abdf1f6b8eccde9ad8284d41d20))
+
+
+### Bug Fixes
+
+* .toml file ([e719881](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/e7198817d8dac802361ab84bc4d5d961fb926767))
+* add revert ([09257e0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/09257e08246d8aee96b3944ac14cc14b88e5f818))
+* minor fix version ([0b972c6](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/0b972c69a9ea843d8ec89327f35c287b0d7a2bb4))
+* pyproject ([2440f7f](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/2440f7f2a5179c6e3a86faf4eefa1d5edf7524c8))
+* python version ([24366b0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/24366b08eefe0789da9a0ccafb8058e8744ee58b))
+
 ## [1.8.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.7.0...v1.8.0) (2024-12-08)
 
 
