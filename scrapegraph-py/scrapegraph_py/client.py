@@ -27,7 +27,7 @@ class Client:
     def from_env(
         cls,
         verify_ssl: bool = True,
-        timeout: float = 120,
+        timeout: Optional[float] = None,
         max_retries: int = 3,
         retry_delay: float = 1.0,
     ):
@@ -35,7 +35,7 @@ class Client:
 
         Args:
             verify_ssl: Whether to verify SSL certificates
-            timeout: Request timeout in seconds
+            timeout: Request timeout in seconds. None means no timeout (infinite)
             max_retries: Maximum number of retry attempts
             retry_delay: Delay between retries in seconds
         """
@@ -56,7 +56,7 @@ class Client:
         self,
         api_key: str = None,
         verify_ssl: bool = True,
-        timeout: float = 120,
+        timeout: Optional[float] = None,
         max_retries: int = 3,
         retry_delay: float = 1.0,
     ):
@@ -65,7 +65,7 @@ class Client:
         Args:
             api_key: API key for authentication. If None, will try to load from environment
             verify_ssl: Whether to verify SSL certificates
-            timeout: Request timeout in seconds
+            timeout: Request timeout in seconds. None means no timeout (infinite)
             max_retries: Maximum number of retry attempts
             retry_delay: Delay between retries in seconds
         """
@@ -148,6 +148,31 @@ class Client:
             logger.error(f"🔴 Connection Error: {str(e)}")
             raise ConnectionError(f"Failed to connect to API: {str(e)}")
 
+    def markdownify(self, website_url: str):
+        """Send a markdownify request"""
+        logger.info(f"🔍 Starting markdownify request for {website_url}")
+
+        request = MarkdownifyRequest(website_url=website_url)
+        logger.debug("✅ Request validation passed")
+
+        result = self._make_request(
+            "POST", f"{API_BASE_URL}/markdownify", json=request.model_dump()
+        )
+        logger.info("✨ Markdownify request completed successfully")
+        return result
+
+    def get_markdownify(self, request_id: str):
+        """Get the result of a previous markdownify request"""
+        logger.info(f"🔍 Fetching markdownify result for request {request_id}")
+
+        # Validate input using Pydantic model
+        GetMarkdownifyRequest(request_id=request_id)
+        logger.debug("✅ Request ID validation passed")
+
+        result = self._make_request("GET", f"{API_BASE_URL}/markdownify/{request_id}")
+        logger.info(f"✨ Successfully retrieved result for request {request_id}")
+        return result
+
     def smartscraper(
         self,
         website_url: str,
@@ -180,74 +205,6 @@ class Client:
         logger.debug("✅ Request ID validation passed")
 
         result = self._make_request("GET", f"{API_BASE_URL}/smartscraper/{request_id}")
-        logger.info(f"✨ Successfully retrieved result for request {request_id}")
-        return result
-
-    def get_credits(self):
-        """Get credits information"""
-        logger.info("💳 Fetching credits information")
-
-        result = self._make_request(
-            "GET",
-            f"{API_BASE_URL}/credits",
-        )
-        logger.info(
-            f"✨ Credits info retrieved: {result.get('remaining_credits')} credits remaining"
-        )
-        return result
-
-    def submit_feedback(
-        self, request_id: str, rating: int, feedback_text: Optional[str] = None
-    ):
-        """Submit feedback for a request"""
-        logger.info(f"📝 Submitting feedback for request {request_id}")
-        logger.debug(f"⭐ Rating: {rating}, Feedback: {feedback_text}")
-
-        feedback = FeedbackRequest(
-            request_id=request_id, rating=rating, feedback_text=feedback_text
-        )
-        logger.debug("✅ Feedback validation passed")
-
-        result = self._make_request(
-            "POST", f"{API_BASE_URL}/feedback", json=feedback.model_dump()
-        )
-        logger.info("✨ Feedback submitted successfully")
-        return result
-
-    def close(self):
-        """Close the session to free up resources"""
-        logger.info("🔒 Closing Client session")
-        self.session.close()
-        logger.debug("✅ Session closed successfully")
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.close()
-
-    def markdownify(self, website_url: str):
-        """Send a markdownify request"""
-        logger.info(f"🔍 Starting markdownify request for {website_url}")
-
-        request = MarkdownifyRequest(website_url=website_url)
-        logger.debug("✅ Request validation passed")
-
-        result = self._make_request(
-            "POST", f"{API_BASE_URL}/markdownify", json=request.model_dump()
-        )
-        logger.info("✨ Markdownify request completed successfully")
-        return result
-
-    def get_markdownify(self, request_id: str):
-        """Get the result of a previous markdownify request"""
-        logger.info(f"🔍 Fetching markdownify result for request {request_id}")
-
-        # Validate input using Pydantic model
-        GetMarkdownifyRequest(request_id=request_id)
-        logger.debug("✅ Request ID validation passed")
-
-        result = self._make_request("GET", f"{API_BASE_URL}/markdownify/{request_id}")
         logger.info(f"✨ Successfully retrieved result for request {request_id}")
         return result
 
@@ -285,3 +242,46 @@ class Client:
         result = self._make_request("GET", f"{API_BASE_URL}/localscraper/{request_id}")
         logger.info(f"✨ Successfully retrieved result for request {request_id}")
         return result
+
+    def submit_feedback(
+        self, request_id: str, rating: int, feedback_text: Optional[str] = None
+    ):
+        """Submit feedback for a request"""
+        logger.info(f"📝 Submitting feedback for request {request_id}")
+        logger.debug(f"⭐ Rating: {rating}, Feedback: {feedback_text}")
+
+        feedback = FeedbackRequest(
+            request_id=request_id, rating=rating, feedback_text=feedback_text
+        )
+        logger.debug("✅ Feedback validation passed")
+
+        result = self._make_request(
+            "POST", f"{API_BASE_URL}/feedback", json=feedback.model_dump()
+        )
+        logger.info("✨ Feedback submitted successfully")
+        return result
+
+    def get_credits(self):
+        """Get credits information"""
+        logger.info("💳 Fetching credits information")
+
+        result = self._make_request(
+            "GET",
+            f"{API_BASE_URL}/credits",
+        )
+        logger.info(
+            f"✨ Credits info retrieved: {result.get('remaining_credits')} credits remaining"
+        )
+        return result
+
+    def close(self):
+        """Close the session to free up resources"""
+        logger.info("🔒 Closing Client session")
+        self.session.close()
+        logger.debug("✅ Session closed successfully")
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
