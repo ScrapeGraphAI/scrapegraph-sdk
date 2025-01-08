@@ -27,7 +27,7 @@ class Client:
     def from_env(
         cls,
         verify_ssl: bool = True,
-        timeout: float = 120,
+        timeout: Optional[float] = None,
         max_retries: int = 3,
         retry_delay: float = 1.0,
     ):
@@ -35,7 +35,7 @@ class Client:
 
         Args:
             verify_ssl: Whether to verify SSL certificates
-            timeout: Request timeout in seconds
+            timeout: Request timeout in seconds. None means no timeout (infinite)
             max_retries: Maximum number of retry attempts
             retry_delay: Delay between retries in seconds
         """
@@ -56,7 +56,7 @@ class Client:
         self,
         api_key: str = None,
         verify_ssl: bool = True,
-        timeout: float = 120,
+        timeout: Optional[float] = None,
         max_retries: int = 3,
         retry_delay: float = 1.0,
     ):
@@ -65,7 +65,7 @@ class Client:
         Args:
             api_key: API key for authentication. If None, will try to load from environment
             verify_ssl: Whether to verify SSL certificates
-            timeout: Request timeout in seconds
+            timeout: Request timeout in seconds. None means no timeout (infinite)
             max_retries: Maximum number of retry attempts
             retry_delay: Delay between retries in seconds
         """
