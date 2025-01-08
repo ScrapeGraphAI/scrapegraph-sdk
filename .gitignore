@@ -1,0 +1,5 @@
+.env
+# Ignore .DS_Store files anywhere in the repository
+.DS_Store
+**/.DS_Store
+*.csv
