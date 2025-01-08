@@ -1,9 +1,10 @@
 # 🌐 ScrapeGraph JavaScript SDK
 
-[![npm version](https://badge.fury.io/js/scrapegraph-js.svg)](https://badge.fury.io/js/scrapegraph-js)  
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)  
-[![Build Status](https://github.com/ScrapeGraphAI/scrapegraph-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/ScrapeGraphAI/scrapegraph-sdk/actions)  
-[![Documentation Status](https://img.shields.io/badge/docs-latest-brightgreen.svg)](https://docs.scrapegraphai.com)
+[![npm version](https://badge.fury.io/js/scrapegraph-js.svg)](https://badge.fury.io/js/scrapegraph-js) [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT) [![Documentation Status](https://img.shields.io/badge/docs-latest-brightgreen.svg)](https://docs.scrapegraphai.com)
+
+<p align="left">
+  <img src="https://raw.githubusercontent.com/VinciGit00/Scrapegraph-ai/main/docs/assets/api-banner.png" alt="ScrapeGraph API Banner" style="width: 70%;">
+</p>
 
 Official JavaScript/TypeScript SDK for the ScrapeGraph AI API - Smart web scraping powered by AI.
 
@@ -246,7 +247,7 @@ Contributions are welcome! Please feel free to submit a Pull Request. For major 
 ## 🔗 Links
 
 - [Website](https://scrapegraphai.com)
-- [Documentation](https://scrapegraphai.com/documentation)
+- [Documentation](https://docs.scrapegraphai.com)
 - [GitHub](https://github.com/ScrapeGraphAI/scrapegraph-sdk)
 
 ## 💬 Support
