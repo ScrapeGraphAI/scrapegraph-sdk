@@ -1,3 +1,44 @@
+## [1.9.0-beta.6](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.9.0-beta.5...v1.9.0-beta.6) (2025-01-08)
+
+
+### Features
+
+* add time varying timeout ([945b876](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/945b876a0c23d4b2a29ef916bd6fa9af425f9ab5))
+* update doc readme ([c02c411](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/c02c411ffba9fc7906fcc7664d0ce841e0e2fb54))
+
+
+### Bug Fixes
+
+* houses examples and typos ([c596c44](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/c596c448e334a76444ecf3ee738ec275fd5316fa))
+* make timeout optional ([49b8e4b](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/49b8e4b8d3aa637bfd28a59e47cd1f5efad91075))
+
+
+### chore
+
+* fix _make_request not using it ([701a4c1](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/701a4c13bbe7e5d4ba9eae1846b0bd8abbbdb6b8))
+* fix pyproject version ([3567034](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/3567034e02e4dfab967248a5a4eaee426f145d6b))
+
+
+### Docs
+
+* added api reference ([6929a7a](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/6929a7adcc09f47a652cfd7ad7557314b52db9c0))
+* added api reference ([7b88876](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/7b88876facc2b37e4738797b6a18c65ca89f9aa0))
+* added cookbook reference ([e68c1bd](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/e68c1bd1268663a625441bc7f955a1d4514ac0ef))
+* added langchain-scrapegraph examples ([479dbdb](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/479dbdb1833a3ce6c2ce03eaf1400487ff534dd0))
+* added open in colab badge ([c2fc1ef](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/c2fc1efc687623bd821468c19a102dbaed70bd4b))
+* added two langchain-scrapegraph examples ([8f3a87e](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/8f3a87e880f820f4453d564fec02ef02af3742b3))
+* added two new examples ([5fa2b42](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/5fa2b42685df565531cd7d2495e1d42e5c34ff90))
+* **cookbook:** added two new examples ([f67769e](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/f67769e0ef0bba6fc4fd6908ec666b63ac2368b9))
+* added wired langgraph react agent ([9f1e0cf](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/9f1e0cf72f4f84ee1f81439befaeace8c5c7ffa5))
+* added zillow example ([7fad92c](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/7fad92ca5e87cd9ecc60702e1599b2cff479af5c))
+* api reference ([855c2e5](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/855c2e51ebfaf7d8e4be008e8f22fdf66c0dc0e0))
+* fixed cookbook images and urls ([f860167](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/f8601674f686084a7df88e221475c014b40015b8))
+* github trending sdk ([320de37](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/320de37d2e8ec0d859ca91725c6cc35dab68e183))
+* link typo ([e1bfd6a](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/e1bfd6aa364b369c17457513f1c68e91376d0c68))
+* llama-index @VinciGit00 ([6de5eb2](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/6de5eb22490de2f5ff4075836bf1aca2e304ff8d))
+* research agent ([6e06afa](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/6e06afa9f8d5e9f05a38e605562ec10249216704))
+* updated new documentation urls ([1d0cb46](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/1d0cb46e5710707151ce227fa2043d5de5e92657))
+
 ## [1.9.0-beta.5](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.9.0-beta.4...v1.9.0-beta.5) (2025-01-03)
 
 
