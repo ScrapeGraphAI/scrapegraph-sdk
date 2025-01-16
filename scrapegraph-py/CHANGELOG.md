@@ -1,3 +1,15 @@
+## [1.10.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.9.0...v1.10.0) (2025-01-16)
+
+
+### Features
+
+* add integration for sql ([2543b5a](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/2543b5a9b84826de5c583d38fe89cf21aad077e6))
+
+
+### Docs
+
+* added new image ([b052ddb](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/b052ddbe0d1a5ea182c54897c94d4c88fbc54ab8))
+
 ## [1.9.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.8.0...v1.9.0) (2025-01-08)
 
 
