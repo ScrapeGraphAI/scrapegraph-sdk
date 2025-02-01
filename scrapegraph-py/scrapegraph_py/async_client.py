@@ -10,6 +10,10 @@ from scrapegraph_py.exceptions import APIError
 from scrapegraph_py.logger import sgai_logger as logger
 from scrapegraph_py.models.feedback import FeedbackRequest
 from scrapegraph_py.models.markdownify import GetMarkdownifyRequest, MarkdownifyRequest
+from scrapegraph_py.models.searchscraper import (
+    GetSearchScraperRequest,
+    SearchScraperRequest,
+)
 from scrapegraph_py.models.smartscraper import (
     GetSmartScraperRequest,
     SmartScraperRequest,
@@ -239,6 +243,45 @@ class AsyncClient:
         logger.info(
             f"✨ Credits info retrieved: {result.get('remaining_credits')} credits remaining"
         )
+        return result
+
+    async def searchscraper(
+        self,
+        user_prompt: str,
+        headers: Optional[dict[str, str]] = None,
+        output_schema: Optional[BaseModel] = None,
+    ):
+        """Send a searchscraper request"""
+        logger.info("🔍 Starting searchscraper request")
+        logger.debug(f"📝 Prompt: {user_prompt}")
+        if headers:
+            logger.debug("🔧 Using custom headers")
+
+        request = SearchScraperRequest(
+            user_prompt=user_prompt,
+            headers=headers,
+            output_schema=output_schema,
+        )
+        logger.debug("✅ Request validation passed")
+
+        result = await self._make_request(
+            "POST", f"{API_BASE_URL}/searchscraper", json=request.model_dump()
+        )
+        logger.info("✨ Searchscraper request completed successfully")
+        return result
+
+    async def get_searchscraper(self, request_id: str):
+        """Get the result of a previous searchscraper request"""
+        logger.info(f"🔍 Fetching searchscraper result for request {request_id}")
+
+        # Validate input using Pydantic model
+        GetSearchScraperRequest(request_id=request_id)
+        logger.debug("✅ Request ID validation passed")
+
+        result = await self._make_request(
+            "GET", f"{API_BASE_URL}/searchscraper/{request_id}"
+        )
+        logger.info(f"✨ Successfully retrieved result for request {request_id}")
         return result
 
     async def close(self):

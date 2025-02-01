@@ -3,6 +3,10 @@ from pydantic import BaseModel, ValidationError
 
 from scrapegraph_py.models.feedback import FeedbackRequest
 from scrapegraph_py.models.markdownify import GetMarkdownifyRequest, MarkdownifyRequest
+from scrapegraph_py.models.searchscraper import (
+    GetSearchScraperRequest,
+    SearchScraperRequest,
+)
 from scrapegraph_py.models.smartscraper import (
     GetSmartScraperRequest,
     SmartScraperRequest,
@@ -157,3 +161,57 @@ def test_get_markdownify_request_validation():
     # Invalid UUID
     with pytest.raises(ValidationError):
         GetMarkdownifyRequest(request_id="invalid-uuid")
+
+
+def test_searchscraper_request_validation():
+    class ExampleSchema(BaseModel):
+        name: str
+        age: int
+
+    # Valid input without headers
+    request = SearchScraperRequest(user_prompt="What is the latest version of Python?")
+    assert request.user_prompt == "What is the latest version of Python?"
+    assert request.headers is None
+    assert request.output_schema is None
+
+    # Valid input with headers
+    headers = {
+        "User-Agent": "Mozilla/5.0",
+        "Cookie": "session=123",
+    }
+    request = SearchScraperRequest(
+        user_prompt="What is the latest version of Python?",
+        headers=headers,
+    )
+    assert request.headers == headers
+
+    # Test with output_schema
+    request = SearchScraperRequest(
+        user_prompt="What is the latest version of Python?",
+        output_schema=ExampleSchema,
+    )
+
+    # When we dump the model, the output_schema should be converted to a dict
+    dumped = request.model_dump()
+    assert isinstance(dumped["output_schema"], dict)
+    assert "properties" in dumped["output_schema"]
+    assert "name" in dumped["output_schema"]["properties"]
+    assert "age" in dumped["output_schema"]["properties"]
+
+    # Empty prompt
+    with pytest.raises(ValidationError):
+        SearchScraperRequest(user_prompt="")
+
+    # Invalid prompt (no alphanumeric characters)
+    with pytest.raises(ValidationError):
+        SearchScraperRequest(user_prompt="!@#$%^")
+
+
+def test_get_searchscraper_request_validation():
+    # Valid UUID
+    request = GetSearchScraperRequest(request_id="123e4567-e89b-12d3-a456-426614174000")
+    assert request.request_id == "123e4567-e89b-12d3-a456-426614174000"
+
+    # Invalid UUID
+    with pytest.raises(ValidationError):
+        GetSearchScraperRequest(request_id="invalid-uuid")
