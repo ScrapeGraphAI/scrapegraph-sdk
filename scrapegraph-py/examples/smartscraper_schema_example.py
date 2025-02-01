@@ -16,6 +16,7 @@ sgai_client = Client(api_key="your-api-key-here")
 # SmartScraper request with output schema
 response = sgai_client.smartscraper(
     website_url="https://example.com",
+    # website_html="...", # Optional, if you want to pass in HTML content instead of a URL
     user_prompt="Extract webpage information",
     output_schema=WebpageSchema,
 )

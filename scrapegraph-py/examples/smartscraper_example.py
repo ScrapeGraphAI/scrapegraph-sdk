@@ -9,8 +9,10 @@ sgai_client = Client(api_key="your-api-key-here")
 # SmartScraper request
 response = sgai_client.smartscraper(
     website_url="https://example.com",
+    # website_html="...", # Optional, if you want to pass in HTML content instead of a URL
     user_prompt="Extract the main heading, description, and summary of the webpage",
 )
+
 
 # Print the response
 print(f"Request ID: {response['request_id']}")
