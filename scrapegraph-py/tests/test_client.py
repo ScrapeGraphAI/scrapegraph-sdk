@@ -206,3 +206,79 @@ def test_get_markdownify(mock_api_key, mock_uuid):
         response = client.get_markdownify(mock_uuid)
         assert response["status"] == "completed"
         assert response["request_id"] == mock_uuid
+
+
+@responses.activate
+def test_searchscraper(mock_api_key):
+    # Mock the API response
+    responses.add(
+        responses.POST,
+        "https://api.scrapegraphai.com/v1/searchscraper",
+        json={
+            "request_id": str(uuid4()),
+            "status": "completed",
+            "result": {"answer": "Python 3.12 is the latest version."},
+            "reference_urls": ["https://www.python.org/downloads/"],
+        },
+    )
+
+    with Client(api_key=mock_api_key) as client:
+        response = client.searchscraper(
+            user_prompt="What is the latest version of Python?"
+        )
+        assert response["status"] == "completed"
+        assert "answer" in response["result"]
+        assert "reference_urls" in response
+        assert isinstance(response["reference_urls"], list)
+
+
+@responses.activate
+def test_searchscraper_with_headers(mock_api_key):
+    # Mock the API response
+    responses.add(
+        responses.POST,
+        "https://api.scrapegraphai.com/v1/searchscraper",
+        json={
+            "request_id": str(uuid4()),
+            "status": "completed",
+            "result": {"answer": "Python 3.12 is the latest version."},
+            "reference_urls": ["https://www.python.org/downloads/"],
+        },
+    )
+
+    headers = {
+        "User-Agent": "Mozilla/5.0",
+        "Cookie": "session=123",
+    }
+
+    with Client(api_key=mock_api_key) as client:
+        response = client.searchscraper(
+            user_prompt="What is the latest version of Python?",
+            headers=headers,
+        )
+        assert response["status"] == "completed"
+        assert "answer" in response["result"]
+        assert "reference_urls" in response
+        assert isinstance(response["reference_urls"], list)
+
+
+@responses.activate
+def test_get_searchscraper(mock_api_key, mock_uuid):
+    responses.add(
+        responses.GET,
+        f"https://api.scrapegraphai.com/v1/searchscraper/{mock_uuid}",
+        json={
+            "request_id": mock_uuid,
+            "status": "completed",
+            "result": {"answer": "Python 3.12 is the latest version."},
+            "reference_urls": ["https://www.python.org/downloads/"],
+        },
+    )
+
+    with Client(api_key=mock_api_key) as client:
+        response = client.get_searchscraper(mock_uuid)
+        assert response["status"] == "completed"
+        assert response["request_id"] == mock_uuid
+        assert "answer" in response["result"]
+        assert "reference_urls" in response
+        assert isinstance(response["reference_urls"], list)

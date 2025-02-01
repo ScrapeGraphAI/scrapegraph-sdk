@@ -210,3 +210,77 @@ async def test_get_markdownify(mock_api_key, mock_uuid):
             response = await client.get_markdownify(mock_uuid)
             assert response["status"] == "completed"
             assert response["request_id"] == mock_uuid
+
+
+@pytest.mark.asyncio
+async def test_searchscraper(mock_api_key):
+    with aioresponses() as mocked:
+        mocked.post(
+            "https://api.scrapegraphai.com/v1/searchscraper",
+            payload={
+                "request_id": str(uuid4()),
+                "status": "completed",
+                "result": {"answer": "Python 3.12 is the latest version."},
+                "reference_urls": ["https://www.python.org/downloads/"],
+            },
+        )
+
+        async with AsyncClient(api_key=mock_api_key) as client:
+            response = await client.searchscraper(
+                user_prompt="What is the latest version of Python?"
+            )
+            assert response["status"] == "completed"
+            assert "answer" in response["result"]
+            assert "reference_urls" in response
+            assert isinstance(response["reference_urls"], list)
+
+
+@pytest.mark.asyncio
+async def test_searchscraper_with_headers(mock_api_key):
+    with aioresponses() as mocked:
+        mocked.post(
+            "https://api.scrapegraphai.com/v1/searchscraper",
+            payload={
+                "request_id": str(uuid4()),
+                "status": "completed",
+                "result": {"answer": "Python 3.12 is the latest version."},
+                "reference_urls": ["https://www.python.org/downloads/"],
+            },
+        )
+
+        headers = {
+            "User-Agent": "Mozilla/5.0",
+            "Cookie": "session=123",
+        }
+
+        async with AsyncClient(api_key=mock_api_key) as client:
+            response = await client.searchscraper(
+                user_prompt="What is the latest version of Python?",
+                headers=headers,
+            )
+            assert response["status"] == "completed"
+            assert "answer" in response["result"]
+            assert "reference_urls" in response
+            assert isinstance(response["reference_urls"], list)
+
+
+@pytest.mark.asyncio
+async def test_get_searchscraper(mock_api_key, mock_uuid):
+    with aioresponses() as mocked:
+        mocked.get(
+            f"https://api.scrapegraphai.com/v1/searchscraper/{mock_uuid}",
+            payload={
+                "request_id": mock_uuid,
+                "status": "completed",
+                "result": {"answer": "Python 3.12 is the latest version."},
+                "reference_urls": ["https://www.python.org/downloads/"],
+            },
+        )
+
+        async with AsyncClient(api_key=mock_api_key) as client:
+            response = await client.get_searchscraper(mock_uuid)
+            assert response["status"] == "completed"
+            assert response["request_id"] == mock_uuid
+            assert "answer" in response["result"]
+            assert "reference_urls" in response
+            assert isinstance(response["reference_urls"], list)
