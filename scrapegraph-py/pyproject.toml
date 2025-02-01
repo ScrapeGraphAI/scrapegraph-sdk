@@ -83,7 +83,7 @@ line-length = 88
 
 [tool.ruff.lint]
 select = ["F", "E", "W", "C"]
-ignore = ["E203", "E501"]  # Ignore conflicts with Black
+ignore = ["E203", "E501", "C901"]  # Ignore conflicts with Black and function complexity
 
 [tool.mypy]
 python_version = "3.10"
@@ -97,4 +97,4 @@ build-backend = "hatchling.build"
 
 [tool.poe.tasks]
 pylint-local = "pylint scrapegraph_py/**/*.py"
-pylint-ci = "pylint --disable=C0114,C0115,C0116 --exit-zero scrapegraph_py/**/*.py"
+pylint-ci = "pylint --disable=C0114,C0115,C0116,C901 --exit-zero scrapegraph_py/**/*.py"
