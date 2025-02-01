@@ -20,6 +20,14 @@ class SmartScraperRequest(BaseModel):
         example="<html><body><h1>Title</h1><p>Content</p></body></html>",
         description="HTML content, maximum size 2MB",
     )
+    headers: Optional[dict[str, str]] = Field(
+        None,
+        example={
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+            "Cookie": "cookie1=value1; cookie2=value2",
+        },
+        description="Optional headers to send with the request, including cookies and user agent",
+    )
     output_schema: Optional[Type[BaseModel]] = None
 
     @model_validator(mode="after")
