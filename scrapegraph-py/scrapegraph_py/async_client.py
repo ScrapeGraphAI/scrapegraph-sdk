@@ -132,11 +132,15 @@ class AsyncClient:
                 logger.info(f"⏳ Waiting {retry_delay}s before retry {attempt + 2}")
                 await asyncio.sleep(retry_delay)
 
-    async def markdownify(self, website_url: str):
+    async def markdownify(
+        self, website_url: str, headers: Optional[dict[str, str]] = None
+    ):
         """Send a markdownify request"""
         logger.info(f"🔍 Starting markdownify request for {website_url}")
+        if headers:
+            logger.debug("🔧 Using custom headers")
 
-        request = MarkdownifyRequest(website_url=website_url)
+        request = MarkdownifyRequest(website_url=website_url, headers=headers)
         logger.debug("✅ Request validation passed")
 
         result = await self._make_request(
@@ -164,6 +168,7 @@ class AsyncClient:
         user_prompt: str,
         website_url: Optional[str] = None,
         website_html: Optional[str] = None,
+        headers: Optional[dict[str, str]] = None,
         output_schema: Optional[BaseModel] = None,
     ):
         """Send a smartscraper request"""
@@ -172,11 +177,14 @@ class AsyncClient:
             logger.debug(f"🌐 URL: {website_url}")
         if website_html:
             logger.debug("📄 Using provided HTML content")
+        if headers:
+            logger.debug("🔧 Using custom headers")
         logger.debug(f"📝 Prompt: {user_prompt}")
 
         request = SmartScraperRequest(
             website_url=website_url,
             website_html=website_html,
+            headers=headers,
             user_prompt=user_prompt,
             output_schema=output_schema,
         )
