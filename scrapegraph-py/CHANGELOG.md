@@ -1,4 +1,20 @@
 ## [1.9.0-beta.7](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.9.0-beta.6...v1.9.0-beta.7) (2025-02-03)
+## [1.10.2](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.10.1...v1.10.2) (2025-01-22)
+
+
+### Bug Fixes
+
+* pyproject ([5d6a9ee](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/5d6a9eed262d1041eea3110fbaa1729f2c16855c))
+
+## [1.10.1](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.10.0...v1.10.1) (2025-01-22)
+
+
+### Bug Fixes
+
+* pyproject.toml ([c6e6c6e](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/c6e6c6e33cd189bd78d7366dd570ee1e4d8c2c68))
+* pyproject.toml ([e8aed70](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/e8aed7011c1a65eca2909df88a804179a04bdd96))
+
+## [1.10.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.9.0...v1.10.0) (2025-01-16)
 
 
 ### Features
@@ -16,18 +32,37 @@
 * **tests:** updated tests ([9149ce8](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/9149ce85a78b503098f80910c20de69831030378))
 
 ## [1.9.0-beta.6](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.9.0-beta.5...v1.9.0-beta.6) (2025-01-08)
+* add integration for sql ([2543b5a](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/2543b5a9b84826de5c583d38fe89cf21aad077e6))
+
+
+### Docs
+
+* added new image ([b052ddb](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/b052ddbe0d1a5ea182c54897c94d4c88fbc54ab8))
+
+## [1.9.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.8.0...v1.9.0) (2025-01-08)
 
 
 ### Features
 
+* add localScraper functionality ([8701eb2](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/8701eb2ca7f108b922eb1617c850a58c0f88f8f9))
 * add time varying timeout ([945b876](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/945b876a0c23d4b2a29ef916bd6fa9af425f9ab5))
+* revert to old release ([d88a3ac](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/d88a3ac6969a0abdf1f6b8eccde9ad8284d41d20))
 * update doc readme ([c02c411](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/c02c411ffba9fc7906fcc7664d0ce841e0e2fb54))
 
 
 ### Bug Fixes
 
+* .toml file ([e719881](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/e7198817d8dac802361ab84bc4d5d961fb926767))
+* add new python compatibility ([77b67f6](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/77b67f646d75abd3a558b40cb31c52c12cc7182e))
+* add revert ([09257e0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/09257e08246d8aee96b3944ac14cc14b88e5f818))
+* come back to py 3.10 ([26d3a75](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/26d3a75ed973590e21d55c985bf71f3905a3ac0e))
 * houses examples and typos ([c596c44](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/c596c448e334a76444ecf3ee738ec275fd5316fa))
+* improve api desc ([62243f8](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/62243f84384ae238c0bd0c48abc76a6b99376c74))
 * make timeout optional ([49b8e4b](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/49b8e4b8d3aa637bfd28a59e47cd1f5efad91075))
+* minor fix version ([0b972c6](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/0b972c69a9ea843d8ec89327f35c287b0d7a2bb4))
+* pyproject ([2440f7f](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/2440f7f2a5179c6e3a86faf4eefa1d5edf7524c8))
+* python version ([24366b0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/24366b08eefe0789da9a0ccafb8058e8744ee58b))
+* updated hatchling version ([740933a](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/740933aff79a5873e6d1c633afcedb674d1f4cf0))
 
 
 ### chore
@@ -55,6 +90,15 @@
 * llama-index @VinciGit00 ([6de5eb2](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/6de5eb22490de2f5ff4075836bf1aca2e304ff8d))
 * research agent ([6e06afa](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/6e06afa9f8d5e9f05a38e605562ec10249216704))
 * updated new documentation urls ([1d0cb46](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/1d0cb46e5710707151ce227fa2043d5de5e92657))
+
+
+### CI
+
+* **release:** 1.9.0-beta.1 [skip ci] ([236d55b](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/236d55b7c3ce571258fdd488ad7ac0891b2958ce))
+* **release:** 1.9.0-beta.2 [skip ci] ([59611f6](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/59611f6d1d690b89917abd03ba863b46b40c2b95))
+* **release:** 1.9.0-beta.3 [skip ci] ([cbf2da4](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/cbf2da44b22da23c4d3870d52f88f9b0214cab27))
+* **release:** 1.9.0-beta.4 [skip ci] ([05d57ae](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/05d57aee168b1d184ef352240a03a43457e16749))
+* **release:** 1.9.0-beta.5 [skip ci] ([d03b9bf](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/d03b9bf8807d6a42a41e6f82d65e54931844039c))
 
 ## [1.9.0-beta.5](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.9.0-beta.4...v1.9.0-beta.5) (2025-01-03)
 
