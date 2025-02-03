@@ -9,7 +9,7 @@
   <img src="https://raw.githubusercontent.com/VinciGit00/Scrapegraph-ai/main/docs/assets/api-banner.png" alt="ScrapeGraph API Banner" style="width: 70%;">
 </p>
 
-Official SDKs for the ScrapeGraph AI API - Intelligent web scraping powered by AI. Extract structured data from any webpage with natural language prompts.
+Official SDKs for the ScrapeGraph AI API - Intelligent web scraping and search powered by AI. Extract structured data from any webpage or perform AI-powered web searches with natural language prompts.
 
 Get your [API key](https://scrapegraphai.com)!
 
@@ -17,7 +17,7 @@ Get your [API key](https://scrapegraphai.com)!
 
 - [Python SDK Documentation](scrapegraph-py/README.md)
 - [JavaScript SDK Documentation](scrapegraph-js/README.md)
-- [API Documentation](https://docs.scrapegraphai.com) 
+- [API Documentation](https://docs.scrapegraphai.com)
 - [Website](https://scrapegraphai.com)
 
 ## 📦 Installation
@@ -34,7 +34,7 @@ npm install scrapegraph-js
 
 ## 🎯 Core Features
 
-- 🤖 **AI-Powered Extraction**: Use natural language to describe what data you want
+- 🤖 **AI-Powered Extraction & Search**: Use natural language to extract data or search the web
 - 📊 **Structured Output**: Get clean, structured data with optional schema validation
 - 🔄 **Multiple Formats**: Extract data as JSON, Markdown, or custom schemas
 - ⚡ **High Performance**: Concurrent processing and automatic retries
@@ -43,22 +43,22 @@ npm install scrapegraph-js
 ## 🛠️ Available Endpoints
 
 ### 🔍 SmartScraper
-Extract structured data from any webpage using natural language prompts.
+Using AI to extract structured data from any webpage or HTML content with natural language prompts.
+
+### 🔎 SearchScraper
+Perform AI-powered web searches with structured results and reference URLs.
 
 ### 📝 Markdownify
 Convert any webpage into clean, formatted markdown.
-
-### 💻 LocalScraper
-Extract information from a local HTML file using AI.
-
 
 ## 🌟 Key Benefits
 
 - 📝 **Natural Language Queries**: No complex selectors or XPath needed
 - 🎯 **Precise Extraction**: AI understands context and structure
-- 🔄 **Adaptive Scraping**: Works with dynamic and static content
+- 🔄 **Adaptive Processing**: Works with both web content and direct HTML
 - 📊 **Schema Validation**: Ensure data consistency with Pydantic/TypeScript
 - ⚡ **Async Support**: Handle multiple requests efficiently
+- 🔍 **Source Attribution**: Get reference URLs for search results
 
 ## 💡 Use Cases
 
@@ -67,13 +67,14 @@ Extract information from a local HTML file using AI.
 - 📰 **Content Aggregation**: Convert articles to structured formats
 - 🔍 **Data Mining**: Extract specific information from multiple sources
 - 📱 **App Integration**: Feed clean data into your applications
+- 🌐 **Web Research**: Perform AI-powered searches with structured results
 
 ## 📖 Documentation
 
 For detailed documentation and examples, visit:
 - [Python SDK Guide](scrapegraph-py/README.md)
 - [JavaScript SDK Guide](scrapegraph-js/README.md)
-- [API Documentation](https://docs.scrapegraphai.com) 
+- [API Documentation](https://docs.scrapegraphai.com)
 
 ## 💬 Support & Feedback
 
