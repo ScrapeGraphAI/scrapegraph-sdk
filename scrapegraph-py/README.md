@@ -40,7 +40,7 @@ client = Client(api_key="your-api-key-here")
 
 ## 📚 Available Endpoints
 
-### 🔍 SmartScraper
+### 🤖 SmartScraper
 
 Extract structured data from any webpage or HTML content using AI.
 
@@ -95,7 +95,7 @@ response = client.smartscraper(
 
 </details>
 
-### 🔎 SearchScraper
+### 🔍 SearchScraper
 
 Perform AI-powered web searches with structured results and reference URLs.
 
