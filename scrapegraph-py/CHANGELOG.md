@@ -1,3 +1,4 @@
+## [1.9.0-beta.7](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.9.0-beta.6...v1.9.0-beta.7) (2025-02-03)
 ## [1.10.2](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.10.1...v1.10.2) (2025-01-22)
 
 
@@ -18,6 +19,19 @@
 
 ### Features
 
+* add optional headers to request ([bb851d7](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/bb851d785d121b039d5e968327fb930955a3fd92))
+* merged localscraper into smartscraper ([503dbd1](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/503dbd19b8cec4d2ff4575786b0eec25db2e80e6))
+* modified icons ([bcb9b0b](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/bcb9b0b731b057d242fdf80b43d96879ff7a2764))
+* searchscraper ([2e04e5a](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/2e04e5a1bbd207a7ceeea594878bdea542a7a856))
+* updated readmes ([bfdbea0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/bfdbea038918d79df2e3e9442e25d5f08bbccbbc))
+
+
+### chore
+
+* refactor examples ([8e00846](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/8e008465f7280c53e2faab7a92f02871ffc5b867))
+* **tests:** updated tests ([9149ce8](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/9149ce85a78b503098f80910c20de69831030378))
+
+## [1.9.0-beta.6](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.9.0-beta.5...v1.9.0-beta.6) (2025-01-08)
 * add integration for sql ([2543b5a](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/2543b5a9b84826de5c583d38fe89cf21aad077e6))
 
 
