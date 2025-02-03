@@ -42,10 +42,10 @@ npm install scrapegraph-js
 
 ## 🛠️ Available Endpoints
 
-### 🔍 SmartScraper
+### 🤖 SmartScraper
 Using AI to extract structured data from any webpage or HTML content with natural language prompts.
 
-### 🔎 SearchScraper
+### 🔍 SearchScraper
 Perform AI-powered web searches with structured results and reference URLs.
 
 ### 📝 Markdownify
