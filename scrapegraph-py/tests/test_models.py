@@ -2,11 +2,11 @@ import pytest
 from pydantic import BaseModel, ValidationError
 
 from scrapegraph_py.models.feedback import FeedbackRequest
-from scrapegraph_py.models.localscraper import (
-    GetLocalScraperRequest,
-    LocalScraperRequest,
-)
 from scrapegraph_py.models.markdownify import GetMarkdownifyRequest, MarkdownifyRequest
+from scrapegraph_py.models.searchscraper import (
+    GetSearchScraperRequest,
+    SearchScraperRequest,
+)
 from scrapegraph_py.models.smartscraper import (
     GetSmartScraperRequest,
     SmartScraperRequest,
@@ -14,17 +14,40 @@ from scrapegraph_py.models.smartscraper import (
 
 
 def test_smartscraper_request_validation():
-
     class ExampleSchema(BaseModel):
         name: str
         age: int
 
-    # Valid input
+    # Valid input with website_url
     request = SmartScraperRequest(
         website_url="https://example.com", user_prompt="Describe this page."
     )
     assert request.website_url == "https://example.com"
     assert request.user_prompt == "Describe this page."
+    assert request.website_html is None
+    assert request.headers is None
+
+    # Valid input with website_html
+    request = SmartScraperRequest(
+        website_html="<html><body><p>Test content</p></body></html>",
+        user_prompt="Extract info",
+    )
+    assert request.website_url is None
+    assert request.website_html == "<html><body><p>Test content</p></body></html>"
+    assert request.user_prompt == "Extract info"
+    assert request.headers is None
+
+    # Valid input with headers
+    headers = {
+        "User-Agent": "Mozilla/5.0",
+        "Cookie": "session=123",
+    }
+    request = SmartScraperRequest(
+        website_url="https://example.com",
+        user_prompt="Describe this page.",
+        headers=headers,
+    )
+    assert request.headers == headers
 
     # Test with output_schema
     request = SmartScraperRequest(
@@ -49,6 +72,25 @@ def test_smartscraper_request_validation():
     # Empty prompt
     with pytest.raises(ValidationError):
         SmartScraperRequest(website_url="https://example.com", user_prompt="")
+
+    # Invalid HTML
+    with pytest.raises(ValidationError):
+        SmartScraperRequest(
+            website_html="not valid html",
+            user_prompt="Extract info",
+        )
+
+    # HTML too large (>2MB)
+    large_html = "x" * (2 * 1024 * 1024 + 1)
+    with pytest.raises(ValidationError):
+        SmartScraperRequest(
+            website_html=large_html,
+            user_prompt="Extract info",
+        )
+
+    # Neither URL nor HTML provided
+    with pytest.raises(ValidationError):
+        SmartScraperRequest(user_prompt="Extract info")
 
 
 def test_get_smartscraper_request_validation():
@@ -88,9 +130,19 @@ def test_feedback_request_validation():
 
 
 def test_markdownify_request_validation():
-    # Valid input
+    # Valid input without headers
     request = MarkdownifyRequest(website_url="https://example.com")
     assert request.website_url == "https://example.com"
+    assert request.headers is None
+
+    # Valid input with headers
+    headers = {
+        "User-Agent": "Mozilla/5.0",
+        "Cookie": "session=123",
+    }
+    request = MarkdownifyRequest(website_url="https://example.com", headers=headers)
+    assert request.website_url == "https://example.com"
+    assert request.headers == headers
 
     # Invalid URL
     with pytest.raises(ValidationError):
@@ -111,36 +163,55 @@ def test_get_markdownify_request_validation():
         GetMarkdownifyRequest(request_id="invalid-uuid")
 
 
-def test_localscraper_request_validation():
-    # Valid input
-    request = LocalScraperRequest(
-        user_prompt="Extract info",
-        website_html="<html><body><p>Test content</p></body></html>",
+def test_searchscraper_request_validation():
+    class ExampleSchema(BaseModel):
+        name: str
+        age: int
+
+    # Valid input without headers
+    request = SearchScraperRequest(user_prompt="What is the latest version of Python?")
+    assert request.user_prompt == "What is the latest version of Python?"
+    assert request.headers is None
+    assert request.output_schema is None
+
+    # Valid input with headers
+    headers = {
+        "User-Agent": "Mozilla/5.0",
+        "Cookie": "session=123",
+    }
+    request = SearchScraperRequest(
+        user_prompt="What is the latest version of Python?",
+        headers=headers,
     )
-    assert request.user_prompt == "Extract info"
-    assert "<p>Test content</p>" in request.website_html
+    assert request.headers == headers
+
+    # Test with output_schema
+    request = SearchScraperRequest(
+        user_prompt="What is the latest version of Python?",
+        output_schema=ExampleSchema,
+    )
+
+    # When we dump the model, the output_schema should be converted to a dict
+    dumped = request.model_dump()
+    assert isinstance(dumped["output_schema"], dict)
+    assert "properties" in dumped["output_schema"]
+    assert "name" in dumped["output_schema"]["properties"]
+    assert "age" in dumped["output_schema"]["properties"]
 
     # Empty prompt
     with pytest.raises(ValidationError):
-        LocalScraperRequest(
-            user_prompt="", website_html="<html><body><p>Test content</p></body></html>"
-        )
+        SearchScraperRequest(user_prompt="")
 
-    # Invalid HTML
+    # Invalid prompt (no alphanumeric characters)
     with pytest.raises(ValidationError):
-        LocalScraperRequest(user_prompt="Extract info", website_html="not valid html")
-
-    # HTML too large (>2MB)
-    large_html = "x" * (2 * 1024 * 1024 + 1)
-    with pytest.raises(ValidationError):
-        LocalScraperRequest(user_prompt="Extract info", website_html=large_html)
+        SearchScraperRequest(user_prompt="!@#$%^")
 
 
-def test_get_localscraper_request_validation():
+def test_get_searchscraper_request_validation():
     # Valid UUID
-    request = GetLocalScraperRequest(request_id="123e4567-e89b-12d3-a456-426614174000")
+    request = GetSearchScraperRequest(request_id="123e4567-e89b-12d3-a456-426614174000")
     assert request.request_id == "123e4567-e89b-12d3-a456-426614174000"
 
     # Invalid UUID
     with pytest.raises(ValidationError):
-        GetLocalScraperRequest(request_id="invalid-uuid")
+        GetSearchScraperRequest(request_id="invalid-uuid")

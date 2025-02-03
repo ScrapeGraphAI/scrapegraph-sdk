@@ -4,7 +4,7 @@
 [![Python Support](https://img.shields.io/pypi/pyversions/scrapegraph-py.svg)](https://pypi.org/project/scrapegraph-py/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![Documentation Status](https://readthedocs.org/projects/scrapegraph-py/badge/?version=latest)](https://docs.scrapegraphai.com) 
+[![Documentation Status](https://readthedocs.org/projects/scrapegraph-py/badge/?version=latest)](https://docs.scrapegraphai.com)
 
 <p align="left">
   <img src="https://raw.githubusercontent.com/VinciGit00/Scrapegraph-ai/main/docs/assets/api-banner.png" alt="ScrapeGraph API Banner" style="width: 70%;">
@@ -20,7 +20,7 @@ pip install scrapegraph-py
 
 ## 🚀 Features
 
-- 🤖 AI-powered web scraping
+- 🤖 AI-powered web scraping and search
 - 🔄 Both sync and async clients
 - 📊 Structured output with Pydantic schemas
 - 🔍 Detailed logging
@@ -40,19 +40,34 @@ client = Client(api_key="your-api-key-here")
 
 ## 📚 Available Endpoints
 
-### 🔍 SmartScraper
+### 🤖 SmartScraper
 
-Scrapes any webpage using AI to extract specific information.
+Extract structured data from any webpage or HTML content using AI.
 
 ```python
 from scrapegraph_py import Client
 
 client = Client(api_key="your-api-key-here")
 
-# Basic usage
+# Using a URL
 response = client.smartscraper(
     website_url="https://example.com",
     user_prompt="Extract the main heading and description"
+)
+
+# Or using HTML content
+html_content = """
+<html>
+    <body>
+        <h1>Company Name</h1>
+        <p>We are a technology company focused on AI solutions.</p>
+    </body>
+</html>
+"""
+
+response = client.smartscraper(
+    website_html=html_content,
+    user_prompt="Extract the company description"
 )
 
 print(response)
@@ -80,6 +95,45 @@ response = client.smartscraper(
 
 </details>
 
+### 🔍 SearchScraper
+
+Perform AI-powered web searches with structured results and reference URLs.
+
+```python
+from scrapegraph_py import Client
+
+client = Client(api_key="your-api-key-here")
+
+response = client.searchscraper(
+    user_prompt="What is the latest version of Python and its main features?"
+)
+
+print(f"Answer: {response['result']}")
+print(f"Sources: {response['reference_urls']}")
+```
+
+<details>
+<summary>Output Schema (Optional)</summary>
+
+```python
+from pydantic import BaseModel, Field
+from scrapegraph_py import Client
+
+client = Client(api_key="your-api-key-here")
+
+class PythonVersionInfo(BaseModel):
+    version: str = Field(description="The latest Python version number")
+    release_date: str = Field(description="When this version was released")
+    major_features: list[str] = Field(description="List of main features")
+
+response = client.searchscraper(
+    user_prompt="What is the latest version of Python and its main features?",
+    output_schema=PythonVersionInfo
+)
+```
+
+</details>
+
 ### 📝 Markdownify
 
 Converts any webpage into clean, formatted markdown.
@@ -91,35 +145,6 @@ client = Client(api_key="your-api-key-here")
 
 response = client.markdownify(
     website_url="https://example.com"
-)
-
-print(response)
-```
-
-### 💻 LocalScraper
-
-Extracts information from HTML content using AI.
-
-```python
-from scrapegraph_py import Client
-
-client = Client(api_key="your-api-key-here")
-
-html_content = """
-<html>
-    <body>
-        <h1>Company Name</h1>
-        <p>We are a technology company focused on AI solutions.</p>
-        <div class="contact">
-            <p>Email: contact@example.com</p>
-        </div>
-    </body>
-</html>
-"""
-
-response = client.localscraper(
-    user_prompt="Extract the company description",
-    website_html=html_content
 )
 
 print(response)
@@ -177,7 +202,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🔗 Links
 
 - [Website](https://scrapegraphai.com)
-- [Documentation](https://docs.scrapegraphai.com) 
+- [Documentation](https://docs.scrapegraphai.com)
 - [GitHub](https://github.com/ScrapeGraphAI/scrapegraph-sdk)
 
 ---

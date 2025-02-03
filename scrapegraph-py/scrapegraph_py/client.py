@@ -10,11 +10,11 @@ from scrapegraph_py.config import API_BASE_URL, DEFAULT_HEADERS
 from scrapegraph_py.exceptions import APIError
 from scrapegraph_py.logger import sgai_logger as logger
 from scrapegraph_py.models.feedback import FeedbackRequest
-from scrapegraph_py.models.localscraper import (
-    GetLocalScraperRequest,
-    LocalScraperRequest,
-)
 from scrapegraph_py.models.markdownify import GetMarkdownifyRequest, MarkdownifyRequest
+from scrapegraph_py.models.searchscraper import (
+    GetSearchScraperRequest,
+    SearchScraperRequest,
+)
 from scrapegraph_py.models.smartscraper import (
     GetSmartScraperRequest,
     SmartScraperRequest,
@@ -148,11 +148,13 @@ class Client:
             logger.error(f"🔴 Connection Error: {str(e)}")
             raise ConnectionError(f"Failed to connect to API: {str(e)}")
 
-    def markdownify(self, website_url: str):
+    def markdownify(self, website_url: str, headers: Optional[dict[str, str]] = None):
         """Send a markdownify request"""
         logger.info(f"🔍 Starting markdownify request for {website_url}")
+        if headers:
+            logger.debug("🔧 Using custom headers")
 
-        request = MarkdownifyRequest(website_url=website_url)
+        request = MarkdownifyRequest(website_url=website_url, headers=headers)
         logger.debug("✅ Request validation passed")
 
         result = self._make_request(
@@ -175,16 +177,26 @@ class Client:
 
     def smartscraper(
         self,
-        website_url: str,
         user_prompt: str,
+        website_url: Optional[str] = None,
+        website_html: Optional[str] = None,
+        headers: Optional[dict[str, str]] = None,
         output_schema: Optional[BaseModel] = None,
     ):
         """Send a smartscraper request"""
-        logger.info(f"🔍 Starting smartscraper request for {website_url}")
+        logger.info("🔍 Starting smartscraper request")
+        if website_url:
+            logger.debug(f"🌐 URL: {website_url}")
+        if website_html:
+            logger.debug("📄 Using provided HTML content")
+        if headers:
+            logger.debug("🔧 Using custom headers")
         logger.debug(f"📝 Prompt: {user_prompt}")
 
         request = SmartScraperRequest(
             website_url=website_url,
+            website_html=website_html,
+            headers=headers,
             user_prompt=user_prompt,
             output_schema=output_schema,
         )
@@ -205,41 +217,6 @@ class Client:
         logger.debug("✅ Request ID validation passed")
 
         result = self._make_request("GET", f"{API_BASE_URL}/smartscraper/{request_id}")
-        logger.info(f"✨ Successfully retrieved result for request {request_id}")
-        return result
-
-    def localscraper(
-        self,
-        user_prompt: str,
-        website_html: str,
-        output_schema: Optional[BaseModel] = None,
-    ):
-        """Send a localscraper request"""
-        logger.info("🔍 Starting localscraper request")
-        logger.debug(f"📝 Prompt: {user_prompt}")
-
-        request = LocalScraperRequest(
-            user_prompt=user_prompt,
-            website_html=website_html,
-            output_schema=output_schema,
-        )
-        logger.debug("✅ Request validation passed")
-
-        result = self._make_request(
-            "POST", f"{API_BASE_URL}/localscraper", json=request.model_dump()
-        )
-        logger.info("✨ Localscraper request completed successfully")
-        return result
-
-    def get_localscraper(self, request_id: str):
-        """Get the result of a previous localscraper request"""
-        logger.info(f"🔍 Fetching localscraper result for request {request_id}")
-
-        # Validate input using Pydantic model
-        GetLocalScraperRequest(request_id=request_id)
-        logger.debug("✅ Request ID validation passed")
-
-        result = self._make_request("GET", f"{API_BASE_URL}/localscraper/{request_id}")
         logger.info(f"✨ Successfully retrieved result for request {request_id}")
         return result
 
@@ -272,6 +249,43 @@ class Client:
         logger.info(
             f"✨ Credits info retrieved: {result.get('remaining_credits')} credits remaining"
         )
+        return result
+
+    def searchscraper(
+        self,
+        user_prompt: str,
+        headers: Optional[dict[str, str]] = None,
+        output_schema: Optional[BaseModel] = None,
+    ):
+        """Send a searchscraper request"""
+        logger.info("🔍 Starting searchscraper request")
+        logger.debug(f"📝 Prompt: {user_prompt}")
+        if headers:
+            logger.debug("🔧 Using custom headers")
+
+        request = SearchScraperRequest(
+            user_prompt=user_prompt,
+            headers=headers,
+            output_schema=output_schema,
+        )
+        logger.debug("✅ Request validation passed")
+
+        result = self._make_request(
+            "POST", f"{API_BASE_URL}/searchscraper", json=request.model_dump()
+        )
+        logger.info("✨ Searchscraper request completed successfully")
+        return result
+
+    def get_searchscraper(self, request_id: str):
+        """Get the result of a previous searchscraper request"""
+        logger.info(f"🔍 Fetching searchscraper result for request {request_id}")
+
+        # Validate input using Pydantic model
+        GetSearchScraperRequest(request_id=request_id)
+        logger.debug("✅ Request ID validation passed")
+
+        result = self._make_request("GET", f"{API_BASE_URL}/searchscraper/{request_id}")
+        logger.info(f"✨ Successfully retrieved result for request {request_id}")
         return result
 
     def close(self):
