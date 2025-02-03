@@ -1,5 +1,6 @@
 # Models for markdownify endpoint
 
+from typing import Optional
 from uuid import UUID
 
 from pydantic import BaseModel, Field, model_validator
@@ -7,6 +8,14 @@ from pydantic import BaseModel, Field, model_validator
 
 class MarkdownifyRequest(BaseModel):
     website_url: str = Field(..., example="https://scrapegraphai.com/")
+    headers: Optional[dict[str, str]] = Field(
+        None,
+        example={
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+            "Cookie": "cookie1=value1; cookie2=value2",
+        },
+        description="Optional headers to send with the request, including cookies and user agent",
+    )
 
     @model_validator(mode="after")
     def validate_url(self) -> "MarkdownifyRequest":
