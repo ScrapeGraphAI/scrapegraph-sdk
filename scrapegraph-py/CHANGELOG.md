@@ -1,4 +1,5 @@
 ## [1.11.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.10.2...v1.11.0) (2025-02-03)
+## [1.11.0-beta.1](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.10.2...v1.11.0-beta.1) (2025-02-03)
 
 
 ### Features
