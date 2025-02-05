@@ -1,3 +1,20 @@
+## [1.12.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.11.0...v1.12.0) (2025-02-05)
+
+
+### Features
+
+* implemented search scraper functionality ([2c5a59b](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/2c5a59bd5cee46535aa1b157463db9164d7d42fb))
+
+
+### Bug Fixes
+
+* fixed HttpError messages ([869441b](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/869441b156f49ed38bb95236f26d5b87139d6db0))
+
+
+### CI
+
+* **release:** 1.11.0-beta.1 [skip ci] ([2a62b40](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/2a62b403df3481f5ad803bc192d3177beee79e35))
+
 ## [1.11.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.10.2...v1.11.0) (2025-02-03)
 ## [1.11.0-beta.1](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.10.2...v1.11.0-beta.1) (2025-02-03)
 
