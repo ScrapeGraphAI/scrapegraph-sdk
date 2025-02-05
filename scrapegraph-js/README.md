@@ -107,6 +107,26 @@ const schema = z.object({
 })();
 ```
 
+### Search Scraping
+
+Search and extract information from multiple web sources using AI.
+
+```javascript
+import { searchScraper } from 'scrapegraph-js';
+
+const apiKey = 'your-api-key';
+const prompt = 'What is the latest version of Python and what are its main features?';
+
+(async () => {
+  try {
+    const response = await searchScraper(apiKey, prompt);
+    console.log(response.result);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+})();
+```
+
 ### Scraping local HTML
 
 Extract structured data from local HTML content

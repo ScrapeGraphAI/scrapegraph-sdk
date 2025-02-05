@@ -1,17 +1,21 @@
 class HttpError extends Error {
-  constructor(statusCode, title, detail) {
-    super(HttpError.makeMessage(statusCode, title, detail));
+  constructor(statusCode, title, data) {
+    super(HttpError.makeMessage(statusCode, title, data));
     this.statusCode = statusCode;
     this.title = title;
-    this.detail = detail;
+    this.info = data;
   }
 
-  static makeMessage(statusCode, title, detail) {
+  static makeMessage(statusCode, title, data) {
     let message = '';
 
     message += statusCode ? `${statusCode} - ` : '(unknown status code) - ';
     message += title ? `${title} - ` : '(unknown error message) - ';
-    message += detail ? `${JSON.stringify(detail)}` : '(unknown error detail)';
+    message += data.detail
+      ? 'Error located in: ' + `${JSON.stringify(data.detail[0].loc)}` + ', ' + `${data.detail[0].msg}`
+      : data.error
+        ? `${data.error}`
+        : '(unknown error detail)';
 
     return message;
   }
@@ -31,7 +35,7 @@ class UnexpectedError extends Error {
 
 export default function handleError(error) {
   if (error.response) {
-    throw new HttpError(error.response.status, error.response.statusText, error.response.data.detail);
+    throw new HttpError(error.response.status, error.response.statusText, error.response.data);
   } else if (error.request) {
     throw new NetworkError('Impossible to contact the server. Check your internet connection.');
   } else {
