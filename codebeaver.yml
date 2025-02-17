@@ -1,0 +1,7 @@
+workspaces:
+- from: jest
+  name: scrapegraph-js
+  path: scrapegraph-js
+- from: pytest
+  name: scrapegraph-py
+  path: scrapegraph-py
