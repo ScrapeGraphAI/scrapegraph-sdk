@@ -12,3 +12,9 @@ try {
 } catch (error) {
   console.error(error);
 }
+
+const apiKey = 'your-api-key';
+const requestId = 'your-request-id';
+getSearchScraperRequest(apiKey, requestId)
+  .then(data => console.log(data))
+  .catch(error => console.error(error));

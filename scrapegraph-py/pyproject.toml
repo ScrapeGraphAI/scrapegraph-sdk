@@ -4,7 +4,7 @@ version = "1.8.0"
 description = "ScrapeGraph Python SDK for API"
 authors = [
     { name = "Marco Vinciguerra", email = "mvincig11@gmail.com" },
-    { name = "Marco Perini", email = "perinim.98@gmail.com" },
+    { name = "", email = "perinim.98@gmail.com" },
     { name = "Lorenzo Padoan", email = "lorenzo.padoan977@gmail.com" }
 ]
 
