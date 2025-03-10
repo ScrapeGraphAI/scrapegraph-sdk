@@ -44,11 +44,44 @@ export async function searchScraper(apiKey, prompt, schema = null, userAgent = n
 }
 
 /**
- * Retrieve the status or the result of searchScraper request. It also allows you to see the result of old requests.
+ * Retrieve the status or result of a searchScraper request. This function allows you to check the progress
+ * or retrieve results of both ongoing and completed search and extraction operations.
  *
  * @param {string} apiKey - Your ScrapeGraph AI API key
  * @param {string} requestId - The request ID associated with the output of a searchScraper request.
- * @returns {Promise<string>} Information related to the status or result of a scraping request.
+ * @returns {Promise<Object>} A promise that resolves to an object containing:
+ *   - status: The current status of the request ('pending', 'completed', 'failed')
+ *   - result: The extracted data in JSON format when status is 'completed', including:
+ *     - extracted_data: The structured data extracted from search results
+ *     - source_urls: Array of URLs that were used as sources
+ *     - search_metadata: Information about the search operation
+ *   - error: Error message if the request failed (when status is 'failed')
+ *   - created_at: Timestamp of when the request was created
+ *   - completed_at: Timestamp of when the request was completed (if applicable)
+ * @throws {Error} Throws an error if the HTTP request fails or if the API key is invalid
+ * 
+ * @example
+ * // Example usage:
+ * const apiKey = 'your-api-key';
+ * const requestId = 'previously-obtained-request-id';
+ * 
+ * try {
+ *   const result = await getSearchScraperRequest(apiKey, requestId);
+ *   if (result.status === 'completed') {
+ *     console.log('Extracted data:', result.result.extracted_data);
+ *     console.log('Sources:', result.result.source_urls);
+ *   } else if (result.status === 'pending') {
+ *     console.log('Search and extraction still in progress');
+ *   } else {
+ *     console.log('Operation failed:', result.error);
+ *   }
+ * } catch (error) {
+ *   console.error('Error fetching search results:', error);
+ * }
+ * 
+ * @note The search operation typically processes multiple web pages to gather comprehensive
+ * information based on the original search query. The results are structured according to
+ * the schema provided in the original searchScraper call, if any.
  */
 export async function getSearchScraperRequest(apiKey, requestId) {
   const endpoint = 'https://api.scrapegraphai.com/v1/searchscraper/' + requestId;
