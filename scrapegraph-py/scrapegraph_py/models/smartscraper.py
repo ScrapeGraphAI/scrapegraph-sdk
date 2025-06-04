@@ -4,7 +4,7 @@ from typing import Optional, Type
 from uuid import UUID
 
 from bs4 import BeautifulSoup
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, model_validator, conint
 
 
 class SmartScraperRequest(BaseModel):
@@ -27,6 +27,14 @@ class SmartScraperRequest(BaseModel):
             "Cookie": "cookie1=value1; cookie2=value2",
         },
         description="Optional headers to send with the request, including cookies and user agent",
+    )
+    infinite_scrolling: bool = Field(
+        default=False,
+        description="Enable infinite scrolling to load more content dynamically",
+    )
+    max_pages: conint(ge=1, le=1000) = Field(
+        default=10,
+        description="Maximum number of pages to scroll when infinite_scrolling is enabled",
     )
     output_schema: Optional[Type[BaseModel]] = None
 
