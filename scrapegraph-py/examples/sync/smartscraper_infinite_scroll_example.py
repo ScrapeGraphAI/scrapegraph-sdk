@@ -15,7 +15,7 @@ class CompaniesResponse(BaseModel):
     companies: List[Company]
 
 # Initialize the client with explicit API key
-sgai_client = Client(api_key="sgai-4cf4a4f5-87f7-457a-8c58-0790ecaf323e")
+sgai_client = Client(api_key="sgai-api-key")
 
 try:
     # SmartScraper request with infinite scroll
