@@ -4,7 +4,7 @@ from typing import Optional, Type
 from uuid import UUID
 
 from bs4 import BeautifulSoup
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, model_validator, conint
 
 
 class SmartScraperRequest(BaseModel):
@@ -29,6 +29,11 @@ class SmartScraperRequest(BaseModel):
         description="Optional headers to send with the request, including cookies and user agent",
     )
     output_schema: Optional[Type[BaseModel]] = None
+    number_of_scrolls: Optional[conint(ge=0, le=100)] = Field(
+        default=None,
+        description="Number of times to scroll the page (0-100). If None, no scrolling will be performed.",
+        example=10
+    )
 
     @model_validator(mode="after")
     def validate_user_prompt(self) -> "SmartScraperRequest":
