@@ -1,71 +1,69 @@
 import asyncio
-from typing import List
-from pydantic import BaseModel
+from typing import List, Dict, Any
 
 from scrapegraph_py import AsyncClient
 from scrapegraph_py.logger import sgai_logger
 
 sgai_logger.set_logging(level="INFO")
 
-# Define the output schema
-class Company(BaseModel):
-    name: str
-    category: str
-    location: str
-
-class CompaniesResponse(BaseModel):
-    companies: List[Company]
 
 async def scrape_companies(client: AsyncClient, url: str, batch: str) -> None:
     """Scrape companies from a specific YC batch with infinite scroll."""
     try:
+        # Initial scrape with infinite scroll enabled
         response = await client.smartscraper(
-            website_url=f"{url}?batch={batch}",
-            user_prompt="Extract all company names and their categories from the page",
-            output_schema=CompaniesResponse,
-            number_of_scrolls=10  # Scroll 10 times to load more companies
+            website_url=url,
+            user_prompt="Extract all company information from this page, including name, description, and website",
+            infinite_scroll=True,
+            scroll_options={
+                "max_scrolls": 10,  # Adjust based on page size
+                "scroll_delay": 2,  # Seconds between scrolls
+                "scroll_to_bottom": True
+            }
         )
-
-        # Parse and print the results
-        result = CompaniesResponse.model_validate(response['result'])
-        print(f"\nCompanies from {batch} batch:")
-        print("=" * 80)
-        for company in result.companies:
-            print(f"Name: {company.name}")
-            print(f"Category: {company.category}")
-            print(f"Location: {company.location}")
-            print("-" * 80)
-
+        
+        # Process the results
+        companies = response.get("result", [])
+        if not companies:
+            print(f"No companies found for batch {batch}")
+            return
+            
+        # Save or process the companies data
+        print(f"Found {len(companies)} companies in batch {batch}")
+        for company in companies:
+            print(f"Company: {company.get('name', 'N/A')}")
+            print(f"Description: {company.get('description', 'N/A')}")
+            print(f"Website: {company.get('website', 'N/A')}")
+            print("-" * 50)
+            
     except Exception as e:
-        print(f"Error scraping {batch} batch: {e}")
+        print(f"Error scraping batch {batch}: {str(e)}")
+
 
 async def main():
     # Initialize async client
-    sgai_client = AsyncClient(api_key="your-api-key-here")
-
+    client = AsyncClient(api_key="your-api-key-here")
+    
     try:
-        # Define batches to scrape
-        base_url = "https://www.ycombinator.com/companies"
-        batches = [
-            "Spring%202025",
-            "Winter%202025",
-            "Summer%202024"
-        ]
-
+        # Example YC batch URLs
+        batch_urls = {
+            "W24": "https://www.ycombinator.com/companies?batch=W24",
+            "S23": "https://www.ycombinator.com/companies?batch=S23"
+        }
+        
         # Create tasks for each batch
         tasks = [
-            scrape_companies(sgai_client, base_url, batch)
-            for batch in batches
+            scrape_companies(client, url, batch)
+            for batch, url in batch_urls.items()
         ]
-
-        # Execute all scraping tasks concurrently
+        
+        # Execute all batch scraping concurrently
         await asyncio.gather(*tasks)
-
-    except Exception as e:
-        print(f"An error occurred: {e}")
-
+        
     finally:
-        await sgai_client.close()
+        # Ensure client is properly closed
+        await client.close()
+
 
 if __name__ == "__main__":
     asyncio.run(main()) 
