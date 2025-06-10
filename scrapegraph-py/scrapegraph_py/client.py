@@ -182,6 +182,8 @@ class Client:
         website_html: Optional[str] = None,
         headers: Optional[dict[str, str]] = None,
         output_schema: Optional[BaseModel] = None,
+        infinite_scrolling: bool = False,
+        max_pages: int = 10,
     ):
         """Send a smartscraper request"""
         logger.info("🔍 Starting smartscraper request")
@@ -192,6 +194,8 @@ class Client:
         if headers:
             logger.debug("🔧 Using custom headers")
         logger.debug(f"📝 Prompt: {user_prompt}")
+        if infinite_scrolling:
+            logger.debug(f"🔄 Infinite scrolling enabled with max_pages={max_pages}")
 
         request = SmartScraperRequest(
             website_url=website_url,
@@ -199,6 +203,8 @@ class Client:
             headers=headers,
             user_prompt=user_prompt,
             output_schema=output_schema,
+            infinite_scrolling=infinite_scrolling,
+            max_pages=max_pages,
         )
         logger.debug("✅ Request validation passed")
 
