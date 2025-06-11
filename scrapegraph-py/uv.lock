@@ -1525,7 +1525,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "aiohttp", specifier = ">=3.11.8" },
+    { name = "aiohttp", specifier = ">=3.10" },
     { name = "beautifulsoup4", specifier = ">=4.12.3" },
     { name = "furo", marker = "extra == 'docs'", specifier = "==2024.5.6" },
     { name = "pydantic", specifier = ">=2.10.2" },
