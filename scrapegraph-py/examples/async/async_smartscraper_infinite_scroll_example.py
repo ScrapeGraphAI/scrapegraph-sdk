@@ -14,12 +14,7 @@ async def scrape_companies(client: AsyncClient, url: str, batch: str) -> None:
         response = await client.smartscraper(
             website_url=url,
             user_prompt="Extract all company information from this page, including name, description, and website",
-            infinite_scroll=True,
-            scroll_options={
-                "max_scrolls": 10,  # Adjust based on page size
-                "scroll_delay": 2,  # Seconds between scrolls
-                "scroll_to_bottom": True
-            }
+            number_of_scrolls=10,
         )
         
         # Process the results
