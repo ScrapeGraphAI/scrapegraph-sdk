@@ -36,7 +36,7 @@ async def scrape_companies(client: AsyncClient, url: str, batch: str) -> None:
 
 async def main():
     # Initialize async client
-    client = AsyncClient(api_key="sgai-4cf4a4f5-87f7-457a-8c58-0790ecaf323e")
+    client = AsyncClient(api_key="Your-API-Key")
     
     try:
         # Example YC batch URLs
