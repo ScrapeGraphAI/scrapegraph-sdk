@@ -1,5 +1,4 @@
 import asyncio
-from typing import List, Dict, Any
 
 from scrapegraph_py import AsyncClient
 from scrapegraph_py.logger import sgai_logger
@@ -16,15 +15,15 @@ async def scrape_companies(client: AsyncClient, url: str, batch: str) -> None:
             user_prompt="Extract all company information from this page, including name, description, and website",
             number_of_scrolls=10,
         )
-        
         # Process the results
-        companies = response.get("result", [])
+        companies = response.get("result", {}).get("companies", [])
         if not companies:
             print(f"No companies found for batch {batch}")
             return
             
         # Save or process the companies data
         print(f"Found {len(companies)} companies in batch {batch}")
+        
         for company in companies:
             print(f"Company: {company.get('name', 'N/A')}")
             print(f"Description: {company.get('description', 'N/A')}")
@@ -37,13 +36,13 @@ async def scrape_companies(client: AsyncClient, url: str, batch: str) -> None:
 
 async def main():
     # Initialize async client
-    client = AsyncClient(api_key="your-api-key-here")
+    client = AsyncClient(api_key="sgai-4cf4a4f5-87f7-457a-8c58-0790ecaf323e")
     
     try:
         # Example YC batch URLs
         batch_urls = {
-            "W24": "https://www.ycombinator.com/companies?batch=W24",
-            "S23": "https://www.ycombinator.com/companies?batch=S23"
+            "W24": "https://www.ycombinator.com/companies?batch=Winter%202024",
+            "S23": "https://www.ycombinator.com/companies?batch=Summer%202023"
         }
         
         # Create tasks for each batch
