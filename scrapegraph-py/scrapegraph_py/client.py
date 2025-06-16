@@ -182,6 +182,7 @@ class Client:
         website_html: Optional[str] = None,
         headers: Optional[dict[str, str]] = None,
         output_schema: Optional[BaseModel] = None,
+        number_of_scrolls: Optional[int] = None,
     ):
         """Send a smartscraper request"""
         logger.info("🔍 Starting smartscraper request")
@@ -191,6 +192,8 @@ class Client:
             logger.debug("📄 Using provided HTML content")
         if headers:
             logger.debug("🔧 Using custom headers")
+        if number_of_scrolls is not None:
+            logger.debug(f"🔄 Number of scrolls: {number_of_scrolls}")
         logger.debug(f"📝 Prompt: {user_prompt}")
 
         request = SmartScraperRequest(
@@ -199,6 +202,7 @@ class Client:
             headers=headers,
             user_prompt=user_prompt,
             output_schema=output_schema,
+            number_of_scrolls=number_of_scrolls,
         )
         logger.debug("✅ Request validation passed")
 
