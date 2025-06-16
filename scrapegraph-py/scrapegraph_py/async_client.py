@@ -196,6 +196,7 @@ class AsyncClient:
             output_schema=output_schema,
             number_of_scrolls=number_of_scrolls,
         )
+
         logger.debug("✅ Request validation passed")
 
         result = await self._make_request(
