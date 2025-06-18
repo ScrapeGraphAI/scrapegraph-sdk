@@ -107,6 +107,30 @@ const schema = z.object({
 })();
 ```
 
+#### Scraping with Infinite Scrolling
+
+For websites that load content dynamically through infinite scrolling (like social media feeds), you can use the `numberOfScrolls` parameter:
+
+```javascript
+import { smartScraper } from 'scrapegraph-js';
+
+const apiKey = 'your-api-key';
+const url = 'https://example.com/infinite-scroll-page';
+const prompt = 'Extract all the posts from the feed';
+const numberOfScrolls = 10; // Will scroll 10 times to load more content
+
+(async () => {
+  try {
+    const response = await smartScraper(apiKey, url, prompt, null, numberOfScrolls);
+    console.log('Extracted data from scrolled page:', response);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+})();
+```
+
+The `numberOfScrolls` parameter accepts values between 0 and 100, allowing you to control how many times the page should be scrolled before extraction.
+
 ### Search Scraping
 
 Search and extract information from multiple web sources using AI.
