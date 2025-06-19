@@ -1,7 +1,7 @@
 {
   "name": "scrapegraph-js",
   "author": "ScrapeGraphAI",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Scrape and extract structured data from a webpage using ScrapeGraphAI's APIs.",
   "repository": {
     "type": "git",
