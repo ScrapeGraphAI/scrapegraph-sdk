@@ -282,3 +282,112 @@ def test_get_searchscraper(mock_api_key, mock_uuid):
         assert "answer" in response["result"]
         assert "reference_urls" in response
         assert isinstance(response["reference_urls"], list)
+
+
+@responses.activate
+def test_crawl(mock_api_key):
+    # Mock the API response
+    responses.add(
+        responses.POST,
+        "https://api.scrapegraphai.com/v1/crawl",
+        json={
+            "id": str(uuid4()),
+            "status": "processing",
+            "message": "Crawl job started",
+        },
+    )
+
+    schema = {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "Test Schema",
+        "type": "object",
+        "properties": {
+            "name": {"type": "string"},
+            "age": {"type": "integer"},
+        },
+        "required": ["name"],
+    }
+
+    with Client(api_key=mock_api_key) as client:
+        response = client.crawl(
+            url="https://example.com",
+            prompt="Extract company information",
+            schema=schema,
+            cache_website=True,
+            depth=2,
+            max_pages=5,
+            same_domain_only=True,
+            batch_size=1,
+        )
+        assert response["status"] == "processing"
+        assert "id" in response
+
+
+@responses.activate
+def test_crawl_with_minimal_params(mock_api_key):
+    # Mock the API response
+    responses.add(
+        responses.POST,
+        "https://api.scrapegraphai.com/v1/crawl",
+        json={
+            "id": str(uuid4()),
+            "status": "processing",
+            "message": "Crawl job started",
+        },
+    )
+
+    schema = {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "Test Schema",
+        "type": "object",
+        "properties": {
+            "name": {"type": "string"},
+        },
+        "required": ["name"],
+    }
+
+    with Client(api_key=mock_api_key) as client:
+        response = client.crawl(
+            url="https://example.com",
+            prompt="Extract company information",
+            schema=schema,
+        )
+        assert response["status"] == "processing"
+        assert "id" in response
+
+
+@responses.activate
+def test_get_crawl(mock_api_key, mock_uuid):
+    responses.add(
+        responses.GET,
+        f"https://api.scrapegraphai.com/v1/crawl/{mock_uuid}",
+        json={
+            "id": mock_uuid,
+            "status": "completed",
+            "result": {
+                "llm_result": {
+                    "company": {
+                        "name": "Example Corp",
+                        "description": "A technology company",
+                    },
+                    "services": [
+                        {
+                            "service_name": "Web Development",
+                            "description": "Custom web solutions",
+                        }
+                    ],
+                    "legal": {
+                        "privacy_policy": "Privacy policy content",
+                        "terms_of_service": "Terms of service content",
+                    },
+                }
+            },
+        },
+    )
+
+    with Client(api_key=mock_api_key) as client:
+        response = client.get_crawl(mock_uuid)
+        assert response["status"] == "completed"
+        assert response["id"] == mock_uuid
+        assert "result" in response
+        assert "llm_result" in response["result"]

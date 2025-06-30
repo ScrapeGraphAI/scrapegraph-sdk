@@ -1,6 +1,7 @@
 import pytest
 from pydantic import BaseModel, ValidationError
 
+from scrapegraph_py.models.crawl import CrawlRequest, GetCrawlRequest
 from scrapegraph_py.models.feedback import FeedbackRequest
 from scrapegraph_py.models.markdownify import GetMarkdownifyRequest, MarkdownifyRequest
 from scrapegraph_py.models.searchscraper import (
@@ -215,3 +216,164 @@ def test_get_searchscraper_request_validation():
     # Invalid UUID
     with pytest.raises(ValidationError):
         GetSearchScraperRequest(request_id="invalid-uuid")
+
+
+def test_crawl_request_validation():
+    # Example schema
+    schema = {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "Test Schema",
+        "type": "object",
+        "properties": {
+            "name": {"type": "string"},
+            "age": {"type": "integer"},
+        },
+        "required": ["name"],
+    }
+
+    # Valid input with all parameters
+    request = CrawlRequest(
+        url="https://example.com",
+        prompt="Extract company information",
+        schema=schema,
+        cache_website=True,
+        depth=2,
+        max_pages=5,
+        same_domain_only=True,
+        batch_size=1,
+    )
+    assert request.url == "https://example.com"
+    assert request.prompt == "Extract company information"
+    assert request.schema == schema
+    assert request.cache_website is True
+    assert request.depth == 2
+    assert request.max_pages == 5
+    assert request.same_domain_only is True
+    assert request.batch_size == 1
+
+    # Valid input with minimal parameters
+    request = CrawlRequest(
+        url="https://example.com",
+        prompt="Extract company information",
+        schema=schema,
+    )
+    assert request.url == "https://example.com"
+    assert request.prompt == "Extract company information"
+    assert request.schema == schema
+    assert request.cache_website is True  # default
+    assert request.depth == 2  # default
+    assert request.max_pages == 2  # default
+    assert request.same_domain_only is True  # default
+    assert request.batch_size == 1  # default
+
+    # Invalid URL
+    with pytest.raises(ValidationError):
+        CrawlRequest(
+            url="invalid-url",
+            prompt="Extract company information",
+            schema=schema,
+        )
+
+    # Empty URL
+    with pytest.raises(ValidationError):
+        CrawlRequest(
+            url="",
+            prompt="Extract company information",
+            schema=schema,
+        )
+
+    # Empty prompt
+    with pytest.raises(ValidationError):
+        CrawlRequest(
+            url="https://example.com",
+            prompt="",
+            schema=schema,
+        )
+
+    # Invalid prompt (no alphanumeric characters)
+    with pytest.raises(ValidationError):
+        CrawlRequest(
+            url="https://example.com",
+            prompt="!@#$%^",
+            schema=schema,
+        )
+
+    # Empty schema
+    with pytest.raises(ValidationError):
+        CrawlRequest(
+            url="https://example.com",
+            prompt="Extract company information",
+            schema={},
+        )
+
+    # Invalid schema (not a dict)
+    with pytest.raises(ValidationError):
+        CrawlRequest(
+            url="https://example.com",
+            prompt="Extract company information",
+            schema="not a dict",
+        )
+
+    # Invalid depth (too low)
+    with pytest.raises(ValidationError):
+        CrawlRequest(
+            url="https://example.com",
+            prompt="Extract company information",
+            schema=schema,
+            depth=0,
+        )
+
+    # Invalid depth (too high)
+    with pytest.raises(ValidationError):
+        CrawlRequest(
+            url="https://example.com",
+            prompt="Extract company information",
+            schema=schema,
+            depth=11,
+        )
+
+    # Invalid max_pages (too low)
+    with pytest.raises(ValidationError):
+        CrawlRequest(
+            url="https://example.com",
+            prompt="Extract company information",
+            schema=schema,
+            max_pages=0,
+        )
+
+    # Invalid max_pages (too high)
+    with pytest.raises(ValidationError):
+        CrawlRequest(
+            url="https://example.com",
+            prompt="Extract company information",
+            schema=schema,
+            max_pages=101,
+        )
+
+    # Invalid batch_size (too low)
+    with pytest.raises(ValidationError):
+        CrawlRequest(
+            url="https://example.com",
+            prompt="Extract company information",
+            schema=schema,
+            batch_size=0,
+        )
+
+    # Invalid batch_size (too high)
+    with pytest.raises(ValidationError):
+        CrawlRequest(
+            url="https://example.com",
+            prompt="Extract company information",
+            schema=schema,
+            batch_size=11,
+        )
+
+
+def test_get_crawl_request_validation():
+    # Valid UUID
+    request = GetCrawlRequest(crawl_id="123e4567-e89b-12d3-a456-426614174000")
+    assert request.crawl_id == "123e4567-e89b-12d3-a456-426614174000"
+
+    # Invalid UUID
+    with pytest.raises(ValidationError):
+        GetCrawlRequest(crawl_id="invalid-uuid")
