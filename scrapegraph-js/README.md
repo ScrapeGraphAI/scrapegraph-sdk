@@ -151,6 +151,105 @@ const prompt = 'What is the latest version of Python and what are its main featu
 })();
 ```
 
+### Crawl API
+
+Start a crawl job to extract structured data from a website and its linked pages, using a custom schema.
+
+```javascript
+import { crawl, getCrawlRequest } from 'scrapegraph-js';
+import 'dotenv/config';
+
+const apiKey = process.env.SGAI_APIKEY;
+const url = 'https://scrapegraphai.com/';
+const prompt = 'What does the company do? and I need text content from there privacy and terms';
+
+const schema = {
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ScrapeGraphAI Website Content",
+  "type": "object",
+  "properties": {
+    "company": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "features": { "type": "array", "items": { "type": "string" } },
+        "contact_email": { "type": "string", "format": "email" },
+        "social_links": {
+          "type": "object",
+          "properties": {
+            "github": { "type": "string", "format": "uri" },
+            "linkedin": { "type": "string", "format": "uri" },
+            "twitter": { "type": "string", "format": "uri" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": ["name", "description"]
+    },
+    "services": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "service_name": { "type": "string" },
+          "description": { "type": "string" },
+          "features": { "type": "array", "items": { "type": "string" } }
+        },
+        "required": ["service_name", "description"]
+      }
+    },
+    "legal": {
+      "type": "object",
+      "properties": {
+        "privacy_policy": { "type": "string" },
+        "terms_of_service": { "type": "string" }
+      },
+      "required": ["privacy_policy", "terms_of_service"]
+    }
+  },
+  "required": ["company", "services", "legal"]
+};
+
+(async () => {
+  try {
+    // Start the crawl job
+    const crawlResponse = await crawl(apiKey, url, prompt, schema, {
+      cacheWebsite: true,
+      depth: 2,
+      maxPages: 2,
+      sameDomainOnly: true,
+      batchSize: 1,
+    });
+    console.log('Crawl job started. Response:', crawlResponse);
+
+    // If the crawl is asynchronous and returns an ID, fetch the result
+    const crawlId = crawlResponse.id || crawlResponse.task_id;
+    if (crawlId) {
+      for (let i = 0; i < 10; i++) {
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+        const result = await getCrawlRequest(apiKey, crawlId);
+        if (result.status === 'success' && result.result) {
+          console.log('Crawl completed. Result:', result.result.llm_result);
+          break;
+        } else if (result.status === 'failed') {
+          console.log('Crawl failed. Result:', result);
+          break;
+        } else {
+          console.log(`Status: ${result.status}, waiting...`);
+        }
+      }
+    } else {
+      console.log('No crawl ID found in response. Synchronous result:', crawlResponse);
+    }
+  } catch (error) {
+    console.error('Error occurred:', error);
+  }
+})();
+```
+
+You can use a plain JSON schema or a [Zod](https://www.npmjs.com/package/zod) schema for the `schema` parameter. The crawl API supports options for crawl depth, max pages, domain restriction, and batch size.
+
 ### Scraping local HTML
 
 Extract structured data from local HTML content

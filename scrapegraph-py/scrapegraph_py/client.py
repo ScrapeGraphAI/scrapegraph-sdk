@@ -1,5 +1,5 @@
 # Client implementation goes here
-from typing import Any, Optional
+from typing import Any, Optional, Dict
 
 import requests
 import urllib3
@@ -9,6 +9,7 @@ from requests.exceptions import RequestException
 from scrapegraph_py.config import API_BASE_URL, DEFAULT_HEADERS
 from scrapegraph_py.exceptions import APIError
 from scrapegraph_py.logger import sgai_logger as logger
+from scrapegraph_py.models.crawl import CrawlRequest, GetCrawlRequest
 from scrapegraph_py.models.feedback import FeedbackRequest
 from scrapegraph_py.models.markdownify import GetMarkdownifyRequest, MarkdownifyRequest
 from scrapegraph_py.models.searchscraper import (
@@ -290,6 +291,58 @@ class Client:
 
         result = self._make_request("GET", f"{API_BASE_URL}/searchscraper/{request_id}")
         logger.info(f"✨ Successfully retrieved result for request {request_id}")
+        return result
+
+    def crawl(
+        self,
+        url: str,
+        prompt: str,
+        schema: Dict[str, Any],
+        cache_website: bool = True,
+        depth: int = 2,
+        max_pages: int = 2,
+        same_domain_only: bool = True,
+        batch_size: int = 1,
+    ):
+        """Send a crawl request"""
+        logger.info("🔍 Starting crawl request")
+        logger.debug(f"🌐 URL: {url}")
+        logger.debug(f"📝 Prompt: {prompt}")
+        logger.debug(f"📊 Schema provided: {bool(schema)}")
+        logger.debug(f"💾 Cache website: {cache_website}")
+        logger.debug(f"🔍 Depth: {depth}")
+        logger.debug(f"📄 Max pages: {max_pages}")
+        logger.debug(f"🏠 Same domain only: {same_domain_only}")
+        logger.debug(f"📦 Batch size: {batch_size}")
+
+        request = CrawlRequest(
+            url=url,
+            prompt=prompt,
+            schema=schema,
+            cache_website=cache_website,
+            depth=depth,
+            max_pages=max_pages,
+            same_domain_only=same_domain_only,
+            batch_size=batch_size,
+        )
+        logger.debug("✅ Request validation passed")
+
+        result = self._make_request(
+            "POST", f"{API_BASE_URL}/crawl", json=request.model_dump()
+        )
+        logger.info("✨ Crawl request completed successfully")
+        return result
+
+    def get_crawl(self, crawl_id: str):
+        """Get the result of a previous crawl request"""
+        logger.info(f"🔍 Fetching crawl result for request {crawl_id}")
+
+        # Validate input using Pydantic model
+        GetCrawlRequest(crawl_id=crawl_id)
+        logger.debug("✅ Request ID validation passed")
+
+        result = self._make_request("GET", f"{API_BASE_URL}/crawl/{crawl_id}")
+        logger.info(f"✨ Successfully retrieved result for request {crawl_id}")
         return result
 
     def close(self):
