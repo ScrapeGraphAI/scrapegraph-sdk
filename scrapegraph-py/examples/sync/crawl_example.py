@@ -13,15 +13,42 @@ SGAI_API_KEY=your_api_key_here
 import json
 import os
 import time
-from typing import Dict, Any
+from typing import Dict, Any, List, Optional
 
 from dotenv import load_dotenv
 
+from pydantic import BaseModel, EmailStr, HttpUrl
 from scrapegraph_py import Client
 
 # Load environment variables from .env file
 load_dotenv()
 
+# Pydantic models for schema
+class SocialLinks(BaseModel):
+    github: Optional[HttpUrl]
+    linkedin: Optional[HttpUrl]
+    twitter: Optional[HttpUrl]
+
+class Company(BaseModel):
+    name: str
+    description: str
+    features: Optional[List[str]] = None
+    contact_email: Optional[EmailStr] = None
+    social_links: Optional[SocialLinks] = None
+
+class Service(BaseModel):
+    service_name: str
+    description: str
+    features: Optional[List[str]] = None
+
+class Legal(BaseModel):
+    privacy_policy: str
+    terms_of_service: str
+
+class WebsiteContent(BaseModel):
+    company: Company
+    services: List[Service]
+    legal: Legal
 
 def main():
     if not os.getenv("SGAI_API_KEY"):
@@ -31,53 +58,7 @@ def main():
         return
 
     # Example schema (from your curl command)
-    schema: Dict[str, Any] = {
-        "$schema": "http://json-schema.org/draft-07/schema#",
-        "title": "ScrapeGraphAI Website Content",
-        "type": "object",
-        "properties": {
-            "company": {
-                "type": "object",
-                "properties": {
-                    "name": {"type": "string"},
-                    "description": {"type": "string"},
-                    "features": {"type": "array", "items": {"type": "string"}},
-                    "contact_email": {"type": "string", "format": "email"},
-                    "social_links": {
-                        "type": "object",
-                        "properties": {
-                            "github": {"type": "string", "format": "uri"},
-                            "linkedin": {"type": "string", "format": "uri"},
-                            "twitter": {"type": "string", "format": "uri"},
-                        },
-                        "additionalProperties": False,
-                    },
-                },
-                "required": ["name", "description"],
-            },
-            "services": {
-                "type": "array",
-                "items": {
-                    "type": "object",
-                    "properties": {
-                        "service_name": {"type": "string"},
-                        "description": {"type": "string"},
-                        "features": {"type": "array", "items": {"type": "string"}},
-                    },
-                    "required": ["service_name", "description"],
-                },
-            },
-            "legal": {
-                "type": "object",
-                "properties": {
-                    "privacy_policy": {"type": "string"},
-                    "terms_of_service": {"type": "string"},
-                },
-                "required": ["privacy_policy", "terms_of_service"],
-            },
-        },
-        "required": ["company", "services", "legal"],
-    }
+    schema = WebsiteContent.schema()
 
     url = "https://scrapegraphai.com/"
     prompt = (
