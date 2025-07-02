@@ -1,5 +1,10 @@
 """
 Example of using the async searchscraper functionality with output schemas for extraction.
+
+This example demonstrates both schema-based output and configurable website limits:
+- Using different website limits for different complexity levels
+- Enhanced searches provide better data for complex schema population
+- Concurrent processing of multiple schema-based searches
 """
 
 import asyncio
@@ -37,26 +42,36 @@ async def main():
     # Initialize async client
     sgai_client = AsyncClient(api_key="your-api-key-here")
 
-    # Define search queries with their corresponding schemas
+    # Define search queries with their corresponding schemas and website limits
     searches = [
         {
             "prompt": "What is the latest version of Python? Include the release date and main features.",
             "schema": PythonVersionInfo,
+            "num_results": 4,  # Moderate search for version info (40 credits)
         },
         {
             "prompt": "Compare Python 2 and Python 3, including backward compatibility and migration difficulty.",
             "schema": PythonComparison,
+            "num_results": 6,  # Enhanced search for comparison (60 credits)
         },
         {
             "prompt": "Explain Python's GIL, its purpose, limitations, and possible workarounds.",
             "schema": GILInfo,
+            "num_results": 8,  # Deep search for technical details (80 credits)
         },
     ]
 
-    # Create tasks for concurrent execution
+    print("🚀 Starting concurrent schema-based searches with configurable limits:")
+    for i, search in enumerate(searches, 1):
+        credits = 30 if search["num_results"] <= 3 else 30 + (search["num_results"] - 3) * 10
+        print(f"   {i}. {search['num_results']} websites ({credits} credits): {search['prompt'][:50]}...")
+    print()
+
+    # Create tasks for concurrent execution with configurable website limits
     tasks = [
         sgai_client.searchscraper(
             user_prompt=search["prompt"],
+            num_results=search["num_results"],
             output_schema=search["schema"],
         )
         for search in searches

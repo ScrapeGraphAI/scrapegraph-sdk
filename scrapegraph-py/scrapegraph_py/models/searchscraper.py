@@ -8,6 +8,13 @@ from pydantic import BaseModel, Field, model_validator
 
 class SearchScraperRequest(BaseModel):
     user_prompt: str = Field(..., example="What is the latest version of Python?")
+    num_results: Optional[int] = Field(
+        default=3,
+        ge=3,
+        le=20,
+        example=5,
+        description="Number of websites to scrape (3-20). Default is 3. More websites provide better research depth but cost more credits."
+    )
     headers: Optional[dict[str, str]] = Field(
         None,
         example={

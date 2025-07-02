@@ -259,17 +259,29 @@ class Client:
     def searchscraper(
         self,
         user_prompt: str,
+        num_results: Optional[int] = 3,
         headers: Optional[dict[str, str]] = None,
         output_schema: Optional[BaseModel] = None,
     ):
-        """Send a searchscraper request"""
+        """Send a searchscraper request
+        
+        Args:
+            user_prompt: The search prompt string
+            num_results: Number of websites to scrape (3-20). Default is 3.
+                        More websites provide better research depth but cost more credits.
+                        Credit calculation: 30 base + 10 per additional website beyond 3.
+            headers: Optional headers to send with the request
+            output_schema: Optional schema to structure the output
+        """
         logger.info("🔍 Starting searchscraper request")
         logger.debug(f"📝 Prompt: {user_prompt}")
+        logger.debug(f"🌐 Number of results: {num_results}")
         if headers:
             logger.debug("🔧 Using custom headers")
 
         request = SearchScraperRequest(
             user_prompt=user_prompt,
+            num_results=num_results,
             headers=headers,
             output_schema=output_schema,
         )
