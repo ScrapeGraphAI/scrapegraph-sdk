@@ -8,12 +8,15 @@ import { zodToJsonSchema } from 'zod-to-json-schema';
  *
  * @param {string} apiKey - Your ScrapeGraph AI API key
  * @param {string} prompt - Natural language prompt describing what data to extract
+ * @param {number} [numResults=3] - Number of websites to scrape (3-20). Default is 3.
+ *                                 More websites provide better research depth but cost more credits.
+ *                                 Credit calculation: 30 base + 10 per additional website beyond 3.
  * @param {Object} [schema] - Optional schema object defining the output structure
  * @param {String} userAgent - the user agent like "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
  * @returns {Promise<string>} Extracted data in JSON format matching the provided schema
  * @throws - Will throw an error in case of an HTTP failure.
  */
-export async function searchScraper(apiKey, prompt, schema = null, userAgent = null) {
+export async function searchScraper(apiKey, prompt, numResults = 3, schema = null, userAgent = null) {
   const endpoint = 'https://api.scrapegraphai.com/v1/searchscraper';
   const headers = {
     'accept': 'application/json',
@@ -23,8 +26,14 @@ export async function searchScraper(apiKey, prompt, schema = null, userAgent = n
 
   if (userAgent) headers['User-Agent'] = userAgent;
 
+  // Validate numResults
+  if (numResults < 3 || numResults > 20) {
+    throw new Error('numResults must be between 3 and 20');
+  }
+
   const payload = {
     user_prompt: prompt,
+    num_results: numResults,
   };
 
   if (schema) {

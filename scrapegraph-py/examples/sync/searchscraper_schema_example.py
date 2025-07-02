@@ -1,5 +1,10 @@
 """
 Example of using the searchscraper functionality with a custom output schema.
+
+This example demonstrates both schema-based output and configurable website limits:
+- Default: 3 websites (30 credits)
+- Enhanced: 5 websites (50 credits) - provides more comprehensive data for schema
+- Maximum: 20 websites (200 credits) - for highly detailed schema population
 """
 
 from typing import List
@@ -23,9 +28,14 @@ class PythonVersionInfo(BaseModel):
 # Initialize the client
 client = Client(api_key="your-api-key-here")
 
-# Send a searchscraper request with schema
+# Send a searchscraper request with schema and configurable website limits
+num_results = 5  # Enhanced search for better schema data (50 credits)
+print(f"🔍 Searching {num_results} websites with custom schema")
+print(f"💳 Credits required: {30 if num_results <= 3 else 30 + (num_results - 3) * 10}")
+
 response = client.searchscraper(
     user_prompt="What is the latest version of Python? Include the release date and main features.",
+    num_results=num_results,  # More websites for better schema population
     output_schema=PythonVersionInfo,
 )
 
