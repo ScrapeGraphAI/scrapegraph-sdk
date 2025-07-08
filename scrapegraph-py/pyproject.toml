@@ -1,6 +1,6 @@
 [project]
 name = "scrapegraph_py"
-version = "1.8.0"
+version = "1.12.2"
 description = "ScrapeGraph Python SDK for API"
 authors = [
     { name = "Marco Vinciguerra", email = "mvincig11@gmail.com" },
@@ -70,6 +70,7 @@ dev-dependencies = [
     "mkdocs-material>=9.5.46",
     "mkdocstrings-python>=1.12.2",
     "poethepoet>=0.31.1",
+    "twine>=6.1.0",
 ]
 
 [tool.black]
