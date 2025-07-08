@@ -1,3 +1,10 @@
+## [1.1.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.0.0...v1.1.0) (2025-07-08)
+
+
+### Features
+
+* update lock file ([4ae7aa1](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/4ae7aa1687e2fdcae145ecb3375ac8ef4a83b411))
+
 ## 1.0.0 (2025-07-02)
 
 
