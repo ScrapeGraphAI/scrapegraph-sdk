@@ -8,6 +8,7 @@ authors = [
     { name = "Lorenzo Padoan", email = "lorenzo.padoan977@gmail.com" }
 ]
 
+
 license = "MIT"
 readme = "README.md"
 homepage = "https://scrapegraphai.com/"
