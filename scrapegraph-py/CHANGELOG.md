@@ -1,3 +1,10 @@
+## [1.14.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.13.0...v1.14.0) (2025-07-08)
+
+
+### Features
+
+* update a tag ([2a4b6aa](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/2a4b6aa73c9672dde558b2f487b9fa0637838478))
+
 ## [1.1.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.0.0...v1.1.0) (2025-07-08)
 
 
