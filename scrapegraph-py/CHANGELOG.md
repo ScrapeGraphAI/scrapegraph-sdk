@@ -1,3 +1,10 @@
+## [1.14.1](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.14.0...v1.14.1) (2025-07-08)
+
+
+### Bug Fixes
+
+* pyproject ([a3b3121](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/a3b312161762bcd4aec898c4bf360fb0dedbc637))
+
 ## [1.14.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.13.0...v1.14.0) (2025-07-08)
 
 
