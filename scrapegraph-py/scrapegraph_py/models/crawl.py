@@ -17,7 +17,7 @@ class CrawlRequest(BaseModel):
         example="What does the company do? and I need text content from there privacy and terms",
         description="The prompt to guide the crawl and extraction"
     )
-    schema: Dict[str, Any] = Field(
+    data_schema: Dict[str, Any] = Field(
         ...,
         description="JSON schema defining the structure of the extracted data"
     )
@@ -62,11 +62,11 @@ class CrawlRequest(BaseModel):
         return self
 
     @model_validator(mode="after")
-    def validate_schema(self) -> "CrawlRequest":
-        if not isinstance(self.schema, dict):
-            raise ValueError("Schema must be a dictionary")
-        if not self.schema:
-            raise ValueError("Schema cannot be empty")
+    def validate_data_schema(self) -> "CrawlRequest":
+        if not isinstance(self.data_schema, dict):
+            raise ValueError("Data schema must be a dictionary")
+        if not self.data_schema:
+            raise ValueError("Data schema cannot be empty")
         return self
 
 

@@ -1,3 +1,4 @@
+import os
 from scrapegraph_py import Client
 from scrapegraph_py.logger import sgai_logger
 from pydantic import BaseModel
@@ -14,8 +15,9 @@ class Company(BaseModel):
 class CompaniesResponse(BaseModel):
     companies: List[Company]
 
-# Initialize the client with explicit API key
-sgai_client = Client(api_key="sgai-api-key")
+# Initialize the client with API key from environment variable
+# Make sure to set SGAI_API_KEY in your environment or .env file
+sgai_client = Client.from_env()
 
 try:
     # SmartScraper request with infinite scroll

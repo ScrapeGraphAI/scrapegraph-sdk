@@ -28,6 +28,11 @@ class MarkdownifyRequest(BaseModel):
             raise ValueError("Invalid URL")
         return self
 
+    def model_dump(self, *args, **kwargs) -> dict:
+        # Set exclude_none=True to exclude None values from serialization
+        kwargs.setdefault('exclude_none', True)
+        return super().model_dump(*args, **kwargs)
+
 
 class GetMarkdownifyRequest(BaseModel):
     """Request model for get_markdownify endpoint"""

@@ -67,6 +67,8 @@ class SmartScraperRequest(BaseModel):
         return self
 
     def model_dump(self, *args, **kwargs) -> dict:
+        # Set exclude_none=True to exclude None values from serialization
+        kwargs.setdefault('exclude_none', True)
         data = super().model_dump(*args, **kwargs)
         # Convert the Pydantic model schema to dict if present
         if self.output_schema is not None:

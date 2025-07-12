@@ -23,20 +23,32 @@ def validate_api_key(api_key: str) -> bool:
 
 
 def handle_sync_response(response: Response) -> Dict[str, Any]:
-    data = response.json()
+    try:
+        data = response.json()
+    except ValueError:
+        # If response is not JSON, use the raw text
+        data = {"error": response.text}
 
     if response.status_code >= 400:
-        error_msg = data.get("error", "Unknown error occurred")
+        error_msg = data.get("error", data.get("detail", f"HTTP {response.status_code}: {response.text}"))
         raise APIError(error_msg, status_code=response.status_code)
 
     return data
 
 
 async def handle_async_response(response: aiohttp.ClientResponse) -> Dict[str, Any]:
-    data = await response.json()
+    try:
+        data = await response.json()
+        text = None
+    except ValueError:
+        # If response is not JSON, use the raw text
+        text = await response.text()
+        data = {"error": text}
 
     if response.status >= 400:
-        error_msg = data.get("error", "Unknown error occurred")
+        if text is None:
+            text = await response.text()
+        error_msg = data.get("error", data.get("detail", f"HTTP {response.status}: {text}"))
         raise APIError(error_msg, status_code=response.status)
 
     return data

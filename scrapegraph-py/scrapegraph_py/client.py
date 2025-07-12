@@ -309,7 +309,7 @@ class Client:
         self,
         url: str,
         prompt: str,
-        schema: Dict[str, Any],
+        data_schema: Dict[str, Any],
         cache_website: bool = True,
         depth: int = 2,
         max_pages: int = 2,
@@ -320,7 +320,7 @@ class Client:
         logger.info("🔍 Starting crawl request")
         logger.debug(f"🌐 URL: {url}")
         logger.debug(f"📝 Prompt: {prompt}")
-        logger.debug(f"📊 Schema provided: {bool(schema)}")
+        logger.debug(f"📊 Schema provided: {bool(data_schema)}")
         logger.debug(f"💾 Cache website: {cache_website}")
         logger.debug(f"🔍 Depth: {depth}")
         logger.debug(f"📄 Max pages: {max_pages}")
@@ -330,7 +330,7 @@ class Client:
         request = CrawlRequest(
             url=url,
             prompt=prompt,
-            schema=schema,
+            data_schema=data_schema,
             cache_website=cache_website,
             depth=depth,
             max_pages=max_pages,

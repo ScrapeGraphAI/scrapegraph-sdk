@@ -89,7 +89,7 @@ def main():
         crawl_response = client.crawl(
             url=url,
             prompt=prompt,
-            schema=schema,
+            data_schema=schema,
             cache_website=True,
             depth=2,
             max_pages=2,

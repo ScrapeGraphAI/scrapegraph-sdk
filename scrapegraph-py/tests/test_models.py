@@ -235,7 +235,7 @@ def test_crawl_request_validation():
     request = CrawlRequest(
         url="https://example.com",
         prompt="Extract company information",
-        schema=schema,
+        data_schema=schema,
         cache_website=True,
         depth=2,
         max_pages=5,
@@ -244,7 +244,7 @@ def test_crawl_request_validation():
     )
     assert request.url == "https://example.com"
     assert request.prompt == "Extract company information"
-    assert request.schema == schema
+    assert request.data_schema == schema
     assert request.cache_website is True
     assert request.depth == 2
     assert request.max_pages == 5
@@ -255,11 +255,11 @@ def test_crawl_request_validation():
     request = CrawlRequest(
         url="https://example.com",
         prompt="Extract company information",
-        schema=schema,
+        data_schema=schema,
     )
     assert request.url == "https://example.com"
     assert request.prompt == "Extract company information"
-    assert request.schema == schema
+    assert request.data_schema == schema
     assert request.cache_website is True  # default
     assert request.depth == 2  # default
     assert request.max_pages == 2  # default
@@ -271,7 +271,7 @@ def test_crawl_request_validation():
         CrawlRequest(
             url="invalid-url",
             prompt="Extract company information",
-            schema=schema,
+            data_schema=schema,
         )
 
     # Empty URL
@@ -279,7 +279,7 @@ def test_crawl_request_validation():
         CrawlRequest(
             url="",
             prompt="Extract company information",
-            schema=schema,
+            data_schema=schema,
         )
 
     # Empty prompt
@@ -287,7 +287,7 @@ def test_crawl_request_validation():
         CrawlRequest(
             url="https://example.com",
             prompt="",
-            schema=schema,
+            data_schema=schema,
         )
 
     # Invalid prompt (no alphanumeric characters)
@@ -295,7 +295,7 @@ def test_crawl_request_validation():
         CrawlRequest(
             url="https://example.com",
             prompt="!@#$%^",
-            schema=schema,
+            data_schema=schema,
         )
 
     # Empty schema
@@ -303,7 +303,7 @@ def test_crawl_request_validation():
         CrawlRequest(
             url="https://example.com",
             prompt="Extract company information",
-            schema={},
+            data_schema={},
         )
 
     # Invalid schema (not a dict)
@@ -311,7 +311,7 @@ def test_crawl_request_validation():
         CrawlRequest(
             url="https://example.com",
             prompt="Extract company information",
-            schema="not a dict",
+            data_schema="not a dict",
         )
 
     # Invalid depth (too low)
@@ -319,7 +319,7 @@ def test_crawl_request_validation():
         CrawlRequest(
             url="https://example.com",
             prompt="Extract company information",
-            schema=schema,
+            data_schema=schema,
             depth=0,
         )
 
@@ -328,7 +328,7 @@ def test_crawl_request_validation():
         CrawlRequest(
             url="https://example.com",
             prompt="Extract company information",
-            schema=schema,
+            data_schema=schema,
             depth=11,
         )
 
@@ -337,7 +337,7 @@ def test_crawl_request_validation():
         CrawlRequest(
             url="https://example.com",
             prompt="Extract company information",
-            schema=schema,
+            data_schema=schema,
             max_pages=0,
         )
 
@@ -346,7 +346,7 @@ def test_crawl_request_validation():
         CrawlRequest(
             url="https://example.com",
             prompt="Extract company information",
-            schema=schema,
+            data_schema=schema,
             max_pages=101,
         )
 
@@ -355,7 +355,7 @@ def test_crawl_request_validation():
         CrawlRequest(
             url="https://example.com",
             prompt="Extract company information",
-            schema=schema,
+            data_schema=schema,
             batch_size=0,
         )
 
@@ -364,7 +364,7 @@ def test_crawl_request_validation():
         CrawlRequest(
             url="https://example.com",
             prompt="Extract company information",
-            schema=schema,
+            data_schema=schema,
             batch_size=11,
         )
 
