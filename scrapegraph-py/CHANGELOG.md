@@ -1,3 +1,10 @@
+## [1.14.2](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.14.1...v1.14.2) (2025-07-12)
+
+
+### Bug Fixes
+
+* broken sdk ([b2890d5](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/b2890d5128b167d181280bfeb846f2e22ef00d54))
+
 ## [1.14.1](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.14.0...v1.14.1) (2025-07-08)
 
 
