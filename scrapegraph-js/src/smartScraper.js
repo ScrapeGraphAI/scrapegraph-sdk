@@ -11,10 +11,11 @@ import { zodToJsonSchema } from 'zod-to-json-schema';
  * @param {string} prompt - Natural language prompt describing what data to extract
  * @param {Object} [schema] - Optional schema object defining the output structure
  * @param {number} [numberOfScrolls] - Optional number of times to scroll the page (0-100). If not provided, no scrolling will be performed.
+ * @param {string[]} [steps] - Optional array of interactive steps to perform on the website (e.g., ['click on search bar', 'wait for 500ms', 'fill email with user@example.com'])
  * @returns {Promise<string>} Extracted data in JSON format matching the provided schema
  * @throws - Will throw an error in case of an HTTP failure.
  */
-export async function smartScraper(apiKey, url, prompt, schema = null, numberOfScrolls = null) {
+export async function smartScraper(apiKey, url, prompt, schema = null, numberOfScrolls = null, steps = null) {
   const endpoint = 'https://api.scrapegraphai.com/v1/smartscraper';
   const headers = {
     'accept': 'application/json',
@@ -40,6 +41,16 @@ export async function smartScraper(apiKey, url, prompt, schema = null, numberOfS
       throw new Error('numberOfScrolls must be an integer between 0 and 100');
     }
     payload.number_of_scrolls = numberOfScrolls;
+  }
+
+  if (steps !== null) {
+    if (!Array.isArray(steps)) {
+      throw new Error('steps must be an array of strings');
+    }
+    if (steps.some(step => typeof step !== 'string')) {
+      throw new Error('All steps must be strings');
+    }
+    payload.steps = steps;
   }
 
   try {

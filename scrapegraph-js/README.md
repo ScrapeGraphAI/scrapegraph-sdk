@@ -131,6 +131,43 @@ const numberOfScrolls = 10; // Will scroll 10 times to load more content
 
 The `numberOfScrolls` parameter accepts values between 0 and 100, allowing you to control how many times the page should be scrolled before extraction.
 
+#### Interactive Steps (New!)
+
+For complex websites that require user interaction, you can use the `steps` parameter to perform interactive actions before extraction:
+
+```javascript
+import { smartScraper } from 'scrapegraph-js';
+
+const apiKey = 'your-api-key';
+const url = 'https://github.com/';
+const prompt = 'Extract user profile information';
+
+// Interactive steps for website navigation
+const steps = [
+  'click on search bar',
+  'wait for 500ms',
+  'fill search with "javascript"',
+  'wait for 1 second',
+  'click on first user result'
+];
+
+(async () => {
+  try {
+    const response = await smartScraper(apiKey, url, prompt, null, null, steps);
+    console.log('Extracted data after navigation:', response);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+})();
+```
+
+**Supported Step Types:**
+- **Navigation**: `'click on search bar'`, `'click on menu'`
+- **Input**: `'fill search with "term"'`, `'fill email with user@example.com'`
+- **Wait**: `'wait for 500ms'`, `'wait for 2 seconds'`
+- **Scrolling**: `'scroll to bottom'`, `'scroll to contact form'`
+- **Complex Actions**: `'click on first result'`, `'click on load more button'`
+
 ### Search Scraping
 
 Search and extract information from multiple web sources using AI.
@@ -284,7 +321,7 @@ const websiteHtml = `<html>
 Converts a webpage into clean, well-structured markdown format.
 
 ```javascript
-import { smartScraper } from 'scrapegraph-js';
+import { markdownify } from 'scrapegraph-js';
 
 const apiKey = 'your_api_key';
 const url = 'https://scrapegraphai.com/';
@@ -298,6 +335,40 @@ const url = 'https://scrapegraphai.com/';
   }
 })();
 ```
+
+#### Markdownify with Interactive Steps
+
+For complex websites that require navigation before conversion, you can use the `steps` parameter:
+
+```javascript
+import { markdownify } from 'scrapegraph-js';
+
+const apiKey = 'your_api_key';
+const url = 'https://scrapegraphai.com/';
+
+// Interactive steps for website navigation before conversion
+const steps = [
+  'click on accept cookies',
+  'wait for 1 second',
+  'click on main content',
+  'scroll to article section'
+];
+
+(async () => {
+  try {
+    const response = await markdownify(apiKey, url, steps);
+    console.log('Markdown after navigation:', response);
+  } catch (error) {
+    console.error(error);
+  }
+})();
+```
+
+This is particularly useful for:
+- **SPA Navigation**: Navigating single-page applications
+- **Content Expansion**: Expanding collapsible content sections
+- **Cookie Consent**: Handling cookie consent dialogs
+- **Gated Content**: Accessing content behind forms or authentication
 
 ### Checking API Credits
 

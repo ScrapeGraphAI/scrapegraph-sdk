@@ -6,10 +6,11 @@ import handleError from './utils/handleError.js';
  *
  * @param {string} apiKey - Your ScrapeGraph AI API key.
  * @param {string} url - The URL of the webpage to be converted.
+ * @param {string[]} [steps] - Optional array of interactive steps to perform on the website before conversion (e.g., ['click on accept cookies', 'wait for 1 second', 'click on main content'])
  * @returns {Promise<string>} A promise that resolves to the markdown representation of the webpage.
  * @throws {Error} Throws an error if the HTTP request fails.
  */
-export async function markdownify(apiKey, url) {
+export async function markdownify(apiKey, url, steps = null) {
   const endpoint = 'https://api.scrapegraphai.com/v1/markdownify';
   const headers = {
     'accept': 'application/json',
@@ -19,6 +20,16 @@ export async function markdownify(apiKey, url) {
   const payload = {
     website_url: url,
   };
+
+  if (steps !== null) {
+    if (!Array.isArray(steps)) {
+      throw new Error('steps must be an array of strings');
+    }
+    if (steps.some(step => typeof step !== 'string')) {
+      throw new Error('All steps must be strings');
+    }
+    payload.steps = steps;
+  }
 
   try {
     const response = await axios.post(endpoint, payload, { headers });
