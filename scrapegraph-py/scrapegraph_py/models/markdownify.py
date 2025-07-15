@@ -1,6 +1,6 @@
 # Models for markdownify endpoint
 
-from typing import Optional
+from typing import Optional, List
 from uuid import UUID
 
 from pydantic import BaseModel, Field, model_validator
@@ -15,6 +15,17 @@ class MarkdownifyRequest(BaseModel):
             "Cookie": "cookie1=value1; cookie2=value2",
         },
         description="Optional headers to send with the request, including cookies and user agent",
+    )
+    steps: Optional[List[str]] = Field(
+        default=None,
+        description="Optional list of interactive steps to perform on the website",
+        example=[
+            "click on search bar",
+            "wait for 500ms",
+            "fill email input box with user@example.com",
+            "wait a sec",
+            "click on the first result"
+        ]
     )
 
     @model_validator(mode="after")

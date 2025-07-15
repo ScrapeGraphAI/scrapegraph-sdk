@@ -391,3 +391,334 @@ async def test_get_crawl(mock_api_key, mock_uuid):
             assert response["id"] == mock_uuid
             assert "result" in response
             assert "llm_result" in response["result"]
+
+
+@pytest.mark.asyncio
+async def test_smartscraper_with_steps(mock_api_key):
+    """Test async SmartScraper with interactive steps."""
+    
+    steps = [
+        "click on search bar",
+        "wait for 500ms",
+        "fill email input box with user@example.com",
+        "wait a sec",
+        "click on the first result"
+    ]
+    
+    with aioresponses() as mocked:
+        mocked.post(
+            "https://api.scrapegraphai.com/v1/smartscraper",
+            payload={
+                "request_id": str(uuid4()),
+                "status": "completed",
+                "result": {"profile": "User profile extracted after navigation."},
+            },
+        )
+
+        async with AsyncClient(api_key=mock_api_key) as client:
+            response = await client.smartscraper(
+                website_url="https://example.com",
+                user_prompt="Extract user profile",
+                steps=steps
+            )
+            assert response["status"] == "completed"
+            assert "profile" in response["result"]
+
+        # Verify the request was made with steps
+        assert len(mocked.requests) == 1
+        request_info = mocked.requests[0][1]
+        assert "steps" in request_info
+        assert request_info["steps"] == steps
+
+
+@pytest.mark.asyncio
+async def test_smartscraper_with_steps_and_scrolls(mock_api_key):
+    """Test async SmartScraper with both steps and number_of_scrolls."""
+    
+    steps = [
+        "click on load more button",
+        "wait for 2 seconds",
+        "scroll to bottom"
+    ]
+    
+    with aioresponses() as mocked:
+        mocked.post(
+            "https://api.scrapegraphai.com/v1/smartscraper",
+            payload={
+                "request_id": str(uuid4()),
+                "status": "completed",
+                "result": {"data": "Combined steps and scrolls result."},
+            },
+        )
+
+        async with AsyncClient(api_key=mock_api_key) as client:
+            response = await client.smartscraper(
+                website_url="https://example.com",
+                user_prompt="Extract data with navigation",
+                steps=steps,
+                number_of_scrolls=3
+            )
+            assert response["status"] == "completed"
+            assert "data" in response["result"]
+
+        # Verify the request was made with both steps and scrolls
+        assert len(mocked.requests) == 1
+        request_info = mocked.requests[0][1]
+        assert "steps" in request_info
+        assert "number_of_scrolls" in request_info
+        assert request_info["steps"] == steps
+        assert request_info["number_of_scrolls"] == 3
+
+
+@pytest.mark.asyncio
+async def test_smartscraper_without_steps(mock_api_key):
+    """Test async SmartScraper without steps (should work as before)."""
+    
+    with aioresponses() as mocked:
+        mocked.post(
+            "https://api.scrapegraphai.com/v1/smartscraper",
+            payload={
+                "request_id": str(uuid4()),
+                "status": "completed",
+                "result": {"description": "Normal scraping result."},
+            },
+        )
+
+        async with AsyncClient(api_key=mock_api_key) as client:
+            response = await client.smartscraper(
+                website_url="https://example.com",
+                user_prompt="Extract info"
+            )
+            assert response["status"] == "completed"
+            assert "description" in response["result"]
+
+        # Verify the request was made without steps
+        assert len(mocked.requests) == 1
+        request_info = mocked.requests[0][1]
+        assert "steps" not in request_info
+
+
+@pytest.mark.asyncio
+async def test_markdownify_with_steps(mock_api_key):
+    """Test async Markdownify with interactive steps."""
+    
+    steps = [
+        "click on accept cookies",
+        "wait for 1 second",
+        "click on main content",
+        "scroll to article"
+    ]
+    
+    with aioresponses() as mocked:
+        mocked.post(
+            "https://api.scrapegraphai.com/v1/markdownify",
+            payload={
+                "request_id": str(uuid4()),
+                "status": "completed",
+                "result": "# Article Title\n\nThis is the article content after navigation.",
+            },
+        )
+
+        async with AsyncClient(api_key=mock_api_key) as client:
+            response = await client.markdownify(
+                website_url="https://example.com/article",
+                steps=steps
+            )
+            assert response["status"] == "completed"
+            assert "Article Title" in response["result"]
+            assert "article content" in response["result"]
+
+        # Verify the request was made with steps
+        assert len(mocked.requests) == 1
+        request_info = mocked.requests[0][1]
+        assert "steps" in request_info
+        assert request_info["steps"] == steps
+
+
+@pytest.mark.asyncio
+async def test_markdownify_with_steps_and_headers(mock_api_key):
+    """Test async Markdownify with both steps and headers."""
+    
+    steps = [
+        "click on expand content",
+        "wait for 500ms",
+        "scroll to full article"
+    ]
+    
+    headers = {
+        "User-Agent": "Mozilla/5.0",
+        "Accept": "text/html,application/xhtml+xml"
+    }
+    
+    with aioresponses() as mocked:
+        mocked.post(
+            "https://api.scrapegraphai.com/v1/markdownify",
+            payload={
+                "request_id": str(uuid4()),
+                "status": "completed",
+                "result": "# Full Article\n\nExpanded content after navigation.",
+            },
+        )
+
+        async with AsyncClient(api_key=mock_api_key) as client:
+            response = await client.markdownify(
+                website_url="https://example.com/article",
+                headers=headers,
+                steps=steps
+            )
+            assert response["status"] == "completed"
+            assert "Full Article" in response["result"]
+            assert "Expanded content" in response["result"]
+
+        # Verify the request was made with both steps and headers
+        assert len(mocked.requests) == 1
+        request_info = mocked.requests[0][1]
+        assert "steps" in request_info
+        assert "headers" in request_info
+        assert request_info["steps"] == steps
+        assert request_info["headers"] == headers
+
+
+@pytest.mark.asyncio
+async def test_markdownify_without_steps(mock_api_key):
+    """Test async Markdownify without steps (should work as before)."""
+    
+    with aioresponses() as mocked:
+        mocked.post(
+            "https://api.scrapegraphai.com/v1/markdownify",
+            payload={
+                "request_id": str(uuid4()),
+                "status": "completed",
+                "result": "# Page Title\n\nNormal markdown content.",
+            },
+        )
+
+        async with AsyncClient(api_key=mock_api_key) as client:
+            response = await client.markdownify(
+                website_url="https://example.com"
+            )
+            assert response["status"] == "completed"
+            assert "Page Title" in response["result"]
+
+        # Verify the request was made without steps
+        assert len(mocked.requests) == 1
+        request_info = mocked.requests[0][1]
+        assert "steps" not in request_info
+
+
+@pytest.mark.asyncio
+async def test_smartscraper_empty_steps_list(mock_api_key):
+    """Test async SmartScraper with empty steps list."""
+    
+    with aioresponses() as mocked:
+        mocked.post(
+            "https://api.scrapegraphai.com/v1/smartscraper",
+            payload={
+                "request_id": str(uuid4()),
+                "status": "completed",
+                "result": {"description": "Result with empty steps."},
+            },
+        )
+
+        async with AsyncClient(api_key=mock_api_key) as client:
+            response = await client.smartscraper(
+                website_url="https://example.com",
+                user_prompt="Extract info",
+                steps=[]
+            )
+            assert response["status"] == "completed"
+            assert "description" in response["result"]
+
+        # Verify the request was made with empty steps
+        assert len(mocked.requests) == 1
+        request_info = mocked.requests[0][1]
+        assert "steps" in request_info
+        assert request_info["steps"] == []
+
+
+@pytest.mark.asyncio
+async def test_markdownify_empty_steps_list(mock_api_key):
+    """Test async Markdownify with empty steps list."""
+    
+    with aioresponses() as mocked:
+        mocked.post(
+            "https://api.scrapegraphai.com/v1/markdownify",
+            payload={
+                "request_id": str(uuid4()),
+                "status": "completed",
+                "result": "# Page Title\n\nContent with empty steps.",
+            },
+        )
+
+        async with AsyncClient(api_key=mock_api_key) as client:
+            response = await client.markdownify(
+                website_url="https://example.com",
+                steps=[]
+            )
+            assert response["status"] == "completed"
+            assert "Page Title" in response["result"]
+
+        # Verify the request was made with empty steps
+        assert len(mocked.requests) == 1
+        request_info = mocked.requests[0][1]
+        assert "steps" in request_info
+        assert request_info["steps"] == []
+
+
+@pytest.mark.asyncio
+async def test_concurrent_requests_with_steps(mock_api_key):
+    """Test concurrent async requests with different steps."""
+    
+    steps1 = ["click on search", "wait for 1 second", "click first result"]
+    steps2 = ["click on menu", "wait for 500ms", "click about"]
+    
+    with aioresponses() as mocked:
+        mocked.post(
+            "https://api.scrapegraphai.com/v1/smartscraper",
+            payload={
+                "request_id": str(uuid4()),
+                "status": "completed",
+                "result": {"data": "Result 1"},
+            },
+        )
+        mocked.post(
+            "https://api.scrapegraphai.com/v1/markdownify",
+            payload={
+                "request_id": str(uuid4()),
+                "status": "completed",
+                "result": "# Result 2\n\nContent",
+            },
+        )
+
+        async with AsyncClient(api_key=mock_api_key) as client:
+            # Execute concurrent requests
+            import asyncio
+            results = await asyncio.gather(
+                client.smartscraper(
+                    website_url="https://example.com",
+                    user_prompt="Extract data",
+                    steps=steps1
+                ),
+                client.markdownify(
+                    website_url="https://example.com",
+                    steps=steps2
+                ),
+                return_exceptions=True
+            )
+            
+            # Verify both requests completed successfully
+            assert len(results) == 2
+            assert results[0]["status"] == "completed"
+            assert results[1]["status"] == "completed"
+            assert "data" in results[0]["result"]
+            assert "Result 2" in results[1]["result"]
+
+        # Verify both requests were made with their respective steps
+        assert len(mocked.requests) == 2
+        request1_info = mocked.requests[0][1]
+        request2_info = mocked.requests[1][1]
+        
+        assert "steps" in request1_info
+        assert "steps" in request2_info
+        assert request1_info["steps"] == steps1
+        assert request2_info["steps"] == steps2

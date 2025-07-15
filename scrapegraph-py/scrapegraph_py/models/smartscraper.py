@@ -1,6 +1,6 @@
 # Models for smartscraper endpoint
 
-from typing import Optional, Type
+from typing import Optional, Type, List
 from uuid import UUID
 
 from bs4 import BeautifulSoup
@@ -33,6 +33,17 @@ class SmartScraperRequest(BaseModel):
         default=None,
         description="Number of times to scroll the page (0-100). If None, no scrolling will be performed.",
         example=10
+    )
+    steps: Optional[List[str]] = Field(
+        default=None,
+        description="Optional list of interactive steps to perform on the website",
+        example=[
+            "click on search bar",
+            "wait for 500ms",
+            "fill email input box with user@example.com",
+            "wait a sec",
+            "click on the first result"
+        ]
     )
 
     @model_validator(mode="after")

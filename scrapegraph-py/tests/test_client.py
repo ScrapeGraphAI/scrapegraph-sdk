@@ -391,3 +391,279 @@ def test_get_crawl(mock_api_key, mock_uuid):
         assert response["id"] == mock_uuid
         assert "result" in response
         assert "llm_result" in response["result"]
+
+
+@responses.activate
+def test_smartscraper_with_steps(mock_api_key):
+    """Test SmartScraper with interactive steps."""
+    
+    steps = [
+        "click on search bar",
+        "wait for 500ms",
+        "fill email input box with user@example.com",
+        "wait a sec",
+        "click on the first result"
+    ]
+    
+    # Mock the API response
+    responses.add(
+        responses.POST,
+        "https://api.scrapegraphai.com/v1/smartscraper",
+        json={
+            "request_id": str(uuid4()),
+            "status": "completed",
+            "result": {"profile": "User profile extracted after navigation."},
+        },
+    )
+
+    with Client(api_key=mock_api_key) as client:
+        response = client.smartscraper(
+            website_url="https://example.com",
+            user_prompt="Extract user profile",
+            steps=steps
+        )
+        assert response["status"] == "completed"
+        assert "profile" in response["result"]
+
+    # Verify the request was made with steps
+    assert len(responses.calls) == 1
+    request_body = responses.calls[0].request.body
+    assert b"steps" in request_body
+    assert b"click on search bar" in request_body
+
+
+@responses.activate
+def test_smartscraper_with_steps_and_scrolls(mock_api_key):
+    """Test SmartScraper with both steps and number_of_scrolls."""
+    
+    steps = [
+        "click on load more button",
+        "wait for 2 seconds",
+        "scroll to bottom"
+    ]
+    
+    # Mock the API response
+    responses.add(
+        responses.POST,
+        "https://api.scrapegraphai.com/v1/smartscraper",
+        json={
+            "request_id": str(uuid4()),
+            "status": "completed",
+            "result": {"data": "Combined steps and scrolls result."},
+        },
+    )
+
+    with Client(api_key=mock_api_key) as client:
+        response = client.smartscraper(
+            website_url="https://example.com",
+            user_prompt="Extract data with navigation",
+            steps=steps,
+            number_of_scrolls=3
+        )
+        assert response["status"] == "completed"
+        assert "data" in response["result"]
+
+    # Verify the request was made with both steps and scrolls
+    assert len(responses.calls) == 1
+    request_body = responses.calls[0].request.body
+    assert b"steps" in request_body
+    assert b"number_of_scrolls" in request_body
+    assert b"load more button" in request_body
+
+
+@responses.activate
+def test_smartscraper_without_steps(mock_api_key):
+    """Test SmartScraper without steps (should work as before)."""
+    
+    # Mock the API response
+    responses.add(
+        responses.POST,
+        "https://api.scrapegraphai.com/v1/smartscraper",
+        json={
+            "request_id": str(uuid4()),
+            "status": "completed",
+            "result": {"description": "Normal scraping result."},
+        },
+    )
+
+    with Client(api_key=mock_api_key) as client:
+        response = client.smartscraper(
+            website_url="https://example.com",
+            user_prompt="Extract info"
+        )
+        assert response["status"] == "completed"
+        assert "description" in response["result"]
+
+    # Verify the request was made without steps
+    assert len(responses.calls) == 1
+    request_body = responses.calls[0].request.body
+    assert b"steps" not in request_body
+
+
+@responses.activate
+def test_markdownify_with_steps(mock_api_key):
+    """Test Markdownify with interactive steps."""
+    
+    steps = [
+        "click on accept cookies",
+        "wait for 1 second",
+        "click on main content",
+        "scroll to article"
+    ]
+    
+    # Mock the API response
+    responses.add(
+        responses.POST,
+        "https://api.scrapegraphai.com/v1/markdownify",
+        json={
+            "request_id": str(uuid4()),
+            "status": "completed",
+            "result": "# Article Title\n\nThis is the article content after navigation.",
+        },
+    )
+
+    with Client(api_key=mock_api_key) as client:
+        response = client.markdownify(
+            website_url="https://example.com/article",
+            steps=steps
+        )
+        assert response["status"] == "completed"
+        assert "Article Title" in response["result"]
+        assert "article content" in response["result"]
+
+    # Verify the request was made with steps
+    assert len(responses.calls) == 1
+    request_body = responses.calls[0].request.body
+    assert b"steps" in request_body
+    assert b"accept cookies" in request_body
+
+
+@responses.activate
+def test_markdownify_with_steps_and_headers(mock_api_key):
+    """Test Markdownify with both steps and headers."""
+    
+    steps = [
+        "click on expand content",
+        "wait for 500ms",
+        "scroll to full article"
+    ]
+    
+    headers = {
+        "User-Agent": "Mozilla/5.0",
+        "Accept": "text/html,application/xhtml+xml"
+    }
+    
+    # Mock the API response
+    responses.add(
+        responses.POST,
+        "https://api.scrapegraphai.com/v1/markdownify",
+        json={
+            "request_id": str(uuid4()),
+            "status": "completed",
+            "result": "# Full Article\n\nExpanded content after navigation.",
+        },
+    )
+
+    with Client(api_key=mock_api_key) as client:
+        response = client.markdownify(
+            website_url="https://example.com/article",
+            headers=headers,
+            steps=steps
+        )
+        assert response["status"] == "completed"
+        assert "Full Article" in response["result"]
+        assert "Expanded content" in response["result"]
+
+    # Verify the request was made with both steps and headers
+    assert len(responses.calls) == 1
+    request_body = responses.calls[0].request.body
+    assert b"steps" in request_body
+    assert b"headers" in request_body
+    assert b"expand content" in request_body
+
+
+@responses.activate
+def test_markdownify_without_steps(mock_api_key):
+    """Test Markdownify without steps (should work as before)."""
+    
+    # Mock the API response
+    responses.add(
+        responses.POST,
+        "https://api.scrapegraphai.com/v1/markdownify",
+        json={
+            "request_id": str(uuid4()),
+            "status": "completed",
+            "result": "# Page Title\n\nNormal markdown content.",
+        },
+    )
+
+    with Client(api_key=mock_api_key) as client:
+        response = client.markdownify(
+            website_url="https://example.com"
+        )
+        assert response["status"] == "completed"
+        assert "Page Title" in response["result"]
+
+    # Verify the request was made without steps
+    assert len(responses.calls) == 1
+    request_body = responses.calls[0].request.body
+    assert b"steps" not in request_body
+
+
+@responses.activate
+def test_smartscraper_empty_steps_list(mock_api_key):
+    """Test SmartScraper with empty steps list."""
+    
+    # Mock the API response
+    responses.add(
+        responses.POST,
+        "https://api.scrapegraphai.com/v1/smartscraper",
+        json={
+            "request_id": str(uuid4()),
+            "status": "completed",
+            "result": {"description": "Result with empty steps."},
+        },
+    )
+
+    with Client(api_key=mock_api_key) as client:
+        response = client.smartscraper(
+            website_url="https://example.com",
+            user_prompt="Extract info",
+            steps=[]
+        )
+        assert response["status"] == "completed"
+        assert "description" in response["result"]
+
+    # Verify the request was made with empty steps
+    assert len(responses.calls) == 1
+    request_body = responses.calls[0].request.body
+    assert b"steps" in request_body
+
+
+@responses.activate
+def test_markdownify_empty_steps_list(mock_api_key):
+    """Test Markdownify with empty steps list."""
+    
+    # Mock the API response
+    responses.add(
+        responses.POST,
+        "https://api.scrapegraphai.com/v1/markdownify",
+        json={
+            "request_id": str(uuid4()),
+            "status": "completed",
+            "result": "# Page Title\n\nContent with empty steps.",
+        },
+    )
+
+    with Client(api_key=mock_api_key) as client:
+        response = client.markdownify(
+            website_url="https://example.com",
+            steps=[]
+        )
+        assert response["status"] == "completed"
+        assert "Page Title" in response["result"]
+
+    # Verify the request was made with empty steps
+    assert len(responses.calls) == 1
+    request_body = responses.calls[0].request.body
+    assert b"steps" in request_body

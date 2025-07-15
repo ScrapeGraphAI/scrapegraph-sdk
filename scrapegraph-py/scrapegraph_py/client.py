@@ -149,13 +149,15 @@ class Client:
             logger.error(f"🔴 Connection Error: {str(e)}")
             raise ConnectionError(f"Failed to connect to API: {str(e)}")
 
-    def markdownify(self, website_url: str, headers: Optional[dict[str, str]] = None):
+    def markdownify(self, website_url: str, headers: Optional[dict[str, str]] = None, steps: Optional[list[str]] = None):
         """Send a markdownify request"""
         logger.info(f"🔍 Starting markdownify request for {website_url}")
         if headers:
             logger.debug("🔧 Using custom headers")
+        if steps:
+            logger.debug(f"🎯 Interactive steps: {len(steps)} steps provided")
 
-        request = MarkdownifyRequest(website_url=website_url, headers=headers)
+        request = MarkdownifyRequest(website_url=website_url, headers=headers, steps=steps)
         logger.debug("✅ Request validation passed")
 
         result = self._make_request(
@@ -184,6 +186,7 @@ class Client:
         headers: Optional[dict[str, str]] = None,
         output_schema: Optional[BaseModel] = None,
         number_of_scrolls: Optional[int] = None,
+        steps: Optional[list[str]] = None,
     ):
         """Send a smartscraper request"""
         logger.info("🔍 Starting smartscraper request")
@@ -195,6 +198,8 @@ class Client:
             logger.debug("🔧 Using custom headers")
         if number_of_scrolls is not None:
             logger.debug(f"🔄 Number of scrolls: {number_of_scrolls}")
+        if steps:
+            logger.debug(f"🎯 Interactive steps: {len(steps)} steps provided")
         logger.debug(f"📝 Prompt: {user_prompt}")
 
         request = SmartScraperRequest(
@@ -204,6 +209,7 @@ class Client:
             user_prompt=user_prompt,
             output_schema=output_schema,
             number_of_scrolls=number_of_scrolls,
+            steps=steps,
         )
         logger.debug("✅ Request validation passed")
 
