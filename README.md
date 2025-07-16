@@ -13,6 +13,13 @@ Official SDKs for the ScrapeGraph AI API - Intelligent web scraping and search p
 
 Get your [API key](https://scrapegraphai.com)!
 
+## Features
+
+- 🤖 **SmartScraper**: Extract structured data from webpages using natural language prompts
+- 🔍 **SearchScraper**: AI-powered web search with structured results and reference URLs
+- 📝 **Markdownify**: Convert any webpage into clean, formatted markdown
+- 🕷️ **SmartCrawler**: Intelligently crawl and extract data from multiple pages
+
 ## 🚀 Quick Links
 ScrapeGraphAI offers seamless integration with popular frameworks and tools to enhance your scraping capabilities. Whether you're building with Python or Node.js, using LLM frameworks, or working with no-code platforms, we've got you covered with our comprehensive integration options..
 
