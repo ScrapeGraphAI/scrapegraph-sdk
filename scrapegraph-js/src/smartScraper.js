@@ -11,10 +11,11 @@ import { zodToJsonSchema } from 'zod-to-json-schema';
  * @param {string} prompt - Natural language prompt describing what data to extract
  * @param {Object} [schema] - Optional schema object defining the output structure
  * @param {number} [numberOfScrolls] - Optional number of times to scroll the page (0-100). If not provided, no scrolling will be performed.
+ * @param {number} [totalPages] - Optional number of pages to scrape (1-10). If not provided, only the first page will be scraped.
  * @returns {Promise<string>} Extracted data in JSON format matching the provided schema
  * @throws - Will throw an error in case of an HTTP failure.
  */
-export async function smartScraper(apiKey, url, prompt, schema = null, numberOfScrolls = null) {
+export async function smartScraper(apiKey, url, prompt, schema = null, numberOfScrolls = null, totalPages = null) {
   const endpoint = 'https://api.scrapegraphai.com/v1/smartscraper';
   const headers = {
     'accept': 'application/json',
@@ -40,6 +41,13 @@ export async function smartScraper(apiKey, url, prompt, schema = null, numberOfS
       throw new Error('numberOfScrolls must be an integer between 0 and 100');
     }
     payload.number_of_scrolls = numberOfScrolls;
+  }
+
+  if (totalPages !== null) {
+    if (!Number.isInteger(totalPages) || totalPages < 1 || totalPages > 10) {
+      throw new Error('totalPages must be an integer between 1 and 10');
+    }
+    payload.total_pages = totalPages;
   }
 
   try {

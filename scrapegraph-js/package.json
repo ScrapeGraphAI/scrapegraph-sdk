@@ -10,7 +10,8 @@
   },
   "scripts": {
     "format": "prettier --write --cache --cache-strategy metadata . !dist",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "node test/smartScraper_pagination_test.js"
   },
   "license": "MIT",
   "homepage": "https://github.com/ScrapeGraphAI/scrapegraph-sdk/tree/main/scrapegraph-js",
