@@ -11,9 +11,13 @@ import os
 import time
 from pydantic import BaseModel
 from typing import List, Optional
+from dotenv import load_dotenv
 
 from scrapegraph_py import Client
 from scrapegraph_py.exceptions import APIError
+
+# Load environment variables from .env file
+load_dotenv()
 
 
 # Configure logging
@@ -46,11 +50,18 @@ def smartscraper_pagination_example():
     print("=" * 50)
     
     # Initialize client from environment variable
+    api_key = os.getenv("SGAI_API_KEY")
+    if not api_key:
+        print("❌ Error: SGAI_API_KEY environment variable not set")
+        print("Please either:")
+        print("  1. Set environment variable: export SGAI_API_KEY='your-api-key-here'")
+        print("  2. Create a .env file with: SGAI_API_KEY=your-api-key-here")
+        return
+    
     try:
-        client = Client.from_env()
-    except ValueError as e:
+        client = Client(api_key=api_key)
+    except Exception as e:
         print(f"❌ Error initializing client: {e}")
-        print("Please set SGAI_API_KEY environment variable")
         return
     
     # Configuration
@@ -121,9 +132,14 @@ def test_pagination_parameters():
     print("Testing different pagination parameters")
     print("=" * 50)
     
+    api_key = os.getenv("SGAI_API_KEY")
+    if not api_key:
+        print("❌ Error: SGAI_API_KEY environment variable not set")
+        return
+    
     try:
-        client = Client.from_env()
-    except ValueError as e:
+        client = Client(api_key=api_key)
+    except Exception as e:
         print(f"❌ Error initializing client: {e}")
         return
     

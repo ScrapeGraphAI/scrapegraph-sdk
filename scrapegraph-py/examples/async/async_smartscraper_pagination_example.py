@@ -12,9 +12,13 @@ import os
 import time
 from pydantic import BaseModel
 from typing import List, Optional
+from dotenv import load_dotenv
 
 from scrapegraph_py import AsyncClient
 from scrapegraph_py.exceptions import APIError
+
+# Load environment variables from .env file
+load_dotenv()
 
 
 # Configure logging
@@ -47,11 +51,18 @@ async def smartscraper_pagination_example():
     print("=" * 50)
     
     # Initialize client from environment variable
+    api_key = os.getenv("SGAI_API_KEY")
+    if not api_key:
+        print("❌ Error: SGAI_API_KEY environment variable not set")
+        print("Please either:")
+        print("  1. Set environment variable: export SGAI_API_KEY='your-api-key-here'")
+        print("  2. Create a .env file with: SGAI_API_KEY=your-api-key-here")
+        return
+    
     try:
-        client = AsyncClient.from_env()
-    except ValueError as e:
+        client = AsyncClient(api_key=api_key)
+    except Exception as e:
         print(f"❌ Error initializing client: {e}")
-        print("Please set SGAI_API_KEY environment variable")
         return
     
     # Configuration
@@ -122,9 +133,14 @@ async def test_concurrent_pagination():
     print("Testing concurrent pagination requests")
     print("=" * 50)
     
+    api_key = os.getenv("SGAI_API_KEY")
+    if not api_key:
+        print("❌ Error: SGAI_API_KEY environment variable not set")
+        return
+    
     try:
-        client = AsyncClient.from_env()
-    except ValueError as e:
+        client = AsyncClient(api_key=api_key)
+    except Exception as e:
         print(f"❌ Error initializing client: {e}")
         return
     
@@ -182,9 +198,14 @@ async def test_pagination_with_different_parameters():
     print("Testing pagination with different parameters")
     print("=" * 50)
     
+    api_key = os.getenv("SGAI_API_KEY")
+    if not api_key:
+        print("❌ Error: SGAI_API_KEY environment variable not set")
+        return
+    
     try:
-        client = AsyncClient.from_env()
-    except ValueError as e:
+        client = AsyncClient(api_key=api_key)
+    except Exception as e:
         print(f"❌ Error initializing client: {e}")
         return
     

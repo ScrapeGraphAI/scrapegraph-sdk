@@ -1,15 +1,27 @@
 import asyncio
+import os
+from dotenv import load_dotenv
 
 from scrapegraph_py import AsyncClient
 from scrapegraph_py.logger import sgai_logger
+
+# Load environment variables from .env file
+load_dotenv()
 
 sgai_logger.set_logging(level="INFO")
 
 
 async def main():
+    # Initialize async client with API key from environment variable
+    api_key = os.getenv("SGAI_API_KEY")
+    if not api_key:
+        print("❌ Error: SGAI_API_KEY environment variable not set")
+        print("Please either:")
+        print("  1. Set environment variable: export SGAI_API_KEY='your-api-key-here'")
+        print("  2. Create a .env file with: SGAI_API_KEY=your-api-key-here")
+        return
 
-    # Initialize async client
-    sgai_client = AsyncClient(api_key="your-api-key-here")
+    sgai_client = AsyncClient(api_key=api_key)
 
     # Concurrent scraping requests
     urls = [
