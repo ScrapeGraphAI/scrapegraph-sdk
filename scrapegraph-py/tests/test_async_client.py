@@ -2,6 +2,7 @@ from uuid import uuid4
 
 import pytest
 from aioresponses import aioresponses
+from pydantic import BaseModel
 
 from scrapegraph_py.async_client import AsyncClient
 from scrapegraph_py.exceptions import APIError
@@ -130,6 +131,107 @@ async def test_get_smartscraper(mock_api_key, mock_uuid):
             response = await client.get_smartscraper(mock_uuid)
             assert response["status"] == "completed"
             assert response["request_id"] == mock_uuid
+
+
+@pytest.mark.asyncio
+async def test_smartscraper_with_pagination(mock_api_key):
+    with aioresponses() as mocked:
+        mocked.post(
+            "https://api.scrapegraphai.com/v1/smartscraper",
+            payload={
+                "request_id": str(uuid4()),
+                "status": "completed",
+                "result": {
+                    "products": [
+                        {"name": "Product 1", "price": "$10"},
+                        {"name": "Product 2", "price": "$20"},
+                        {"name": "Product 3", "price": "$30"},
+                    ]
+                },
+            },
+        )
+
+        async with AsyncClient(api_key=mock_api_key) as client:
+            response = await client.smartscraper(
+                website_url="https://example.com/products",
+                user_prompt="Extract product information",
+                total_pages=3
+            )
+            assert response["status"] == "completed"
+            assert "products" in response["result"]
+            assert len(response["result"]["products"]) == 3
+
+
+@pytest.mark.asyncio
+async def test_smartscraper_with_pagination_and_scrolls(mock_api_key):
+    with aioresponses() as mocked:
+        mocked.post(
+            "https://api.scrapegraphai.com/v1/smartscraper",
+            payload={
+                "request_id": str(uuid4()),
+                "status": "completed",
+                "result": {
+                    "products": [
+                        {"name": "Product 1", "price": "$10"},
+                        {"name": "Product 2", "price": "$20"},
+                        {"name": "Product 3", "price": "$30"},
+                        {"name": "Product 4", "price": "$40"},
+                        {"name": "Product 5", "price": "$50"},
+                    ]
+                },
+            },
+        )
+
+        async with AsyncClient(api_key=mock_api_key) as client:
+            response = await client.smartscraper(
+                website_url="https://example.com/products",
+                user_prompt="Extract product information from paginated results",
+                total_pages=5,
+                number_of_scrolls=10
+            )
+            assert response["status"] == "completed"
+            assert "products" in response["result"]
+            assert len(response["result"]["products"]) == 5
+
+
+@pytest.mark.asyncio
+async def test_smartscraper_with_pagination_and_all_features(mock_api_key):
+    with aioresponses() as mocked:
+        mocked.post(
+            "https://api.scrapegraphai.com/v1/smartscraper",
+            payload={
+                "request_id": str(uuid4()),
+                "status": "completed",
+                "result": {
+                    "products": [
+                        {"name": "Product 1", "price": "$10", "rating": 4.5},
+                        {"name": "Product 2", "price": "$20", "rating": 4.0},
+                    ]
+                },
+            },
+        )
+
+        headers = {
+            "User-Agent": "Mozilla/5.0",
+            "Cookie": "session=123",
+        }
+
+        class ProductSchema(BaseModel):
+            name: str
+            price: str
+            rating: float
+
+        async with AsyncClient(api_key=mock_api_key) as client:
+            response = await client.smartscraper(
+                website_url="https://example.com/products",
+                user_prompt="Extract product information with ratings",
+                headers=headers,
+                output_schema=ProductSchema,
+                number_of_scrolls=5,
+                total_pages=2
+            )
+            assert response["status"] == "completed"
+            assert "products" in response["result"]
 
 
 @pytest.mark.asyncio
