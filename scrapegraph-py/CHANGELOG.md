@@ -1,3 +1,12 @@
+## [1.15.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.14.2...v1.15.0) (2025-07-18)
+
+
+### Features
+
+* add examples in javascript ([16426de](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/16426de3bf24a153574979c5b1d0cbf84c53ca09))
+* add python integration ([5f5ec1b](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/5f5ec1b9fcf4c62c50ccea29519c9e6f71efc4a0))
+* update examples ([2e477d1](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/2e477d1b550a5044e58b8cfab66d70146544e357))
+
 ## [1.14.2](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.14.1...v1.14.2) (2025-07-12)
 
 
