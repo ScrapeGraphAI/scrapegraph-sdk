@@ -12,10 +12,11 @@ import { zodToJsonSchema } from 'zod-to-json-schema';
  * @param {Object} [schema] - Optional schema object defining the output structure
  * @param {number} [numberOfScrolls] - Optional number of times to scroll the page (0-100). If not provided, no scrolling will be performed.
  * @param {number} [totalPages] - Optional number of pages to scrape (1-10). If not provided, only the first page will be scraped.
+ * @param {Object} [cookies] - Optional cookies object for authentication and session management
  * @returns {Promise<string>} Extracted data in JSON format matching the provided schema
  * @throws - Will throw an error in case of an HTTP failure.
  */
-export async function smartScraper(apiKey, url, prompt, schema = null, numberOfScrolls = null, totalPages = null) {
+export async function smartScraper(apiKey, url, prompt, schema = null, numberOfScrolls = null, totalPages = null, cookies = null) {
   const endpoint = 'https://api.scrapegraphai.com/v1/smartscraper';
   const headers = {
     'accept': 'application/json',
@@ -27,6 +28,14 @@ export async function smartScraper(apiKey, url, prompt, schema = null, numberOfS
     website_url: url,
     user_prompt: prompt,
   };
+
+  if (cookies) {
+    if (typeof cookies === 'object' && cookies !== null) {
+      payload.cookies = cookies;
+    } else {
+      throw new Error('Cookies must be an object with key-value pairs');
+    }
+  }
 
   if (schema) {
     if (schema instanceof ZodType) {
