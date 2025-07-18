@@ -1,6 +1,6 @@
 # Models for smartscraper endpoint
 
-from typing import Optional, Type
+from typing import Optional, Type, Dict
 from uuid import UUID
 
 from bs4 import BeautifulSoup
@@ -27,6 +27,11 @@ class SmartScraperRequest(BaseModel):
             "Cookie": "cookie1=value1; cookie2=value2",
         },
         description="Optional headers to send with the request, including cookies and user agent",
+    )
+    cookies: Optional[Dict[str, str]] = Field(
+        None,
+        example={"session_id": "abc123", "user_token": "xyz789"},
+        description="Dictionary of cookies to send with the request for authentication or session management",
     )
     output_schema: Optional[Type[BaseModel]] = None
     number_of_scrolls: Optional[conint(ge=0, le=100)] = Field(

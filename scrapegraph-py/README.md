@@ -95,6 +95,75 @@ response = client.smartscraper(
 
 </details>
 
+<details>
+<summary>🍪 Cookies Support</summary>
+
+Use cookies for authentication and session management:
+
+```python
+from scrapegraph_py import Client
+
+client = Client(api_key="your-api-key-here")
+
+# Define cookies for authentication
+cookies = {
+    "session_id": "abc123def456",
+    "auth_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "user_preferences": "dark_mode,usd"
+}
+
+response = client.smartscraper(
+    website_url="https://example.com/dashboard",
+    user_prompt="Extract user profile information",
+    cookies=cookies
+)
+```
+
+**Common Use Cases:**
+- **E-commerce sites**: User authentication, shopping cart persistence
+- **Social media**: Session management, user preferences
+- **Banking/Financial**: Secure authentication, transaction history
+- **News sites**: User preferences, subscription content
+- **API endpoints**: Authentication tokens, API keys
+
+</details>
+
+<details>
+<summary>🔄 Advanced Features</summary>
+
+**Infinite Scrolling:**
+```python
+response = client.smartscraper(
+    website_url="https://example.com/feed",
+    user_prompt="Extract all posts from the feed",
+    cookies=cookies,
+    number_of_scrolls=10  # Scroll 10 times to load more content
+)
+```
+
+**Pagination:**
+```python
+response = client.smartscraper(
+    website_url="https://example.com/products",
+    user_prompt="Extract all product information",
+    cookies=cookies,
+    total_pages=5  # Scrape 5 pages
+)
+```
+
+**Combined with Cookies:**
+```python
+response = client.smartscraper(
+    website_url="https://example.com/dashboard",
+    user_prompt="Extract user data from all pages",
+    cookies=cookies,
+    number_of_scrolls=5,
+    total_pages=3
+)
+```
+
+</details>
+
 ### 🔍 SearchScraper
 
 Perform AI-powered web searches with structured results and reference URLs.
