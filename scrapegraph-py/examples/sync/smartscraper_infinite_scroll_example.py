@@ -1,8 +1,12 @@
 import os
+from dotenv import load_dotenv
 from scrapegraph_py import Client
 from scrapegraph_py.logger import sgai_logger
 from pydantic import BaseModel
 from typing import List
+
+# Load environment variables from .env file
+load_dotenv()
 
 sgai_logger.set_logging(level="INFO")
 
@@ -17,7 +21,15 @@ class CompaniesResponse(BaseModel):
 
 # Initialize the client with API key from environment variable
 # Make sure to set SGAI_API_KEY in your environment or .env file
-sgai_client = Client.from_env()
+api_key = os.getenv("SGAI_API_KEY")
+if not api_key:
+    print("❌ Error: SGAI_API_KEY environment variable not set")
+    print("Please either:")
+    print("  1. Set environment variable: export SGAI_API_KEY='your-api-key-here'")
+    print("  2. Create a .env file with: SGAI_API_KEY=your-api-key-here")
+    exit(1)
+
+sgai_client = Client(api_key=api_key)
 
 try:
     # SmartScraper request with infinite scroll

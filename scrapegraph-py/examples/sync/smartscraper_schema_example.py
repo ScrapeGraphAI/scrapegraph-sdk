@@ -1,6 +1,11 @@
+import os
+from dotenv import load_dotenv
 from pydantic import BaseModel, Field
 
 from scrapegraph_py import Client
+
+# Load environment variables from .env file
+load_dotenv()
 
 
 # Define a Pydantic model for the output schema
@@ -10,8 +15,16 @@ class WebpageSchema(BaseModel):
     summary: str = Field(description="A brief summary of the webpage")
 
 
-# Initialize the client
-sgai_client = Client(api_key="your-api-key-here")
+# Initialize the client with API key from environment variable
+api_key = os.getenv("SGAI_API_KEY")
+if not api_key:
+    print("❌ Error: SGAI_API_KEY environment variable not set")
+    print("Please either:")
+    print("  1. Set environment variable: export SGAI_API_KEY='your-api-key-here'")
+    print("  2. Create a .env file with: SGAI_API_KEY=your-api-key-here")
+    exit(1)
+
+sgai_client = Client(api_key=api_key)
 
 # SmartScraper request with output schema
 response = sgai_client.smartscraper(

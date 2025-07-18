@@ -48,6 +48,103 @@ def test_invalid_get_smartscraper_request_id():
     with pytest.raises(ValueError, match="request_id must be a valid UUID"):
         GetSmartScraperRequest(request_id="invalid-uuid")
 
+
+def test_smartscraper_request_with_pagination():
+    """
+    Test SmartScraperRequest with pagination parameter.
+    This test ensures that the total_pages field is properly handled.
+    """
+    # Test with valid pagination
+    request = SmartScraperRequest(
+        user_prompt="Extract product information",
+        website_url="https://example.com/products",
+        total_pages=5
+    )
+    
+    assert request.total_pages == 5
+    
+    # Test model_dump includes pagination
+    output = request.model_dump()
+    assert output["total_pages"] == 5
+    
+    # Test without pagination (default behavior)
+    request_no_pagination = SmartScraperRequest(
+        user_prompt="Extract product information",
+        website_url="https://example.com/products"
+    )
+    
+    assert request_no_pagination.total_pages is None
+    
+    # Test model_dump excludes None pagination
+    output_no_pagination = request_no_pagination.model_dump()
+    assert "total_pages" not in output_no_pagination
+
+
+def test_smartscraper_request_pagination_validation():
+    """
+    Test pagination validation constraints.
+    This test ensures that total_pages is properly validated.
+    """
+    # Test minimum value
+    request = SmartScraperRequest(
+        user_prompt="Extract products",
+        website_url="https://example.com/products",
+        total_pages=1
+    )
+    assert request.total_pages == 1
+    
+    # Test maximum value
+    request = SmartScraperRequest(
+        user_prompt="Extract products",
+        website_url="https://example.com/products",
+        total_pages=10
+    )
+    assert request.total_pages == 10
+    
+    # Test invalid values
+    with pytest.raises(ValidationError):
+        SmartScraperRequest(
+            user_prompt="Extract products",
+            website_url="https://example.com/products",
+            total_pages=0
+        )
+    
+    with pytest.raises(ValidationError):
+        SmartScraperRequest(
+            user_prompt="Extract products",
+            website_url="https://example.com/products",
+            total_pages=11
+        )
+
+
+def test_smartscraper_request_pagination_with_all_features():
+    """
+    Test pagination combined with other SmartScraper features.
+    This test ensures pagination works with output_schema, scrolls, and headers.
+    """
+    headers = {"User-Agent": "test-agent"}
+    
+    request = SmartScraperRequest(
+        user_prompt="Extract all product information",
+        website_url="https://example.com/products",
+        headers=headers,
+        output_schema=DummySchema,
+        number_of_scrolls=5,
+        total_pages=3
+    )
+    
+    assert request.total_pages == 3
+    assert request.number_of_scrolls == 5
+    assert request.headers == headers
+    assert request.output_schema == DummySchema
+    
+    # Test model_dump with all features
+    output = request.model_dump()
+    assert output["total_pages"] == 3
+    assert output["number_of_scrolls"] == 5
+    assert output["headers"] == headers
+    assert isinstance(output["output_schema"], dict)
+
 def test_invalid_url_in_smartscraper_request():
     """
     Test that SmartScraperRequest raises a ValueError when provided with a website_url

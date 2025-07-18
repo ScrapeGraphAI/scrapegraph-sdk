@@ -34,6 +34,11 @@ class SmartScraperRequest(BaseModel):
         description="Number of times to scroll the page (0-100). If None, no scrolling will be performed.",
         example=10
     )
+    total_pages: Optional[conint(ge=1, le=10)] = Field(
+        default=None,
+        description="Number of pages to scrape (1-10). If None, only the first page will be scraped.",
+        example=5
+    )
 
     @model_validator(mode="after")
     def validate_user_prompt(self) -> "SmartScraperRequest":

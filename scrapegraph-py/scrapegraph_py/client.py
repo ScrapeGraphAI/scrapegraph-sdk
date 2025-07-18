@@ -184,8 +184,9 @@ class Client:
         headers: Optional[dict[str, str]] = None,
         output_schema: Optional[BaseModel] = None,
         number_of_scrolls: Optional[int] = None,
+        total_pages: Optional[int] = None,
     ):
-        """Send a smartscraper request"""
+        """Send a smartscraper request with optional pagination support"""
         logger.info("🔍 Starting smartscraper request")
         if website_url:
             logger.debug(f"🌐 URL: {website_url}")
@@ -195,6 +196,8 @@ class Client:
             logger.debug("🔧 Using custom headers")
         if number_of_scrolls is not None:
             logger.debug(f"🔄 Number of scrolls: {number_of_scrolls}")
+        if total_pages is not None:
+            logger.debug(f"📄 Total pages to scrape: {total_pages}")
         logger.debug(f"📝 Prompt: {user_prompt}")
 
         request = SmartScraperRequest(
@@ -204,6 +207,7 @@ class Client:
             user_prompt=user_prompt,
             output_schema=output_schema,
             number_of_scrolls=number_of_scrolls,
+            total_pages=total_pages,
         )
         logger.debug("✅ Request validation passed")
 
