@@ -131,6 +131,65 @@ const numberOfScrolls = 10; // Will scroll 10 times to load more content
 
 The `numberOfScrolls` parameter accepts values between 0 and 100, allowing you to control how many times the page should be scrolled before extraction.
 
+#### Scraping with Cookies
+
+Use cookies for authentication and session management when scraping websites that require login or have user-specific content:
+
+```javascript
+import { smartScraper } from 'scrapegraph-js';
+
+const apiKey = 'your-api-key';
+const url = 'https://example.com/dashboard';
+const prompt = 'Extract user profile information';
+
+// Define cookies for authentication
+const cookies = {
+  session_id: 'abc123def456',
+  auth_token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+  user_preferences: 'dark_mode,usd'
+};
+
+(async () => {
+  try {
+    const response = await smartScraper(apiKey, url, prompt, null, null, null, cookies);
+    console.log(response.result);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+})();
+```
+
+**Common Use Cases:**
+- **E-commerce sites**: User authentication, shopping cart persistence
+- **Social media**: Session management, user preferences
+- **Banking/Financial**: Secure authentication, transaction history
+- **News sites**: User preferences, subscription content
+- **API endpoints**: Authentication tokens, API keys
+
+#### Advanced Scraping with Cookies, Scrolling, and Pagination
+
+Combine cookies with infinite scrolling and pagination for comprehensive data extraction:
+
+```javascript
+import { smartScraper } from 'scrapegraph-js';
+
+const apiKey = 'your-api-key';
+const url = 'https://example.com/feed';
+const prompt = 'Extract all posts from the feed';
+const cookies = { session_token: 'xyz789abc123' };
+const numberOfScrolls = 10; // Scroll 10 times
+const totalPages = 5; // Scrape 5 pages
+
+(async () => {
+  try {
+    const response = await smartScraper(apiKey, url, prompt, null, numberOfScrolls, totalPages, cookies);
+    console.log('Extracted data:', response);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+})();
+```
+
 ### Search Scraping
 
 Search and extract information from multiple web sources using AI.
