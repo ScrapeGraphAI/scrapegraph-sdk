@@ -174,11 +174,12 @@ class AsyncClient:
         website_url: Optional[str] = None,
         website_html: Optional[str] = None,
         headers: Optional[dict[str, str]] = None,
+        cookies: Optional[Dict[str, str]] = None,
         output_schema: Optional[BaseModel] = None,
         number_of_scrolls: Optional[int] = None,
         total_pages: Optional[int] = None,
     ):
-        """Send a smartscraper request with optional pagination support"""
+        """Send a smartscraper request with optional pagination support and cookies"""
         logger.info("🔍 Starting smartscraper request")
         if website_url:
             logger.debug(f"🌐 URL: {website_url}")
@@ -186,6 +187,8 @@ class AsyncClient:
             logger.debug("📄 Using provided HTML content")
         if headers:
             logger.debug("🔧 Using custom headers")
+        if cookies:
+            logger.debug("🍪 Using cookies for authentication/session management")
         if number_of_scrolls is not None:
             logger.debug(f"🔄 Number of scrolls: {number_of_scrolls}")
         if total_pages is not None:
@@ -196,6 +199,7 @@ class AsyncClient:
             website_url=website_url,
             website_html=website_html,
             headers=headers,
+            cookies=cookies,
             user_prompt=user_prompt,
             output_schema=output_schema,
             number_of_scrolls=number_of_scrolls,

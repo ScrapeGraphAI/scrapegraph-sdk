@@ -2,7 +2,7 @@
   "name": "scrapegraph-js",
   "author": "ScrapeGraphAI",
   "version": "0.1.1",
-  "description": "Scrape and extract structured data from a webpage using ScrapeGraphAI's APIs.",
+  "description": "Scrape and extract structured data from a webpage using ScrapeGraphAI's APIs. Supports cookies for authentication, infinite scrolling, and pagination.",
   "repository": {
     "type": "git",
     "url": "https://github.com/ScrapeGraphAI/scrapegraph-sdk",
@@ -22,7 +22,12 @@
     "gpt-3",
     "gpt-4",
     "llm",
-    "ai"
+    "ai",
+    "cookies",
+    "authentication",
+    "session-management",
+    "infinite-scroll",
+    "pagination"
   ],
   "main": "index.js",
   "module": "index.js",
