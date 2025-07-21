@@ -1,3 +1,11 @@
+## [1.16.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.15.0...v1.16.0) (2025-07-21)
+
+
+### Features
+
+* add cookies integration ([043d3b3](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/043d3b3284e8d89c434cc86f3e4f2f26b2b2a1b7))
+* add js ([767f810](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/767f81018d7060043bcd4420446a57acabff7bf7))
+
 ## [1.15.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.14.2...v1.15.0) (2025-07-18)
 
 
