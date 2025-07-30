@@ -1,3 +1,10 @@
+## [1.17.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.16.0...v1.17.0) (2025-07-30)
+
+
+### Features
+
+* update crawl integrarion ([f1e9efe](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/f1e9efe20107ab15496343a5d3de19ff56946b55))
+
 ## [1.16.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.15.0...v1.16.0) (2025-07-21)
 
 
