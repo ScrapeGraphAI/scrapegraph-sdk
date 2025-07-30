@@ -37,8 +37,8 @@ class CrawlRequest(BaseModel):
         default=True,
         description="Whether to only crawl pages from the same domain"
     )
-    batch_size: conint(ge=1, le=10) = Field(
-        default=1,
+    batch_size: Optional[conint(ge=1, le=10)] = Field(
+        default=None,
         description="Batch size for processing pages (1-10)"
     )
 
@@ -67,6 +67,12 @@ class CrawlRequest(BaseModel):
             raise ValueError("Data schema must be a dictionary")
         if not self.data_schema:
             raise ValueError("Data schema cannot be empty")
+        return self
+
+    @model_validator(mode="after")
+    def validate_batch_size(self) -> "CrawlRequest":
+        if self.batch_size is not None and (self.batch_size < 1 or self.batch_size > 10):
+            raise ValueError("Batch size must be between 1 and 10")
         return self
 
 

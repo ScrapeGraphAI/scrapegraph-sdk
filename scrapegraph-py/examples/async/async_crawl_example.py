@@ -1,5 +1,5 @@
 """
-Example demonstrating how to use the ScrapeGraphAI /v1/crawl/ API endpoint with a custom schema using the async client.
+Example demonstrating how to use the ScrapeGraphAI /v1/crawl/ API endpoint using the async client.
 
 Requirements:
 - Python 3.7+
@@ -31,59 +31,28 @@ async def main():
         print("SGAI_API_KEY=your_api_key_here")
         return
 
-    # Example schema (from your curl command)
-    schema: Dict[str, Any] = {
-        "$schema": "http://json-schema.org/draft-07/schema#",
-        "title": "ScrapeGraphAI Website Content",
+    # Simple schema for founders' information
+    schema = {
         "type": "object",
         "properties": {
-            "company": {
-                "type": "object",
-                "properties": {
-                    "name": {"type": "string"},
-                    "description": {"type": "string"},
-                    "features": {"type": "array", "items": {"type": "string"}},
-                    "contact_email": {"type": "string", "format": "email"},
-                    "social_links": {
-                        "type": "object",
-                        "properties": {
-                            "github": {"type": "string", "format": "uri"},
-                            "linkedin": {"type": "string", "format": "uri"},
-                            "twitter": {"type": "string", "format": "uri"},
-                        },
-                        "additionalProperties": False,
-                    },
-                },
-                "required": ["name", "description"],
-            },
-            "services": {
+            "founders": {
                 "type": "array",
                 "items": {
                     "type": "object",
                     "properties": {
-                        "service_name": {"type": "string"},
-                        "description": {"type": "string"},
-                        "features": {"type": "array", "items": {"type": "string"}},
-                    },
-                    "required": ["service_name", "description"],
-                },
-            },
-            "legal": {
-                "type": "object",
-                "properties": {
-                    "privacy_policy": {"type": "string"},
-                    "terms_of_service": {"type": "string"},
-                },
-                "required": ["privacy_policy", "terms_of_service"],
-            },
-        },
-        "required": ["company", "services", "legal"],
+                        "name": {"type": "string"},
+                        "title": {"type": "string"},
+                        "bio": {"type": "string"},
+                        "linkedin": {"type": "string"},
+                        "twitter": {"type": "string"}
+                    }
+                }
+            }
+        }
     }
 
-    url = "https://scrapegraphai.com/"
-    prompt = (
-        "What does the company do? and I need text content from there privacy and terms"
-    )
+    url = "https://scrapegraphai.com"
+    prompt = "extract the founders'infos"
 
     try:
         # Initialize the async client
@@ -99,7 +68,7 @@ async def main():
                 depth=2,
                 max_pages=2,
                 same_domain_only=True,
-                batch_size=1,
+                # batch_size is optional and will be excluded if not provided
             )
             execution_time = time.time() - start_time
             print(f"POST /v1/crawl/ execution time: {execution_time:.2f} seconds")

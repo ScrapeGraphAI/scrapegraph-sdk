@@ -322,7 +322,7 @@ class Client:
         depth: int = 2,
         max_pages: int = 2,
         same_domain_only: bool = True,
-        batch_size: int = 1,
+        batch_size: Optional[int] = None,
     ):
         """Send a crawl request"""
         logger.info("🔍 Starting crawl request")
@@ -333,22 +333,30 @@ class Client:
         logger.debug(f"🔍 Depth: {depth}")
         logger.debug(f"📄 Max pages: {max_pages}")
         logger.debug(f"🏠 Same domain only: {same_domain_only}")
-        logger.debug(f"📦 Batch size: {batch_size}")
+        if batch_size is not None:
+            logger.debug(f"📦 Batch size: {batch_size}")
 
-        request = CrawlRequest(
-            url=url,
-            prompt=prompt,
-            data_schema=data_schema,
-            cache_website=cache_website,
-            depth=depth,
-            max_pages=max_pages,
-            same_domain_only=same_domain_only,
-            batch_size=batch_size,
-        )
+        # Build request data, excluding batch_size if not provided
+        request_data = {
+            "url": url,
+            "prompt": prompt,
+            "data_schema": data_schema,
+            "cache_website": cache_website,
+            "depth": depth,
+            "max_pages": max_pages,
+            "same_domain_only": same_domain_only,
+        }
+        
+        if batch_size is not None:
+            request_data["batch_size"] = batch_size
+
+        request = CrawlRequest(**request_data)
         logger.debug("✅ Request validation passed")
 
+        # Serialize the request, excluding None values
+        request_json = request.model_dump(exclude_none=True)
         result = self._make_request(
-            "POST", f"{API_BASE_URL}/crawl", json=request.model_dump()
+            "POST", f"{API_BASE_URL}/crawl", json=request_json
         )
         logger.info("✨ Crawl request completed successfully")
         return result
