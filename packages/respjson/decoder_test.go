@@ -3,8 +3,8 @@ package respjson_test
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/stainless-sdks/scrapegraphai-sdk-go/internal/apijson"
-	rj "github.com/stainless-sdks/scrapegraphai-sdk-go/packages/respjson"
+	"github.com/ScrapeGraphAI/scrapegraph-sdk/internal/apijson"
+	rj "github.com/ScrapeGraphAI/scrapegraph-sdk/packages/respjson"
 	"reflect"
 	"testing"
 )

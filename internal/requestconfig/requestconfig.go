@@ -18,10 +18,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/stainless-sdks/scrapegraphai-sdk-go/internal"
-	"github.com/stainless-sdks/scrapegraphai-sdk-go/internal/apierror"
-	"github.com/stainless-sdks/scrapegraphai-sdk-go/internal/apiform"
-	"github.com/stainless-sdks/scrapegraphai-sdk-go/internal/apiquery"
+	"github.com/ScrapeGraphAI/scrapegraph-sdk/internal"
+	"github.com/ScrapeGraphAI/scrapegraph-sdk/internal/apierror"
+	"github.com/ScrapeGraphAI/scrapegraph-sdk/internal/apiform"
+	"github.com/ScrapeGraphAI/scrapegraph-sdk/internal/apiquery"
 )
 
 func getDefaultHeaders() map[string]string {

@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/stainless-sdks/scrapegraphai-sdk-go/internal/requestconfig"
-	"github.com/stainless-sdks/scrapegraphai-sdk-go/option"
+	"github.com/ScrapeGraphAI/scrapegraph-sdk/internal/requestconfig"
+	"github.com/ScrapeGraphAI/scrapegraph-sdk/option"
 )
 
 // Client creates a struct with services and top level methods that help with

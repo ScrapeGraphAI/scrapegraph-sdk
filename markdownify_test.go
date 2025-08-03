@@ -8,9 +8,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/scrapegraphai-sdk-go"
-	"github.com/stainless-sdks/scrapegraphai-sdk-go/internal/testutil"
-	"github.com/stainless-sdks/scrapegraphai-sdk-go/option"
+	"github.com/ScrapeGraphAI/scrapegraph-sdk"
+	"github.com/ScrapeGraphAI/scrapegraph-sdk/internal/testutil"
+	"github.com/ScrapeGraphAI/scrapegraph-sdk/option"
 )
 
 func TestMarkdownifyNew(t *testing.T) {

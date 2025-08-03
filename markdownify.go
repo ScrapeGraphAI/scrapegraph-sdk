@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/stainless-sdks/scrapegraphai-sdk-go/internal/requestconfig"
-	"github.com/stainless-sdks/scrapegraphai-sdk-go/option"
+	"github.com/ScrapeGraphAI/scrapegraph-sdk/internal/requestconfig"
+	"github.com/ScrapeGraphAI/scrapegraph-sdk/option"
 )
 
 // MarkdownifyService contains methods and other services that help with

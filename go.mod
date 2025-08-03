@@ -1,4 +1,4 @@
-module github.com/stainless-sdks/scrapegraphai-sdk-go
+module github.com/ScrapeGraphAI/scrapegraph-sdk
 
 go 1.21
 

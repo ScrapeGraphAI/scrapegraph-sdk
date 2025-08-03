@@ -1,4 +1,4 @@
 configured_endpoints: 13
 openapi_spec_url: https://storage.googleapis.com/stainless-sdk-openapi-specs/scrapegraphai%2Fscrapegraphai-sdk-1bb59000acb1297b8bbff37e8e34ed4751b9708a050695796e64ed3a8900ceef.yml
 openapi_spec_hash: 141d244ff26ff28ab56901a19fb46347
-config_hash: 00948c20ba1a1093ddc559e83a9c86a3
+config_hash: 841efa635faf188bb88c338627bf9658

@@ -1,8 +1,8 @@
 package sentinel_test
 
 import (
-	"github.com/stainless-sdks/scrapegraphai-sdk-go/internal/encoding/json/sentinel"
-	"github.com/stainless-sdks/scrapegraphai-sdk-go/packages/param"
+	"github.com/ScrapeGraphAI/scrapegraph-sdk/internal/encoding/json/sentinel"
+	"github.com/ScrapeGraphAI/scrapegraph-sdk/packages/param"
 	"reflect"
 	"slices"
 	"testing"

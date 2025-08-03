@@ -3,7 +3,7 @@ package param
 import (
 	"encoding/json"
 	"fmt"
-	shimjson "github.com/stainless-sdks/scrapegraphai-sdk-go/internal/encoding/json"
+	shimjson "github.com/ScrapeGraphAI/scrapegraph-sdk/internal/encoding/json"
 	"time"
 )
 

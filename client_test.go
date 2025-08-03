@@ -10,9 +10,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stainless-sdks/scrapegraphai-sdk-go"
-	"github.com/stainless-sdks/scrapegraphai-sdk-go/internal"
-	"github.com/stainless-sdks/scrapegraphai-sdk-go/option"
+	"github.com/ScrapeGraphAI/scrapegraph-sdk"
+	"github.com/ScrapeGraphAI/scrapegraph-sdk/internal"
+	"github.com/ScrapeGraphAI/scrapegraph-sdk/option"
 )
 
 type closureTransport struct {

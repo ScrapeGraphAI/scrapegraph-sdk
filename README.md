@@ -1,6 +1,6 @@
 # Scrapegraphai SDK Go API Library
 
-<a href="https://pkg.go.dev/github.com/stainless-sdks/scrapegraphai-sdk-go"><img src="https://pkg.go.dev/badge/github.com/stainless-sdks/scrapegraphai-sdk-go.svg" alt="Go Reference"></a>
+<a href="https://pkg.go.dev/github.com/ScrapeGraphAI/scrapegraph-sdk"><img src="https://pkg.go.dev/badge/github.com/ScrapeGraphAI/scrapegraph-sdk.svg" alt="Go Reference"></a>
 
 The Scrapegraphai SDK Go library provides convenient access to the Scrapegraphai SDK REST API
 from applications written in Go.
@@ -9,17 +9,25 @@ It is generated with [Stainless](https://www.stainless.com/).
 
 ## Installation
 
+<!-- x-release-please-start-version -->
+
 ```go
 import (
-	"github.com/stainless-sdks/scrapegraphai-sdk-go" // imported as scrapegraphaisdk
+	"github.com/ScrapeGraphAI/scrapegraph-sdk" // imported as scrapegraphaisdk
 )
 ```
 
+<!-- x-release-please-end -->
+
 Or to pin the version:
 
+<!-- x-release-please-start-version -->
+
 ```sh
-go get -u 'github.com/stainless-sdks/scrapegraphai-sdk-go@v0.0.1-alpha.0'
+go get -u 'github.com/ScrapeGraphAI/scrapegraph-sdk@v0.0.1-alpha.0'
 ```
+
+<!-- x-release-please-end -->
 
 ## Requirements
 
@@ -35,8 +43,8 @@ package main
 import (
 	"context"
 
-	"github.com/stainless-sdks/scrapegraphai-sdk-go"
-	"github.com/stainless-sdks/scrapegraphai-sdk-go/option"
+	"github.com/ScrapeGraphAI/scrapegraph-sdk"
+	"github.com/ScrapeGraphAI/scrapegraph-sdk/option"
 )
 
 func main() {
@@ -262,7 +270,7 @@ client.Credits.List(context.TODO(), ...,
 
 The request option `option.WithDebugLog(nil)` may be helpful while debugging.
 
-See the [full list of request options](https://pkg.go.dev/github.com/stainless-sdks/scrapegraphai-sdk-go/option).
+See the [full list of request options](https://pkg.go.dev/github.com/ScrapeGraphAI/scrapegraph-sdk/option).
 
 ### Pagination
 
@@ -459,7 +467,7 @@ This package generally follows [SemVer](https://semver.org/spec/v2.0.0.html) con
 
 We take backwards-compatibility seriously and work hard to ensure you can rely on a smooth upgrade experience.
 
-We are keen for your feedback; please open an [issue](https://www.github.com/stainless-sdks/scrapegraphai-sdk-go/issues) with questions, bugs, or suggestions.
+We are keen for your feedback; please open an [issue](https://www.github.com/ScrapeGraphAI/scrapegraph-sdk/issues) with questions, bugs, or suggestions.
 
 ## Contributing
 
