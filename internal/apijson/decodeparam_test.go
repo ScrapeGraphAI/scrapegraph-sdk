@@ -3,8 +3,8 @@ package apijson_test
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/stainless-sdks/scrapegraphai-sdk-go/internal/apijson"
-	"github.com/stainless-sdks/scrapegraphai-sdk-go/packages/param"
+	"github.com/ScrapeGraphAI/scrapegraph-sdk/internal/apijson"
+	"github.com/ScrapeGraphAI/scrapegraph-sdk/packages/param"
 	"reflect"
 	"testing"
 )

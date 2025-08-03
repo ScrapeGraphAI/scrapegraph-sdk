@@ -1,8 +1,8 @@
 package paramutil
 
 import (
-	"github.com/stainless-sdks/scrapegraphai-sdk-go/packages/param"
-	"github.com/stainless-sdks/scrapegraphai-sdk-go/packages/respjson"
+	"github.com/ScrapeGraphAI/scrapegraph-sdk/packages/param"
+	"github.com/ScrapeGraphAI/scrapegraph-sdk/packages/respjson"
 )
 
 func AddrIfPresent[T comparable](v param.Opt[T]) *T {

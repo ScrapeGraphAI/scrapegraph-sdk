@@ -2,7 +2,7 @@ package apijson
 
 import (
 	"errors"
-	"github.com/stainless-sdks/scrapegraphai-sdk-go/packages/param"
+	"github.com/ScrapeGraphAI/scrapegraph-sdk/packages/param"
 	"reflect"
 
 	"github.com/tidwall/gjson"

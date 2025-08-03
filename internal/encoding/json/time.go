@@ -2,7 +2,7 @@
 package json
 
 import (
-	"github.com/stainless-sdks/scrapegraphai-sdk-go/internal/encoding/json/shims"
+	"github.com/ScrapeGraphAI/scrapegraph-sdk/internal/encoding/json/shims"
 	"reflect"
 	"time"
 )

@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"time"
 
-	shimjson "github.com/stainless-sdks/scrapegraphai-sdk-go/internal/encoding/json"
+	shimjson "github.com/ScrapeGraphAI/scrapegraph-sdk/internal/encoding/json"
 
 	"github.com/tidwall/sjson"
 )

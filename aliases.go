@@ -3,8 +3,8 @@
 package scrapegraphaisdk
 
 import (
-	"github.com/stainless-sdks/scrapegraphai-sdk-go/internal/apierror"
-	"github.com/stainless-sdks/scrapegraphai-sdk-go/packages/param"
+	"github.com/ScrapeGraphAI/scrapegraph-sdk/internal/apierror"
+	"github.com/ScrapeGraphAI/scrapegraph-sdk/packages/param"
 )
 
 // aliased to make [param.APIUnion] private when embedding

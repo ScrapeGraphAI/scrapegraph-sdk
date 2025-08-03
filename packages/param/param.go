@@ -2,7 +2,7 @@ package param
 
 import (
 	"encoding/json"
-	"github.com/stainless-sdks/scrapegraphai-sdk-go/internal/encoding/json/sentinel"
+	"github.com/ScrapeGraphAI/scrapegraph-sdk/internal/encoding/json/sentinel"
 	"reflect"
 )
 

@@ -1,7 +1,7 @@
 package apijson
 
 import (
-	"github.com/stainless-sdks/scrapegraphai-sdk-go/packages/respjson"
+	"github.com/ScrapeGraphAI/scrapegraph-sdk/packages/respjson"
 	"reflect"
 )
 

@@ -2,7 +2,7 @@ package apiform
 
 import (
 	"bytes"
-	"github.com/stainless-sdks/scrapegraphai-sdk-go/packages/param"
+	"github.com/ScrapeGraphAI/scrapegraph-sdk/packages/param"
 	"io"
 	"mime/multipart"
 	"strings"
