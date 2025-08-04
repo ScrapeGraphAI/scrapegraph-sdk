@@ -1,0 +1,111 @@
+name: Test Python SDK
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('**/pyproject.toml') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-${{ matrix.python-version }}-
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest pytest-asyncio responses
+        cd scrapegraph-py
+        pip install -e .
+    
+    - name: Run tests with coverage
+      run: |
+        cd scrapegraph-py
+        python -m pytest tests/ -v --cov=scrapegraph_py --cov-report=xml --cov-report=term-missing
+        
+    - name: Run real API tests (if API key available)
+      run: |
+        cd scrapegraph-py
+        if [ -n "$SGAI_API_KEY" ]; then
+          python -m pytest tests/test_real_apis.py -v --tb=short
+        else
+          echo "SGAI_API_KEY not set, skipping real API tests"
+        fi
+      env:
+        SGAI_API_KEY: ${{ secrets.SGAI_API_KEY }}
+    
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./scrapegraph-py/coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: false
+
+  lint:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8 black isort mypy
+        cd scrapegraph-py
+        pip install -e .
+    
+    - name: Run linting
+      run: |
+        cd scrapegraph-py
+        flake8 scrapegraph_py/ tests/ --max-line-length=88 --extend-ignore=E203,W503
+        black --check scrapegraph_py/ tests/
+        isort --check-only scrapegraph_py/ tests/
+        mypy scrapegraph_py/ --ignore-missing-imports
+
+  security:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install bandit safety
+        cd scrapegraph-py
+        pip install -e .
+    
+    - name: Run security checks
+      run: |
+        cd scrapegraph-py
+        bandit -r scrapegraph_py/ -f json -o bandit-report.json || true
+        safety check --json --output safety-report.json || true 
