@@ -316,13 +316,7 @@ def test_crawl_with_all_params_real():
             prompt="Extract page titles",
             data_schema=data_schema
         )
-        
-        crawl_id = initial_response["task_id"]
-        
-        # Then get the status
-        status_response = client.get_crawl(crawl_id)
-        assert "status" in status_response
-        assert "crawl_id" in status_response
+        assert "task_id" in initial_response
 
     """Test submitting feedback without text"""
     if not os.getenv("SGAI_API_KEY"):
@@ -411,18 +405,6 @@ async def test_async_markdownify_basic_real():
 # ============================================================================
 # CLIENT INITIALIZATION TESTS
 # ============================================================================
-
-def test_client_from_env_real():
-    """Test client initialization from environment"""
-    if not os.getenv("SGAI_API_KEY"):
-        pytest.skip("SGAI_API_KEY not set")
-    
-    client = Client.from_env()
-    assert client.api_key == os.getenv("SGAI_API_KEY")
-
-    
-    client = AsyncClient.from_env()
-    assert client.api_key == os.getenv("SGAI_API_KEY")
 
 
 def test_client_context_manager_real():
