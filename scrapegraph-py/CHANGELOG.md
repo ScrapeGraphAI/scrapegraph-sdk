@@ -1,3 +1,12 @@
+## [1.18.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.17.0...v1.18.0) (2025-08-05)
+
+
+### Features
+
+* add crawling markdown ([e5d573b](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/e5d573b98c4ecbfeaec794f7bbfb89f429d4da26))
+* add js files ([1a9053e](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/1a9053e3d702e2c447c14d8142a37dc382f60cd0))
+* add tests ([7a50122](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/7a50122230e77a1e319534bebc6ea28deb7eed5d))
+
 ## [1.17.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.16.0...v1.17.0) (2025-07-30)
 
 
