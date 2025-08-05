@@ -21,6 +21,8 @@ pip install scrapegraph-py
 ## 🚀 Features
 
 - 🤖 AI-powered web scraping and search
+- 🕷️ Smart crawling with both AI extraction and markdown conversion modes
+- 💰 Cost-effective markdown conversion (80% savings vs AI mode)
 - 🔄 Both sync and async clients
 - 📊 Structured output with Pydantic schemas
 - 🔍 Detailed logging
@@ -218,6 +220,95 @@ response = client.markdownify(
 
 print(response)
 ```
+
+### 🕷️ Crawler
+
+Intelligently crawl and extract data from multiple pages with support for both AI extraction and markdown conversion modes.
+
+#### AI Extraction Mode (Default)
+Extract structured data from multiple pages using AI:
+
+```python
+from scrapegraph_py import Client
+
+client = Client(api_key="your-api-key-here")
+
+# Define the data schema for extraction
+schema = {
+    "type": "object",
+    "properties": {
+        "company_name": {"type": "string"},
+        "founders": {
+            "type": "array",
+            "items": {"type": "string"}
+        },
+        "description": {"type": "string"}
+    }
+}
+
+response = client.crawl(
+    url="https://scrapegraphai.com",
+    prompt="extract the company information and founders",
+    data_schema=schema,
+    depth=2,
+    max_pages=5,
+    same_domain_only=True
+)
+
+# Poll for results (crawl is asynchronous)
+crawl_id = response.get("crawl_id")
+result = client.get_crawl(crawl_id)
+```
+
+#### Markdown Conversion Mode (Cost-Effective)
+Convert pages to clean markdown without AI processing (80% cheaper):
+
+```python
+from scrapegraph_py import Client
+
+client = Client(api_key="your-api-key-here")
+
+response = client.crawl(
+    url="https://scrapegraphai.com",
+    extraction_mode=False,  # Markdown conversion mode
+    depth=2,
+    max_pages=5,
+    same_domain_only=True,
+    sitemap=True  # Use sitemap for better page discovery
+)
+
+# Poll for results
+crawl_id = response.get("crawl_id")
+result = client.get_crawl(crawl_id)
+
+# Access markdown content
+for page in result["result"]["pages"]:
+    print(f"URL: {page['url']}")
+    print(f"Markdown: {page['markdown']}")
+    print(f"Metadata: {page['metadata']}")
+```
+
+<details>
+<summary>🔧 Crawl Parameters</summary>
+
+- **url** (required): Starting URL for the crawl
+- **extraction_mode** (default: True): 
+  - `True` = AI extraction mode (requires prompt and data_schema)
+  - `False` = Markdown conversion mode (no AI, 80% cheaper)
+- **prompt** (required for AI mode): AI prompt to guide data extraction
+- **data_schema** (required for AI mode): JSON schema defining extracted data structure
+- **depth** (default: 2): Maximum crawl depth (1-10)
+- **max_pages** (default: 2): Maximum pages to crawl (1-100)
+- **same_domain_only** (default: True): Only crawl pages from the same domain
+- **sitemap** (default: False): Use sitemap for better page discovery
+- **cache_website** (default: True): Cache website content
+- **batch_size** (optional): Batch size for processing pages (1-10)
+
+**Cost Comparison:**
+- AI Extraction Mode: ~10 credits per page
+- Markdown Conversion Mode: ~2 credits per page (80% savings!)
+
+</details>
 
 ## ⚡ Async Support
 
