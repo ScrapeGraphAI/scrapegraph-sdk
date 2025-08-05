@@ -4,7 +4,6 @@ Mocked API Tests for ScrapeGraph Python SDK
 These tests use mocked API responses for faster and more reliable testing
 """
 
-import os
 from unittest.mock import patch
 
 import pytest
@@ -65,7 +64,7 @@ MOCK_FEEDBACK_RESPONSE = {
     "message": "Feedback submitted successfully"
 }
 
-api_key = os.getenv("SGAI_API_KEY")
+api_key = "sgai-c0811976-dac7-441c-acb6-7cd72643449c" # its an invalid api key
 # ============================================================================
 # SYNC CLIENT TESTS
 # ============================================================================
