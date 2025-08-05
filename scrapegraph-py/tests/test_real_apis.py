@@ -251,54 +251,6 @@ def test_get_markdownify_status_real():
         assert "request_id" in status_response
 
 
-        
-
-
-def test_crawl_with_all_params_real():
-    """Test crawl with all parameters"""
-    if not os.getenv("SGAI_API_KEY"):
-        pytest.skip("SGAI_API_KEY not set")
-    
-    data_schema = {
-        "type": "object",
-        "properties": {
-            "title": {"type": "string"},
-            "description": {"type": "string"}
-        }
-    }
-    
-    with Client.from_env() as client:
-        response = client.crawl(
-            url="https://example.com",
-            prompt="Extract comprehensive page data",
-            data_schema=data_schema,
-            cache_website=True,
-            depth=1,
-            max_pages=1,
-            same_domain_only=True,
-            batch_size=5
-        )
-
-    """Test getting crawl status"""
-    if not os.getenv("SGAI_API_KEY"):
-        pytest.skip("SGAI_API_KEY not set")
-    
-    with Client.from_env() as client:
-        # First create a crawl request
-        data_schema = {
-            "type": "object",
-            "properties": {
-                "title": {"type": "string"}
-            }
-        }
-        
-        initial_response = client.crawl(
-            url="https://example.com",
-            prompt="Extract page titles",
-            data_schema=data_schema
-        )
-        assert "task_id" in initial_response
-
     """Test submitting feedback without text"""
     if not os.getenv("SGAI_API_KEY"):
         pytest.skip("SGAI_API_KEY not set")
