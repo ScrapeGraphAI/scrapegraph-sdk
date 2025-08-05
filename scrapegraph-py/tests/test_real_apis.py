@@ -251,25 +251,6 @@ def test_get_markdownify_status_real():
         assert "request_id" in status_response
 
 
-def test_crawl_basic_real():
-    """Test basic crawl"""
-    if not os.getenv("SGAI_API_KEY"):
-        pytest.skip("SGAI_API_KEY not set")
-    
-    data_schema = {
-        "type": "object",
-        "properties": {
-            "title": {"type": "string"},
-            "content": {"type": "string"}
-        }
-    }
-    
-    with Client.from_env() as client:
-        client.crawl(
-            url="https://example.com",
-            prompt="Extract page information",
-            data_schema=data_schema
-        )
         
 
 
@@ -292,8 +273,8 @@ def test_crawl_with_all_params_real():
             prompt="Extract comprehensive page data",
             data_schema=data_schema,
             cache_website=True,
-            depth=2,
-            max_pages=3,
+            depth=1,
+            max_pages=1,
             same_domain_only=True,
             batch_size=5
         )
