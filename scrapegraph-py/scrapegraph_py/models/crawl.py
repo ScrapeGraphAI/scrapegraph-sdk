@@ -12,14 +12,18 @@ class CrawlRequest(BaseModel):
         example="https://scrapegraphai.com/",
         description="The starting URL for the crawl"
     )
-    prompt: str = Field(
-        ...,
-        example="What does the company do? and I need text content from there privacy and terms",
-        description="The prompt to guide the crawl and extraction"
+    extraction_mode: bool = Field(
+        default=True,
+        description="True for AI extraction mode, False for markdown conversion mode (no AI/LLM processing)"
     )
-    data_schema: Dict[str, Any] = Field(
-        ...,
-        description="JSON schema defining the structure of the extracted data"
+    prompt: Optional[str] = Field(
+        default=None,
+        example="What does the company do? and I need text content from there privacy and terms",
+        description="The prompt to guide the crawl and extraction (required when extraction_mode=True)"
+    )
+    data_schema: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="JSON schema defining the structure of the extracted data (required when extraction_mode=True)"
     )
     cache_website: bool = Field(
         default=True,
@@ -41,6 +45,10 @@ class CrawlRequest(BaseModel):
         default=None,
         description="Batch size for processing pages (1-10)"
     )
+    sitemap: bool = Field(
+        default=False,
+        description="Whether to use sitemap for better page discovery"
+    )
 
     @model_validator(mode="after")
     def validate_url(self) -> "CrawlRequest":
@@ -54,19 +62,30 @@ class CrawlRequest(BaseModel):
         return self
 
     @model_validator(mode="after")
-    def validate_prompt(self) -> "CrawlRequest":
-        if not self.prompt.strip():
-            raise ValueError("Prompt cannot be empty")
-        if not any(c.isalnum() for c in self.prompt):
-            raise ValueError("Prompt must contain valid content")
-        return self
-
-    @model_validator(mode="after")
-    def validate_data_schema(self) -> "CrawlRequest":
-        if not isinstance(self.data_schema, dict):
-            raise ValueError("Data schema must be a dictionary")
-        if not self.data_schema:
-            raise ValueError("Data schema cannot be empty")
+    def validate_extraction_mode_requirements(self) -> "CrawlRequest":
+        """Validate requirements based on extraction mode"""
+        if self.extraction_mode:
+            # AI extraction mode - require prompt and data_schema
+            if not self.prompt:
+                raise ValueError("Prompt is required when extraction_mode=True")
+            if not self.prompt.strip():
+                raise ValueError("Prompt cannot be empty")
+            if not any(c.isalnum() for c in self.prompt):
+                raise ValueError("Prompt must contain valid content")
+            
+            if not self.data_schema:
+                raise ValueError("Data schema is required when extraction_mode=True")
+            if not isinstance(self.data_schema, dict):
+                raise ValueError("Data schema must be a dictionary")
+            if not self.data_schema:
+                raise ValueError("Data schema cannot be empty")
+        else:
+            # Markdown conversion mode - prompt and data_schema should be None
+            if self.prompt is not None:
+                raise ValueError("Prompt should not be provided when extraction_mode=False (markdown mode)")
+            if self.data_schema is not None:
+                raise ValueError("Data schema should not be provided when extraction_mode=False (markdown mode)")
+        
         return self
 
     @model_validator(mode="after")

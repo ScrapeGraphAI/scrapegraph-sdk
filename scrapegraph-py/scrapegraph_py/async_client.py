@@ -313,37 +313,49 @@ class AsyncClient:
     async def crawl(
         self,
         url: str,
-        prompt: str,
-        data_schema: Dict[str, Any],
+        prompt: Optional[str] = None,
+        data_schema: Optional[Dict[str, Any]] = None,
+        extraction_mode: bool = True,
         cache_website: bool = True,
         depth: int = 2,
         max_pages: int = 2,
         same_domain_only: bool = True,
         batch_size: Optional[int] = None,
+        sitemap: bool = False,
     ):
-        """Send a crawl request"""
+        """Send a crawl request with support for both AI extraction and markdown conversion modes"""
         logger.info("🔍 Starting crawl request")
         logger.debug(f"🌐 URL: {url}")
-        logger.debug(f"📝 Prompt: {prompt}")
-        logger.debug(f"📊 Schema provided: {bool(data_schema)}")
+        logger.debug(f"🤖 Extraction mode: {'AI' if extraction_mode else 'Markdown conversion'}")
+        if extraction_mode:
+            logger.debug(f"📝 Prompt: {prompt}")
+            logger.debug(f"📊 Schema provided: {bool(data_schema)}")
+        else:
+            logger.debug("📄 Markdown conversion mode - no AI processing, 2 credits per page")
         logger.debug(f"💾 Cache website: {cache_website}")
         logger.debug(f"🔍 Depth: {depth}")
         logger.debug(f"📄 Max pages: {max_pages}")
         logger.debug(f"🏠 Same domain only: {same_domain_only}")
+        logger.debug(f"🗺️ Use sitemap: {sitemap}")
         if batch_size is not None:
             logger.debug(f"📦 Batch size: {batch_size}")
 
-        # Build request data, excluding batch_size if not provided
+        # Build request data, excluding None values
         request_data = {
             "url": url,
-            "prompt": prompt,
-            "data_schema": data_schema,
+            "extraction_mode": extraction_mode,
             "cache_website": cache_website,
             "depth": depth,
             "max_pages": max_pages,
             "same_domain_only": same_domain_only,
+            "sitemap": sitemap,
         }
         
+        # Add optional parameters only if provided
+        if prompt is not None:
+            request_data["prompt"] = prompt
+        if data_schema is not None:
+            request_data["data_schema"] = data_schema
         if batch_size is not None:
             request_data["batch_size"] = batch_size
 

@@ -417,7 +417,7 @@ def test_crawl(mock_api_key):
         response = client.crawl(
             url="https://example.com",
             prompt="Extract company information",
-            schema=schema,
+            data_schema=schema,
             cache_website=True,
             depth=2,
             max_pages=5,
@@ -455,7 +455,7 @@ def test_crawl_with_minimal_params(mock_api_key):
         response = client.crawl(
             url="https://example.com",
             prompt="Extract company information",
-            schema=schema,
+            data_schema=schema,
         )
         assert response["status"] == "processing"
         assert "id" in response
@@ -496,3 +496,57 @@ def test_get_crawl(mock_api_key, mock_uuid):
         assert response["id"] == mock_uuid
         assert "result" in response
         assert "llm_result" in response["result"]
+
+
+@responses.activate
+def test_crawl_markdown_mode(mock_api_key):
+    """Test crawl in markdown conversion mode (no AI processing)"""
+    # Mock the API response
+    responses.add(
+        responses.POST,
+        "https://api.scrapegraphai.com/v1/crawl",
+        json={
+            "id": str(uuid4()),
+            "status": "processing",
+            "message": "Markdown crawl job started",
+        },
+    )
+
+    with Client(api_key=mock_api_key) as client:
+        response = client.crawl(
+            url="https://example.com",
+            extraction_mode=False,  # Markdown conversion mode
+            depth=2,
+            max_pages=3,
+            same_domain_only=True,
+            sitemap=True,
+        )
+        assert response["status"] == "processing"
+        assert "id" in response
+
+
+@responses.activate  
+def test_crawl_markdown_mode_validation(mock_api_key):
+    """Test that markdown mode rejects prompt and data_schema parameters"""
+    with Client(api_key=mock_api_key) as client:
+        # Should raise validation error when prompt is provided in markdown mode
+        try:
+            client.crawl(
+                url="https://example.com",
+                extraction_mode=False,
+                prompt="This should not be allowed",
+            )
+            assert False, "Should have raised validation error"
+        except Exception as e:
+            assert "Prompt should not be provided when extraction_mode=False" in str(e)
+        
+        # Should raise validation error when data_schema is provided in markdown mode
+        try:
+            client.crawl(
+                url="https://example.com", 
+                extraction_mode=False,
+                data_schema={"type": "object"},
+            )
+            assert False, "Should have raised validation error"
+        except Exception as e:
+            assert "Data schema should not be provided when extraction_mode=False" in str(e)

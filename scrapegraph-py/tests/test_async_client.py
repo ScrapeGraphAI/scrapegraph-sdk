@@ -415,7 +415,7 @@ async def test_crawl(mock_api_key):
             response = await client.crawl(
                 url="https://example.com",
                 prompt="Extract company information",
-                schema=schema,
+                data_schema=schema,
                 cache_website=True,
                 depth=2,
                 max_pages=5,
@@ -452,7 +452,7 @@ async def test_crawl_with_minimal_params(mock_api_key):
             response = await client.crawl(
                 url="https://example.com",
                 prompt="Extract company information",
-                schema=schema,
+                data_schema=schema,
             )
             assert response["status"] == "processing"
             assert "id" in response
@@ -493,3 +493,56 @@ async def test_get_crawl(mock_api_key, mock_uuid):
             assert response["id"] == mock_uuid
             assert "result" in response
             assert "llm_result" in response["result"]
+
+
+@pytest.mark.asyncio
+async def test_crawl_markdown_mode(mock_api_key):
+    """Test async crawl in markdown conversion mode (no AI processing)"""
+    with aioresponses() as mocked:
+        mocked.post(
+            "https://api.scrapegraphai.com/v1/crawl",
+            payload={
+                "id": str(uuid4()),
+                "status": "processing",
+                "message": "Markdown crawl job started",
+            },
+        )
+
+        async with AsyncClient(api_key=mock_api_key) as client:
+            response = await client.crawl(
+                url="https://example.com",
+                extraction_mode=False,  # Markdown conversion mode
+                depth=2,
+                max_pages=3,
+                same_domain_only=True,
+                sitemap=True,
+            )
+            assert response["status"] == "processing"
+            assert "id" in response
+
+
+@pytest.mark.asyncio
+async def test_crawl_markdown_mode_validation(mock_api_key):
+    """Test that async markdown mode rejects prompt and data_schema parameters"""
+    async with AsyncClient(api_key=mock_api_key) as client:
+        # Should raise validation error when prompt is provided in markdown mode
+        try:
+            await client.crawl(
+                url="https://example.com",
+                extraction_mode=False,
+                prompt="This should not be allowed",
+            )
+            assert False, "Should have raised validation error"
+        except Exception as e:
+            assert "Prompt should not be provided when extraction_mode=False" in str(e)
+        
+        # Should raise validation error when data_schema is provided in markdown mode
+        try:
+            await client.crawl(
+                url="https://example.com", 
+                extraction_mode=False,
+                data_schema={"type": "object"},
+            )
+            assert False, "Should have raised validation error"
+        except Exception as e:
+            assert "Data schema should not be provided when extraction_mode=False" in str(e)
