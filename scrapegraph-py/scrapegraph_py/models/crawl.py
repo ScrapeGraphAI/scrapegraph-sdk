@@ -14,16 +14,20 @@ class CrawlRequest(BaseModel):
     )
     extraction_mode: bool = Field(
         default=True,
-        description="True for AI extraction mode, False for markdown conversion mode (no AI/LLM processing)",
+        description="True for AI extraction mode, False for markdown conversion "
+        "mode (no AI/LLM processing)",
     )
     prompt: Optional[str] = Field(
         default=None,
-        example="What does the company do? and I need text content from there privacy and terms",
-        description="The prompt to guide the crawl and extraction (required when extraction_mode=True)",
+        example="What does the company do? and I need text content from there "
+        "privacy and terms",
+        description="The prompt to guide the crawl and extraction (required when "
+        "extraction_mode=True)",
     )
     data_schema: Optional[Dict[str, Any]] = Field(
         default=None,
-        description="JSON schema defining the structure of the extracted data (required when extraction_mode=True)",
+        description="JSON schema defining the structure of the extracted data "
+        "(required when extraction_mode=True)",
     )
     cache_website: bool = Field(
         default=True, description="Whether to cache the website content"
@@ -74,11 +78,13 @@ class CrawlRequest(BaseModel):
             # Markdown conversion mode - prompt and data_schema should be None
             if self.prompt is not None:
                 raise ValueError(
-                    "Prompt should not be provided when extraction_mode=False (markdown mode)"
+                    "Prompt should not be provided when extraction_mode=False "
+                    "(markdown mode)"
                 )
             if self.data_schema is not None:
                 raise ValueError(
-                    "Data schema should not be provided when extraction_mode=False (markdown mode)"
+                    "Data schema should not be provided when extraction_mode=False "
+                    "(markdown mode)"
                 )
 
         return self

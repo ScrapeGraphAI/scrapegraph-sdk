@@ -13,15 +13,18 @@ class SearchScraperRequest(BaseModel):
         ge=3,
         le=20,
         example=5,
-        description="Number of websites to scrape (3-20). Default is 3. More websites provide better research depth but cost more credits.",
+        description="Number of websites to scrape (3-20). Default is 3. More "
+        "websites provide better research depth but cost more credits.",
     )
     headers: Optional[dict[str, str]] = Field(
         None,
         example={
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36",
             "Cookie": "cookie1=value1; cookie2=value2",
         },
-        description="Optional headers to send with the request, including cookies and user agent",
+        description="Optional headers to send with the request, including cookies "
+        "and user agent",
     )
     output_schema: Optional[Type[BaseModel]] = None
 

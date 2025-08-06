@@ -64,7 +64,8 @@ class Client:
         """Initialize Client with configurable parameters.
 
         Args:
-            api_key: API key for authentication. If None, will try to load from environment
+            api_key: API key for authentication. If None, will try to load
+                     from environment
             verify_ssl: Whether to verify SSL certificates
             timeout: Request timeout in seconds. None means no timeout (infinite)
             max_retries: Maximum number of retry attempts
@@ -84,7 +85,8 @@ class Client:
 
         validate_api_key(api_key)
         logger.debug(
-            f"🛠️ Configuration: verify_ssl={verify_ssl}, timeout={timeout}, max_retries={max_retries}"
+            f"🛠️ Configuration: verify_ssl={verify_ssl}, timeout={timeout}, "
+            f"max_retries={max_retries}"
         )
 
         self.api_key = api_key
@@ -260,7 +262,8 @@ class Client:
             f"{API_BASE_URL}/credits",
         )
         logger.info(
-            f"✨ Credits info retrieved: {result.get('remaining_credits')} credits remaining"
+            f"✨ Credits info retrieved: {result.get('remaining_credits')} "
+            f"credits remaining"
         )
         return result
 
@@ -276,8 +279,9 @@ class Client:
         Args:
             user_prompt: The search prompt string
             num_results: Number of websites to scrape (3-20). Default is 3.
-                        More websites provide better research depth but cost more credits.
-                        Credit calculation: 30 base + 10 per additional website beyond 3.
+                        More websites provide better research depth but cost more
+                        credits. Credit calculation: 30 base + 10 per additional
+                        website beyond 3.
             headers: Optional headers to send with the request
             output_schema: Optional schema to structure the output
         """
@@ -326,7 +330,8 @@ class Client:
         batch_size: Optional[int] = None,
         sitemap: bool = False,
     ):
-        """Send a crawl request with support for both AI extraction and markdown conversion modes"""
+        """Send a crawl request with support for both AI extraction and
+        markdown conversion modes"""
         logger.info("🔍 Starting crawl request")
         logger.debug(f"🌐 URL: {url}")
         logger.debug(

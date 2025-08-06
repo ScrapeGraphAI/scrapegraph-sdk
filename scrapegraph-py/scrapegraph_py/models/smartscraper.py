@@ -23,25 +23,30 @@ class SmartScraperRequest(BaseModel):
     headers: Optional[dict[str, str]] = Field(
         None,
         example={
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36",
             "Cookie": "cookie1=value1; cookie2=value2",
         },
-        description="Optional headers to send with the request, including cookies and user agent",
+        description="Optional headers to send with the request, including cookies "
+        "and user agent",
     )
     cookies: Optional[Dict[str, str]] = Field(
         None,
         example={"session_id": "abc123", "user_token": "xyz789"},
-        description="Dictionary of cookies to send with the request for authentication or session management",
+        description="Dictionary of cookies to send with the request for "
+        "authentication or session management",
     )
     output_schema: Optional[Type[BaseModel]] = None
     number_of_scrolls: Optional[conint(ge=0, le=100)] = Field(
         default=None,
-        description="Number of times to scroll the page (0-100). If None, no scrolling will be performed.",
+        description="Number of times to scroll the page (0-100). If None, no "
+        "scrolling will be performed.",
         example=10,
     )
     total_pages: Optional[conint(ge=1, le=10)] = Field(
         default=None,
-        description="Number of pages to scrape (1-10). If None, only the first page will be scraped.",
+        description="Number of pages to scrape (1-10). If None, only the first "
+        "page will be scraped.",
         example=5,
     )
 
