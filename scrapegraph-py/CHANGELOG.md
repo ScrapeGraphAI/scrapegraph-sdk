@@ -1,3 +1,10 @@
+## [1.18.2](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.18.1...v1.18.2) (2025-08-06)
+
+
+### Bug Fixes
+
+* removedunused imports ([ad55f88](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/ad55f886a08bbf8644e82fd40f4764022ba8cba7))
+
 ## [1.18.1](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.18.0...v1.18.1) (2025-08-06)
 
 
