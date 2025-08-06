@@ -40,12 +40,12 @@ export async function markdownify(apiKey, url) {
  *   - created_at: Timestamp of when the request was created
  *   - completed_at: Timestamp of when the request was completed (if applicable)
  * @throws {Error} Throws an error if the HTTP request fails or if the API key is invalid
- * 
+ *
  * @example
  * // Example usage:
  * const apiKey = 'your-api-key';
  * const requestId = 'previously-obtained-request-id';
- * 
+ *
  * try {
  *   const result = await getMarkdownifyRequest(apiKey, requestId);
  *   if (result.status === 'completed') {
@@ -58,7 +58,7 @@ export async function markdownify(apiKey, url) {
  * } catch (error) {
  *   console.error('Error fetching markdown:', error);
  * }
- * 
+ *
  * @note The markdown content includes:
  *   - Properly formatted headers
  *   - Lists and tables

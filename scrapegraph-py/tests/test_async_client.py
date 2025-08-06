@@ -155,7 +155,7 @@ async def test_smartscraper_with_pagination(mock_api_key):
             response = await client.smartscraper(
                 website_url="https://example.com/products",
                 user_prompt="Extract product information",
-                total_pages=3
+                total_pages=3,
             )
             assert response["status"] == "completed"
             assert "products" in response["result"]
@@ -187,7 +187,7 @@ async def test_smartscraper_with_pagination_and_scrolls(mock_api_key):
                 website_url="https://example.com/products",
                 user_prompt="Extract product information from paginated results",
                 total_pages=5,
-                number_of_scrolls=10
+                number_of_scrolls=10,
             )
             assert response["status"] == "completed"
             assert "products" in response["result"]
@@ -228,7 +228,7 @@ async def test_smartscraper_with_pagination_and_all_features(mock_api_key):
                 headers=headers,
                 output_schema=ProductSchema,
                 number_of_scrolls=5,
-                total_pages=2
+                total_pages=2,
             )
             assert response["status"] == "completed"
             assert "products" in response["result"]
@@ -535,14 +535,17 @@ async def test_crawl_markdown_mode_validation(mock_api_key):
             assert False, "Should have raised validation error"
         except Exception as e:
             assert "Prompt should not be provided when extraction_mode=False" in str(e)
-        
+
         # Should raise validation error when data_schema is provided in markdown mode
         try:
             await client.crawl(
-                url="https://example.com", 
+                url="https://example.com",
                 extraction_mode=False,
                 data_schema={"type": "object"},
             )
             assert False, "Should have raised validation error"
         except Exception as e:
-            assert "Data schema should not be provided when extraction_mode=False" in str(e)
+            assert (
+                "Data schema should not be provided when extraction_mode=False"
+                in str(e)
+            )

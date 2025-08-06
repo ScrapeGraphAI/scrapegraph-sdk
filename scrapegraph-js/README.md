@@ -78,7 +78,7 @@ const prompt = 'Extract the main heading and description.';
 
 #### Scraping with Custom Output Schema
 
-> [!NOTE]  
+> [!NOTE]
 > To use this feature, it is necessary to employ the [Zod](https://www.npmjs.com/package/zod) package for schema creation.
 
 Here is a real-world example:

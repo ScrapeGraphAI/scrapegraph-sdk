@@ -102,4 +102,4 @@ const prompt = 'What does the company do? and I need text content from there pri
   } catch (error) {
     console.error('Error occurred:', error);
   }
-})(); 
+})();

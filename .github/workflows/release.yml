@@ -44,10 +44,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     environment: development
-    if: | 
-        github.event_name == 'push' && github.ref == 'refs/heads/main' || 
-        github.event_name == 'push' && github.ref == 'refs/heads/pre/beta' || 
-        github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged && github.event.pull_request.base.ref == 'main' || 
+    if: |
+        github.event_name == 'push' && github.ref == 'refs/heads/main' ||
+        github.event_name == 'push' && github.ref == 'refs/heads/pre/beta' ||
+        github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged && github.event.pull_request.base.ref == 'main' ||
         github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged && github.event.pull_request.base.ref == 'pre/beta'
     permissions:
       contents: write
@@ -81,9 +81,9 @@ jobs:
           semantic_version: 23
           extra_plugins: |
             semantic-release-pypi@3
-            @semantic-release/git 
-            @semantic-release/commit-analyzer@12 
-            @semantic-release/release-notes-generator@13 
-            @semantic-release/github@10 
+            @semantic-release/git
+            @semantic-release/commit-analyzer@12
+            @semantic-release/release-notes-generator@13
+            @semantic-release/github@10
             @semantic-release/changelog@6
             conventional-changelog-conventionalcommits@7

@@ -37,35 +37,35 @@ console.log('-'.repeat(60));
 
 try {
   const startTime = Date.now();
-  
+
   const response = await smartScraper(
-    apiKey, 
-    url, 
-    prompt, 
-    ProductListSchema, 
-    numberOfScrolls, 
+    apiKey,
+    url,
+    prompt,
+    ProductListSchema,
+    numberOfScrolls,
     totalPages
   );
-  
+
   const duration = Date.now() - startTime;
-  
+
   console.log(`✅ Request completed in ${duration}ms`);
   console.log('📊 Response type:', typeof response);
-  
+
   // Validate and display the response
   try {
     const validatedData = ProductListSchema.parse(response);
     console.log(`\n✨ Schema validation successful!`);
     console.log(`📦 Found ${validatedData.products.length} products`);
-    
+
     if (validatedData.page_info) {
       console.log(`📄 Page info: ${validatedData.page_info.current_page}/${validatedData.page_info.total_pages}`);
     }
-    
+
     if (validatedData.total_count) {
       console.log(`🔢 Total products: ${validatedData.total_count}`);
     }
-    
+
     console.log('\n📋 Product Examples:');
     validatedData.products.slice(0, 5).forEach((product, index) => {
       console.log(`  ${index + 1}. ${product.name}`);
@@ -75,17 +75,17 @@ try {
       console.log(`     🖼️ Image: ${product.image_url ? 'Available' : 'N/A'}`);
       console.log('');
     });
-    
+
     if (validatedData.products.length > 5) {
       console.log(`     ... and ${validatedData.products.length - 5} more products`);
     }
-    
+
   } catch (validationError) {
     console.log('⚠️ Schema validation failed, showing raw response:');
     console.log(JSON.stringify(response, null, 2));
     console.log('\nValidation error:', validationError.message);
   }
-  
+
   console.log('\n' + '='.repeat(60));
   console.log('✅ Pagination with scrolling completed successfully!');
   console.log('\nFeatures demonstrated:');
@@ -94,10 +94,10 @@ try {
   console.log('✓ Structured data extraction with Zod schema');
   console.log('✓ Comprehensive error handling');
   console.log('✓ Performance timing');
-  
+
 } catch (error) {
   console.error('\n❌ Error occurred:', error.message);
-  
+
   // Provide specific error guidance
   if (error.message.includes('totalPages')) {
     console.error('\n🔧 Pagination Error:');
@@ -118,4 +118,4 @@ try {
     console.error('- Try with fewer pages or scrolls');
     console.error('- Check API key validity');
   }
-} 
+}

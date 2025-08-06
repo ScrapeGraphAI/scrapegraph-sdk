@@ -68,12 +68,12 @@ export async function searchScraper(apiKey, prompt, numResults = 3, schema = nul
  *   - created_at: Timestamp of when the request was created
  *   - completed_at: Timestamp of when the request was completed (if applicable)
  * @throws {Error} Throws an error if the HTTP request fails or if the API key is invalid
- * 
+ *
  * @example
  * // Example usage:
  * const apiKey = 'your-api-key';
  * const requestId = 'previously-obtained-request-id';
- * 
+ *
  * try {
  *   const result = await getSearchScraperRequest(apiKey, requestId);
  *   if (result.status === 'completed') {
@@ -87,7 +87,7 @@ export async function searchScraper(apiKey, prompt, numResults = 3, schema = nul
  * } catch (error) {
  *   console.error('Error fetching search results:', error);
  * }
- * 
+ *
  * @note The search operation typically processes multiple web pages to gather comprehensive
  * information based on the original search query. The results are structured according to
  * the schema provided in the original searchScraper call, if any.

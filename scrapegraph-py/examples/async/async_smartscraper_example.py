@@ -1,5 +1,6 @@
 import asyncio
 import os
+
 from dotenv import load_dotenv
 
 from scrapegraph_py import AsyncClient

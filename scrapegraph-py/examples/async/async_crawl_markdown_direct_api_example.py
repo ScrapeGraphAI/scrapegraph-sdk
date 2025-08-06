@@ -182,31 +182,30 @@ async def markdown_crawling_example():
             "conversion_results": {
                 "pages_processed": pages_processed,
                 "credits_used": credits_used,
-                "cost_per_page": credits_used/pages_processed if pages_processed > 0 else 0,
-                "crawled_urls": crawled_urls
+                "cost_per_page": (
+                    credits_used / pages_processed if pages_processed > 0 else 0
+                ),
+                "crawled_urls": crawled_urls,
             },
-            "markdown_content": {
-                "total_pages": len(pages),
-                "pages": []
-            }
+            "markdown_content": {"total_pages": len(pages), "pages": []},
         }
-        
+
         # Add page details to JSON
         for i, page in enumerate(pages):
             metadata = page.get("metadata", {})
             page_data = {
                 "page_number": i + 1,
-                "url": page.get('url'),
-                "title": page.get('title'),
+                "url": page.get("url"),
+                "title": page.get("title"),
                 "metadata": {
-                    "word_count": metadata.get('word_count', 0),
-                    "headers": metadata.get('headers', []),
-                    "links_count": metadata.get('links_count', 0)
+                    "word_count": metadata.get("word_count", 0),
+                    "headers": metadata.get("headers", []),
+                    "links_count": metadata.get("links_count", 0),
                 },
-                "markdown_content": page.get("markdown", "")
+                "markdown_content": page.get("markdown", ""),
             }
             json_output["markdown_content"]["pages"].append(page_data)
-        
+
         # Print JSON output
         print("📊 RESULTS IN JSON FORMAT:")
         print("-" * 40)

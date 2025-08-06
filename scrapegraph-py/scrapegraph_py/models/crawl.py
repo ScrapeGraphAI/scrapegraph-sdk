@@ -1,63 +1,54 @@
 # Models for crawl endpoint
 
-from typing import Optional, Dict, Any
+from typing import Any, Dict, Optional
 from uuid import UUID
 
-from pydantic import BaseModel, Field, model_validator, conint
+from pydantic import BaseModel, Field, conint, model_validator
 
 
 class CrawlRequest(BaseModel):
     url: str = Field(
         ...,
         example="https://scrapegraphai.com/",
-        description="The starting URL for the crawl"
+        description="The starting URL for the crawl",
     )
     extraction_mode: bool = Field(
         default=True,
-        description="True for AI extraction mode, False for markdown conversion mode (no AI/LLM processing)"
+        description="True for AI extraction mode, False for markdown conversion mode (no AI/LLM processing)",
     )
     prompt: Optional[str] = Field(
         default=None,
         example="What does the company do? and I need text content from there privacy and terms",
-        description="The prompt to guide the crawl and extraction (required when extraction_mode=True)"
+        description="The prompt to guide the crawl and extraction (required when extraction_mode=True)",
     )
     data_schema: Optional[Dict[str, Any]] = Field(
         default=None,
-        description="JSON schema defining the structure of the extracted data (required when extraction_mode=True)"
+        description="JSON schema defining the structure of the extracted data (required when extraction_mode=True)",
     )
     cache_website: bool = Field(
-        default=True,
-        description="Whether to cache the website content"
+        default=True, description="Whether to cache the website content"
     )
     depth: conint(ge=1, le=10) = Field(
-        default=2,
-        description="Maximum depth of the crawl (1-10)"
+        default=2, description="Maximum depth of the crawl (1-10)"
     )
     max_pages: conint(ge=1, le=100) = Field(
-        default=2,
-        description="Maximum number of pages to crawl (1-100)"
+        default=2, description="Maximum number of pages to crawl (1-100)"
     )
     same_domain_only: bool = Field(
-        default=True,
-        description="Whether to only crawl pages from the same domain"
+        default=True, description="Whether to only crawl pages from the same domain"
     )
     batch_size: Optional[conint(ge=1, le=10)] = Field(
-        default=None,
-        description="Batch size for processing pages (1-10)"
+        default=None, description="Batch size for processing pages (1-10)"
     )
     sitemap: bool = Field(
-        default=False,
-        description="Whether to use sitemap for better page discovery"
+        default=False, description="Whether to use sitemap for better page discovery"
     )
 
     @model_validator(mode="after")
     def validate_url(self) -> "CrawlRequest":
         if not self.url.strip():
             raise ValueError("URL cannot be empty")
-        if not (
-            self.url.startswith("http://")
-            or self.url.startswith("https://")
-        ):
+        if not (self.url.startswith("http://") or self.url.startswith("https://")):
             raise ValueError("Invalid URL - must start with http:// or https://")
         return self
 
@@ -72,7 +63,7 @@ class CrawlRequest(BaseModel):
                 raise ValueError("Prompt cannot be empty")
             if not any(c.isalnum() for c in self.prompt):
                 raise ValueError("Prompt must contain valid content")
-            
+
             if not self.data_schema:
                 raise ValueError("Data schema is required when extraction_mode=True")
             if not isinstance(self.data_schema, dict):
@@ -82,15 +73,21 @@ class CrawlRequest(BaseModel):
         else:
             # Markdown conversion mode - prompt and data_schema should be None
             if self.prompt is not None:
-                raise ValueError("Prompt should not be provided when extraction_mode=False (markdown mode)")
+                raise ValueError(
+                    "Prompt should not be provided when extraction_mode=False (markdown mode)"
+                )
             if self.data_schema is not None:
-                raise ValueError("Data schema should not be provided when extraction_mode=False (markdown mode)")
-        
+                raise ValueError(
+                    "Data schema should not be provided when extraction_mode=False (markdown mode)"
+                )
+
         return self
 
     @model_validator(mode="after")
     def validate_batch_size(self) -> "CrawlRequest":
-        if self.batch_size is not None and (self.batch_size < 1 or self.batch_size > 10):
+        if self.batch_size is not None and (
+            self.batch_size < 1 or self.batch_size > 10
+        ):
             raise ValueError("Batch size must be between 1 and 10")
         return self
 
@@ -107,4 +104,4 @@ class GetCrawlRequest(BaseModel):
             UUID(self.crawl_id)
         except ValueError:
             raise ValueError("crawl_id must be a valid UUID")
-        return self 
+        return self

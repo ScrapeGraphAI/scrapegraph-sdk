@@ -14,7 +14,9 @@ SGAI_API_KEY=your_api_key_here
 """
 
 import os
+
 from dotenv import load_dotenv
+
 from scrapegraph_py import Client
 from scrapegraph_py.logger import sgai_logger
 
@@ -26,14 +28,16 @@ sgai_logger.set_logging(level="INFO")
 # Initialize the client with API key from environment
 api_key = os.getenv("SGAI_API_KEY")
 if not api_key:
-    raise ValueError("SGAI_API_KEY not found in environment variables. Please create a .env file with: SGAI_API_KEY=your_api_key_here")
+    raise ValueError(
+        "SGAI_API_KEY not found in environment variables. Please create a .env file with: SGAI_API_KEY=your_api_key_here"
+    )
 
 client = Client(api_key=api_key)
 
 # Send a searchscraper request with configurable website limits
 response = client.searchscraper(
     user_prompt="What is the latest version of Python and what are its main features?",
-    num_results=3  # Default: 3 websites (30 credits)
+    num_results=3,  # Default: 3 websites (30 credits)
     # num_results=5  # Enhanced: 5 websites (50 credits) - uncomment for more comprehensive results
     # num_results=10  # Deep research: 10 websites (100 credits) - uncomment for extensive research
 )

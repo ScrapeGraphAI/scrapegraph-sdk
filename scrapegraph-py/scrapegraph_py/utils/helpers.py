@@ -30,7 +30,9 @@ def handle_sync_response(response: Response) -> Dict[str, Any]:
         data = {"error": response.text}
 
     if response.status_code >= 400:
-        error_msg = data.get("error", data.get("detail", f"HTTP {response.status_code}: {response.text}"))
+        error_msg = data.get(
+            "error", data.get("detail", f"HTTP {response.status_code}: {response.text}")
+        )
         raise APIError(error_msg, status_code=response.status_code)
 
     return data
@@ -48,7 +50,9 @@ async def handle_async_response(response: aiohttp.ClientResponse) -> Dict[str, A
     if response.status >= 400:
         if text is None:
             text = await response.text()
-        error_msg = data.get("error", data.get("detail", f"HTTP {response.status}: {text}"))
+        error_msg = data.get(
+            "error", data.get("detail", f"HTTP {response.status}: {text}")
+        )
         raise APIError(error_msg, status_code=response.status)
 
     return data

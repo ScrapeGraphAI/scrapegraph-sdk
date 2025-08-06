@@ -19,7 +19,7 @@ load_dotenv()
 
 def smart_scraper_movements():
     """Example of making a movements request to the smartscraper API"""
-    
+
     # Get API key from .env file
     api_key = os.getenv("TEST_API_KEY")
     if not api_key:
@@ -134,10 +134,10 @@ def smart_scraper_movements():
 
 def show_curl_equivalent():
     """Show the equivalent curl command for reference"""
-    
+
     # Load environment variables from .env file
     load_dotenv()
-    
+
     api_key = os.getenv("TEST_API_KEY", "your-api-key-here")
     curl_command = f"""
 curl --location 'http://localhost:8001/v1/smartscraper' \\
@@ -157,7 +157,7 @@ curl --location 'http://localhost:8001/v1/smartscraper' \\
     ]
 }}'
     """
-    
+
     print("Equivalent curl command:")
     print(curl_command)
 
@@ -169,15 +169,15 @@ def main():
         print("=" * 60)
         print("This example demonstrates interactive movements with timing")
         print()
-        
+
         # Show the curl equivalent
         show_curl_equivalent()
-        
+
         print("\n" + "=" * 60)
-        
+
         # Make the actual API request
         smart_scraper_movements()
-        
+
         print("\n" + "=" * 60)
         print("Example completed!")
         print("\nKey takeaways:")
@@ -201,4 +201,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main() 
+    main()

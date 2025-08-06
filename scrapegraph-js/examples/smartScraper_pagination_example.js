@@ -14,14 +14,14 @@ try {
   console.log('-'.repeat(50));
 
   const startTime = Date.now();
-  
+
   const response = await smartScraper(apiKey, url, prompt, null, null, totalPages);
-  
+
   const duration = Date.now() - startTime;
-  
+
   console.log(`✅ Request completed in ${duration}ms`);
   console.log('📊 Response:', JSON.stringify(response, null, 2));
-  
+
   // Check if pagination worked
   if (response && typeof response === 'object' && response.data) {
     console.log(`\n✨ Pagination successful! Data extracted from ${totalPages} pages`);
@@ -30,7 +30,7 @@ try {
   } else {
     console.log(`\n📋 Request successful! Response type: ${typeof response}`);
   }
-  
+
 } catch (error) {
   console.error('❌ Error:', error.message);
   console.error('This could be due to:');
@@ -38,4 +38,4 @@ try {
   console.error('  - Rate limiting');
   console.error('  - Server issues');
   console.error('  - Network connectivity issues');
-} 
+}

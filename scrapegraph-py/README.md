@@ -292,7 +292,7 @@ for page in result["result"]["pages"]:
 <summary>🔧 Crawl Parameters</summary>
 
 - **url** (required): Starting URL for the crawl
-- **extraction_mode** (default: True): 
+- **extraction_mode** (default: True):
   - `True` = AI extraction mode (requires prompt and data_schema)
   - `False` = Markdown conversion mode (no AI, 80% cheaper)
 - **prompt** (required for AI mode): AI prompt to guide data extraction

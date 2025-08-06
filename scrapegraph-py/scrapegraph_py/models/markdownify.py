@@ -30,7 +30,7 @@ class MarkdownifyRequest(BaseModel):
 
     def model_dump(self, *args, **kwargs) -> dict:
         # Set exclude_none=True to exclude None values from serialization
-        kwargs.setdefault('exclude_none', True)
+        kwargs.setdefault("exclude_none", True)
         return super().model_dump(*args, **kwargs)
 
 

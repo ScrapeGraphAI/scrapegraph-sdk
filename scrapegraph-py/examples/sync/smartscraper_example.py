@@ -1,5 +1,7 @@
 import os
+
 from dotenv import load_dotenv
+
 from scrapegraph_py import Client
 from scrapegraph_py.logger import sgai_logger
 

@@ -233,10 +233,10 @@ def analyze_markdown_content(markdown_content: str):
 
 def show_curl_equivalent():
     """Show the equivalent curl command for reference"""
-    
+
     # Load environment variables from .env file
     load_dotenv()
-    
+
     api_key = os.getenv("TEST_API_KEY", "your-api-key-here")
     curl_command = f"""
 curl --location 'http://localhost:8001/v1/markdownify' \\
@@ -262,7 +262,7 @@ curl --location 'http://localhost:8001/v1/markdownify' \\
     ]
 }}'
     """
-    
+
     print("Equivalent curl command:")
     print(curl_command)
 
@@ -279,15 +279,15 @@ def main():
         print("but excels at creating readable markdown content.")
         print("This example includes comprehensive timing information.")
         print()
-        
+
         # Show the curl equivalent
         show_curl_equivalent()
-        
+
         print("\n" + "=" * 60)
-        
+
         # Make the actual API request
         markdownify_movements()
-        
+
         print("\n" + "=" * 60)
         print("Example completed!")
         print("\nKey takeaways:")
@@ -311,4 +311,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main() 
+    main()

@@ -55,7 +55,7 @@ async function scrapeEcommerceWithAuth() {
   console.log('='.repeat(60));
   console.log('E-COMMERCE SITE SCRAPING WITH AUTHENTICATION');
   console.log('='.repeat(60));
-  
+
   // Example cookies for an e-commerce site
   const cookies = {
     session_id: 'abc123def456',
@@ -64,10 +64,10 @@ async function scrapeEcommerceWithAuth() {
     preferences: 'dark_mode,usd',
     auth_token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
   };
-  
+
   const websiteUrl = 'https://example-ecommerce.com/products';
   const userPrompt = 'Extract product information including name, price, availability, and rating';
-  
+
   try {
     const response = await smartScraper(
       process.env.SGAI_APIKEY,
@@ -78,10 +78,10 @@ async function scrapeEcommerceWithAuth() {
       null, // totalPages
       cookies
     );
-    
+
     console.log('✅ E-commerce scraping completed successfully');
     console.log(JSON.stringify(response, null, 2));
-    
+
   } catch (error) {
     console.error(`❌ Error in e-commerce scraping: ${error.message}`);
   }
@@ -91,7 +91,7 @@ async function scrapeSocialMediaWithSession() {
   console.log('\n' + '='.repeat(60));
   console.log('SOCIAL MEDIA SCRAPING WITH SESSION COOKIES');
   console.log('='.repeat(60));
-  
+
   // Example cookies for a social media site
   const cookies = {
     session_token: 'xyz789abc123',
@@ -100,10 +100,10 @@ async function scrapeSocialMediaWithSession() {
     remember_me: 'true',
     language: 'en_US'
   };
-  
+
   const websiteUrl = 'https://example-social.com/feed';
   const userPrompt = 'Extract posts from the feed including author, content, likes, and comments';
-  
+
   try {
     const response = await smartScraper(
       process.env.SGAI_APIKEY,
@@ -114,10 +114,10 @@ async function scrapeSocialMediaWithSession() {
       null, // totalPages
       cookies
     );
-    
+
     console.log('✅ Social media scraping completed successfully');
     console.log(JSON.stringify(response, null, 2));
-    
+
   } catch (error) {
     console.error(`❌ Error in social media scraping: ${error.message}`);
   }
@@ -127,7 +127,7 @@ async function scrapeNewsWithPreferences() {
   console.log('\n' + '='.repeat(60));
   console.log('NEWS SITE SCRAPING WITH USER PREFERENCES');
   console.log('='.repeat(60));
-  
+
   // Example cookies for a news site
   const cookies = {
     user_preferences: 'technology,science,ai',
@@ -136,10 +136,10 @@ async function scrapeNewsWithPreferences() {
     subscription_tier: 'premium',
     theme: 'dark'
   };
-  
+
   const websiteUrl = 'https://example-news.com/technology';
   const userPrompt = 'Extract news articles including title, summary, author, and publish date';
-  
+
   try {
     const response = await smartScraper(
       process.env.SGAI_APIKEY,
@@ -150,10 +150,10 @@ async function scrapeNewsWithPreferences() {
       3, // totalPages - Scrape multiple pages
       cookies
     );
-    
+
     console.log('✅ News scraping completed successfully');
     console.log(JSON.stringify(response, null, 2));
-    
+
   } catch (error) {
     console.error(`❌ Error in news scraping: ${error.message}`);
   }
@@ -163,7 +163,7 @@ async function scrapeBankingWithSecureCookies() {
   console.log('\n' + '='.repeat(60));
   console.log('BANKING SITE SCRAPING WITH SECURE COOKIES');
   console.log('='.repeat(60));
-  
+
   // Example secure cookies for a banking site
   const cookies = {
     secure_session: 'pqr678stu901',
@@ -172,10 +172,10 @@ async function scrapeBankingWithSecureCookies() {
     device_id: 'device_abc123',
     last_activity: '2024-01-15T10:30:00Z'
   };
-  
+
   const websiteUrl = 'https://example-bank.com/transactions';
   const userPrompt = 'Extract recent transactions including date, description, amount, and type';
-  
+
   try {
     const response = await smartScraper(
       process.env.SGAI_APIKEY,
@@ -186,10 +186,10 @@ async function scrapeBankingWithSecureCookies() {
       5, // totalPages - Scrape multiple pages of transactions
       cookies
     );
-    
+
     console.log('✅ Banking scraping completed successfully');
     console.log(JSON.stringify(response, null, 2));
-    
+
   } catch (error) {
     console.error(`❌ Error in banking scraping: ${error.message}`);
   }
@@ -199,7 +199,7 @@ async function scrapeApiWithAuthTokens() {
   console.log('\n' + '='.repeat(60));
   console.log('API ENDPOINT SCRAPING WITH AUTH TOKENS');
   console.log('='.repeat(60));
-  
+
   // Example API authentication cookies
   const cookies = {
     api_token: 'api_abc123def456',
@@ -208,10 +208,10 @@ async function scrapeApiWithAuthTokens() {
     refresh_token: 'refresh_abc123',
     scope: 'read:all'
   };
-  
+
   const websiteUrl = 'https://api.example.com/data';
   const userPrompt = 'Extract data from the API response';
-  
+
   try {
     const response = await smartScraper(
       process.env.SGAI_APIKEY,
@@ -222,10 +222,10 @@ async function scrapeApiWithAuthTokens() {
       null, // totalPages
       cookies
     );
-    
+
     console.log('✅ API scraping completed successfully');
     console.log(JSON.stringify(response, null, 2));
-    
+
   } catch (error) {
     console.error(`❌ Error in API scraping: ${error.message}`);
   }
@@ -233,7 +233,7 @@ async function scrapeApiWithAuthTokens() {
 
 async function main() {
   const apiKey = process.env.SGAI_APIKEY;
-  
+
   // Check if API key is available
   if (!apiKey) {
     console.error('Error: SGAI_APIKEY not found in .env file');
@@ -241,21 +241,21 @@ async function main() {
     console.log('SGAI_APIKEY=your_api_key_here');
     return;
   }
-  
+
   console.log('🍪 COOKIES INTEGRATION EXAMPLES');
   console.log('This demonstrates various real-world scenarios where cookies are essential for web scraping.');
-  
+
   // Run all examples
   await scrapeEcommerceWithAuth();
   await scrapeSocialMediaWithSession();
   await scrapeNewsWithPreferences();
   await scrapeBankingWithSecureCookies();
   await scrapeApiWithAuthTokens();
-  
+
   console.log('\n' + '='.repeat(60));
   console.log('✅ All examples completed!');
   console.log('='.repeat(60));
 }
 
 // Run the example
-main().catch(console.error); 
+main().catch(console.error);

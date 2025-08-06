@@ -13,9 +13,10 @@ SGAI_API_KEY="your_sgai_api_key"
 import json
 import os
 import time
-from typing import Dict, Any
+from typing import Any, Dict
 
 from dotenv import load_dotenv
+
 from scrapegraph_py import Client
 
 # Load environment variables from .env file
@@ -133,4 +134,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main() 
+    main()

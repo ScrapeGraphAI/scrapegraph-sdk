@@ -12,4 +12,4 @@ try {
   console.log('Extracted data from scrolled page:', response);
 } catch (error) {
   console.error('Error:', error);
-} 
+}

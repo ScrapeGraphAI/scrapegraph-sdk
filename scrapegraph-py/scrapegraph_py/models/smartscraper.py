@@ -1,10 +1,10 @@
 # Models for smartscraper endpoint
 
-from typing import Optional, Type, Dict
+from typing import Dict, Optional, Type
 from uuid import UUID
 
 from bs4 import BeautifulSoup
-from pydantic import BaseModel, Field, model_validator, conint
+from pydantic import BaseModel, Field, conint, model_validator
 
 
 class SmartScraperRequest(BaseModel):
@@ -37,12 +37,12 @@ class SmartScraperRequest(BaseModel):
     number_of_scrolls: Optional[conint(ge=0, le=100)] = Field(
         default=None,
         description="Number of times to scroll the page (0-100). If None, no scrolling will be performed.",
-        example=10
+        example=10,
     )
     total_pages: Optional[conint(ge=1, le=10)] = Field(
         default=None,
         description="Number of pages to scrape (1-10). If None, only the first page will be scraped.",
-        example=5
+        example=5,
     )
 
     @model_validator(mode="after")
@@ -78,7 +78,7 @@ class SmartScraperRequest(BaseModel):
 
     def model_dump(self, *args, **kwargs) -> dict:
         # Set exclude_none=True to exclude None values from serialization
-        kwargs.setdefault('exclude_none', True)
+        kwargs.setdefault("exclude_none", True)
         data = super().model_dump(*args, **kwargs)
         # Convert the Pydantic model schema to dict if present
         if self.output_schema is not None:

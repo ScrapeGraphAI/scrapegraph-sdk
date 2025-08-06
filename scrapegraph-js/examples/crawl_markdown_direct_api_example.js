@@ -2,17 +2,17 @@
 
 /**
  * Example script demonstrating the ScrapeGraphAI Crawler markdown conversion mode.
- * 
+ *
  * This example shows how to use the crawler in markdown conversion mode:
  * - Cost-effective markdown conversion (NO AI/LLM processing)
  * - 2 credits per page (80% savings compared to AI mode)
  * - Clean HTML to markdown conversion with metadata extraction
- * 
+ *
  * Requirements:
  * - Node.js 14+
  * - dotenv
  * - A .env file with your API_KEY
- * 
+ *
  * Example .env file:
  * API_KEY=your_api_key_here
  */
@@ -122,7 +122,7 @@ async function pollWithBackoff(taskId, maxAttempts = 20) {
 
 /**
  * Markdown Conversion Mode (NO AI/LLM Used)
- * 
+ *
  * This example demonstrates cost-effective crawling that converts pages to clean markdown
  * WITHOUT any AI processing. Perfect for content archival and when you only need clean markdown.
  */

@@ -1,6 +1,6 @@
 /**
  * Simple example demonstrating cookies usage with SmartScraper.
- * 
+ *
  * This example shows the basic pattern for using cookies with the API.
  */
 
@@ -27,14 +27,14 @@ async function scrapeWithCookies() {
       null, // totalPages
       cookies // cookies parameter
     );
-    
+
     console.log('✅ Scraping with cookies completed successfully');
     console.log(JSON.stringify(response, null, 2));
-    
+
   } catch (error) {
     console.error('❌ Error:', error.message);
   }
 }
 
 // Run the example
-scrapeWithCookies(); 
+scrapeWithCookies();

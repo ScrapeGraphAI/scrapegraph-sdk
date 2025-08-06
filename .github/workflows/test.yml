@@ -15,12 +15,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
-    
+
     - name: Cache pip dependencies
       uses: actions/cache@v3
       with:
@@ -28,14 +28,14 @@ jobs:
         key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('**/pyproject.toml') }}
         restore-keys: |
           ${{ runner.os }}-pip-${{ matrix.python-version }}-
-    
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install pytest pytest-asyncio responses
         cd scrapegraph-py
         pip install -e .
-    
+
     - name: Run mocked tests with coverage
       run: |
         pytest
@@ -49,22 +49,22 @@ jobs:
 
   lint:
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: "3.11"
-    
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install flake8 black isort mypy
         cd scrapegraph-py
         pip install -e .
-    
+
     - name: Run linting
       run: |
         cd scrapegraph-py
@@ -75,24 +75,24 @@ jobs:
 
   security:
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: "3.11"
-    
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install bandit safety
         cd scrapegraph-py
         pip install -e .
-    
+
     - name: Run security checks
       run: |
         cd scrapegraph-py
         bandit -r scrapegraph_py/ -f json -o bandit-report.json || true
-        safety check --json --output safety-report.json || true 
+        safety check --json --output safety-report.json || true

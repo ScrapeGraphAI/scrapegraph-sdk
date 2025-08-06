@@ -28,7 +28,7 @@ const CookieInfoSchema = z.object({
 
 async function main() {
   const apiKey = process.env.SGAI_APIKEY;
-  
+
   // Check if API key is available
   if (!apiKey) {
     console.error('Error: SGAI_APIKEY not found in .env file');
@@ -122,4 +122,4 @@ async function main() {
 }
 
 // Run the example
-main().catch(console.error); 
+main().catch(console.error);

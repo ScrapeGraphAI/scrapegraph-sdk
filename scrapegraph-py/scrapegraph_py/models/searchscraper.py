@@ -13,7 +13,7 @@ class SearchScraperRequest(BaseModel):
         ge=3,
         le=20,
         example=5,
-        description="Number of websites to scrape (3-20). Default is 3. More websites provide better research depth but cost more credits."
+        description="Number of websites to scrape (3-20). Default is 3. More websites provide better research depth but cost more credits.",
     )
     headers: Optional[dict[str, str]] = Field(
         None,
@@ -35,7 +35,7 @@ class SearchScraperRequest(BaseModel):
 
     def model_dump(self, *args, **kwargs) -> dict:
         # Set exclude_none=True to exclude None values from serialization
-        kwargs.setdefault('exclude_none', True)
+        kwargs.setdefault("exclude_none", True)
         data = super().model_dump(*args, **kwargs)
         # Convert the Pydantic model schema to dict if present
         if self.output_schema is not None:

@@ -1,6 +1,6 @@
 /**
  * Basic SearchScraper Example
- * 
+ *
  * This example demonstrates the configurable website limits feature:
  * - Default: 3 websites (30 credits)
  * - Enhanced: 5 websites (50 credits) - uncomment to try
@@ -22,9 +22,9 @@ try {
   console.log(`🔍 Searching ${numResults} websites for: ${prompt}`);
   console.log(`💳 Credits required: ${numResults <= 3 ? 30 : 30 + (numResults - 3) * 10}`);
   console.log('-'.repeat(60));
-  
+
   const response = await searchScraper(apiKey, prompt, numResults);
-  
+
   console.log('✅ Search completed successfully!');
   console.log('\n📋 RESULTS:');
   console.log(`Result: ${response.result}`);
@@ -32,7 +32,7 @@ try {
   response.reference_urls?.forEach((url, index) => {
     console.log(`${index + 1}. ${url}`);
   });
-  
+
 } catch (error) {
   console.error('❌ Error:', error.message);
 }

@@ -38,10 +38,10 @@ async def check_server_connectivity(base_url: str) -> bool:
 
 async def async_smart_scraper_movements():
     """Async example of making a movements request to the smartscraper API"""
-    
+
     # Load environment variables from .env file
     load_dotenv()
-    
+
     # Get API key from .env file
     api_key = os.getenv("TEST_API_KEY")
     if not api_key:
@@ -124,7 +124,9 @@ async def async_smart_scraper_movements():
 
                     # Pretty print the result with proper indentation
                     if "result" in result:
-                        print(json.dumps(result["result"], indent=2, ensure_ascii=False))
+                        print(
+                            json.dumps(result["result"], indent=2, ensure_ascii=False)
+                        )
                     else:
                         print("No result data found")
 
@@ -176,7 +178,7 @@ async def async_markdownify_movements():
     """
     # Load environment variables from .env file
     load_dotenv()
-    
+
     # Get API key from .env file
     api_key = os.getenv("TEST_API_KEY")
     if not api_key:
@@ -184,7 +186,7 @@ async def async_markdownify_movements():
             "API key must be provided or set in .env file as TEST_API_KEY. "
             "Create a .env file with: TEST_API_KEY=your_api_key_here"
         )
-    
+
     steps = [
         "click on search bar",
         "wait for 500ms",
@@ -193,7 +195,7 @@ async def async_markdownify_movements():
         "click on the first time of search result",
         "wait for 2 seconds to load the result of search",
     ]
-    
+
     # Target website configuration
     website_url = "https://scrapegraphai.com/"
 
@@ -392,10 +394,10 @@ def analyze_markdown_content(markdown_content: str):
 
 def show_curl_equivalent():
     """Show the equivalent curl command for reference"""
-    
+
     # Load environment variables from .env file
     load_dotenv()
-    
+
     api_key = os.getenv("TEST_API_KEY", "your-api-key-here")
     curl_command = f"""
 curl --location 'http://localhost:8001/v1/smartscraper' \\
@@ -415,7 +417,7 @@ curl --location 'http://localhost:8001/v1/smartscraper' \\
     ]
 }}'
     """
-    
+
     print("Equivalent curl command:")
     print(curl_command)
 
@@ -430,23 +432,25 @@ async def main():
         print("=" * 60)
         print("This example demonstrates async interactive movements with timing")
         print()
-        
+
         # Show the curl equivalent
         show_curl_equivalent()
-        
+
         print("\n" + "=" * 60)
-        
+
         # Make the actual API requests
         print("1️⃣ Running SmartScraper Movements Example...")
         await async_smart_scraper_movements()
-        
+
         print("\n" + "=" * 60)
         print("2️⃣ Running Markdownify Movements Example...")
         await async_markdownify_movements()
-        
+
         total_duration = time.time() - total_start_time
-        logger.info(f"Examples completed! Total execution time: {total_duration:.2f} seconds")
-        
+        logger.info(
+            f"Examples completed! Total execution time: {total_duration:.2f} seconds"
+        )
+
         print("\n" + "=" * 60)
         print("Examples completed!")
         print(f"⏱️ Total execution time: {total_duration:.2f} seconds")
@@ -472,4 +476,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main()) 
+    asyncio.run(main())

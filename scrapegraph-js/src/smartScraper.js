@@ -79,12 +79,12 @@ export async function smartScraper(apiKey, url, prompt, schema = null, numberOfS
  *   - created_at: Timestamp of when the request was created
  *   - completed_at: Timestamp of when the request was completed (if applicable)
  * @throws {Error} Throws an error if the HTTP request fails or if the API key is invalid
- * 
+ *
  * @example
  * // Example usage:
  * const apiKey = 'your-api-key';
  * const requestId = 'previously-obtained-request-id';
- * 
+ *
  * try {
  *   const result = await getSmartScraperRequest(apiKey, requestId);
  *   if (result.status === 'completed') {

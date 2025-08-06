@@ -36,11 +36,11 @@ const ProductSchema = z.object({
 });
 
 const result = await smartScraper(
-  apiKey, 
-  url, 
-  prompt, 
-  ProductSchema, 
-  null, 
+  apiKey,
+  url,
+  prompt,
+  ProductSchema,
+  null,
   3 // 3 pages
 );
 ```
@@ -49,10 +49,10 @@ const result = await smartScraper(
 
 ```javascript
 const result = await smartScraper(
-  apiKey, 
-  url, 
-  prompt, 
-  null, 
+  apiKey,
+  url,
+  prompt,
+  null,
   10, // 10 scrolls per page
   2   // 2 pages
 );
@@ -62,10 +62,10 @@ const result = await smartScraper(
 
 ```javascript
 const result = await smartScraper(
-  apiKey, 
-  url, 
-  prompt, 
-  ProductSchema, 
+  apiKey,
+  url,
+  prompt,
+  ProductSchema,
   5, // numberOfScrolls
   3  // totalPages
 );
@@ -241,4 +241,4 @@ For issues or questions about pagination functionality:
 
 ---
 
-*This pagination feature is designed to work with the existing ScrapeGraph AI API and maintains full backward compatibility with existing code.* 
+*This pagination feature is designed to work with the existing ScrapeGraph AI API and maintains full backward compatibility with existing code.*

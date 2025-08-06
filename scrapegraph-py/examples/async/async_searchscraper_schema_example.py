@@ -63,8 +63,12 @@ async def main():
 
     print("🚀 Starting concurrent schema-based searches with configurable limits:")
     for i, search in enumerate(searches, 1):
-        credits = 30 if search["num_results"] <= 3 else 30 + (search["num_results"] - 3) * 10
-        print(f"   {i}. {search['num_results']} websites ({credits} credits): {search['prompt'][:50]}...")
+        credits = (
+            30 if search["num_results"] <= 3 else 30 + (search["num_results"] - 3) * 10
+        )
+        print(
+            f"   {i}. {search['num_results']} websites ({credits} credits): {search['prompt'][:50]}..."
+        )
     print()
 
     # Create tasks for concurrent execution with configurable website limits

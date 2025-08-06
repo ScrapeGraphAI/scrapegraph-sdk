@@ -1,5 +1,5 @@
 # Client implementation goes here
-from typing import Any, Optional, Dict
+from typing import Any, Dict, Optional
 
 import requests
 import urllib3
@@ -272,7 +272,7 @@ class Client:
         output_schema: Optional[BaseModel] = None,
     ):
         """Send a searchscraper request
-        
+
         Args:
             user_prompt: The search prompt string
             num_results: Number of websites to scrape (3-20). Default is 3.
@@ -329,12 +329,16 @@ class Client:
         """Send a crawl request with support for both AI extraction and markdown conversion modes"""
         logger.info("🔍 Starting crawl request")
         logger.debug(f"🌐 URL: {url}")
-        logger.debug(f"🤖 Extraction mode: {'AI' if extraction_mode else 'Markdown conversion'}")
+        logger.debug(
+            f"🤖 Extraction mode: {'AI' if extraction_mode else 'Markdown conversion'}"
+        )
         if extraction_mode:
             logger.debug(f"📝 Prompt: {prompt}")
             logger.debug(f"📊 Schema provided: {bool(data_schema)}")
         else:
-            logger.debug("📄 Markdown conversion mode - no AI processing, 2 credits per page")
+            logger.debug(
+                "📄 Markdown conversion mode - no AI processing, 2 credits per page"
+            )
         logger.debug(f"💾 Cache website: {cache_website}")
         logger.debug(f"🔍 Depth: {depth}")
         logger.debug(f"📄 Max pages: {max_pages}")
@@ -353,7 +357,7 @@ class Client:
             "same_domain_only": same_domain_only,
             "sitemap": sitemap,
         }
-        
+
         # Add optional parameters only if provided
         if prompt is not None:
             request_data["prompt"] = prompt
@@ -367,9 +371,7 @@ class Client:
 
         # Serialize the request, excluding None values
         request_json = request.model_dump(exclude_none=True)
-        result = self._make_request(
-            "POST", f"{API_BASE_URL}/crawl", json=request_json
-        )
+        result = self._make_request("POST", f"{API_BASE_URL}/crawl", json=request_json)
         logger.info("✨ Crawl request completed successfully")
         return result
 

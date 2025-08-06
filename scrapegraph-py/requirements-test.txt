@@ -15,4 +15,4 @@ bandit>=1.7.0
 safety>=2.3.0
 
 # Coverage reporting
-coverage>=7.0.0 
+coverage>=7.0.0

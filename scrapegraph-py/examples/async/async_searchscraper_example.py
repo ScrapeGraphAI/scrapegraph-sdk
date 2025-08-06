@@ -28,7 +28,7 @@ async def main():
 
     # Create tasks for concurrent execution with configurable website limits
     tasks = [
-        sgai_client.searchscraper(user_prompt=query, num_results=num_results) 
+        sgai_client.searchscraper(user_prompt=query, num_results=num_results)
         for query, num_results in queries
     ]
 
@@ -43,7 +43,9 @@ async def main():
             query, num_results = queries[i]
             print(f"\nSearch {i+1}:")
             print(f"Query: {query}")
-            print(f"Websites searched: {num_results} (Credits: {30 if num_results <= 3 else 30 + (num_results - 3) * 10})")
+            print(
+                f"Websites searched: {num_results} (Credits: {30 if num_results <= 3 else 30 + (num_results - 3) * 10})"
+            )
             print(f"Result: {response['result']}")
             print("Reference URLs:")
             for url in response["reference_urls"]:
