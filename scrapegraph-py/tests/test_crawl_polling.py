@@ -9,6 +9,7 @@ These tests focus on the complete crawl workflow including:
 """
 
 import json
+import time
 from unittest.mock import patch
 from uuid import uuid4
 
@@ -58,11 +59,11 @@ def mock_founders_result():
     return {
         "founders": [
             {
-                "name": "Marco Perini",
+                "name": "Marco Vinci",
                 "title": "Co-founder & CEO",
                 "bio": "AI researcher and entrepreneur",
-                "linkedin": "https://linkedin.com/in/marco-perini",
-                "twitter": "https://twitter.com/marco_perini",
+                "linkedin": "https://linkedin.com/in/marco-vinci",
+                "twitter": "https://twitter.com/marco_vinci",
             },
             {
                 "name": "Lorenzo Padoan",
@@ -441,7 +442,7 @@ def test_crawl_polling_with_timing(
 
         # Simulate the polling loop from crawl_example.py
         for i in range(60):  # Same as in the example
-            # time.sleep(5) - mocked out
+            time.sleep(5)  # This will be mocked out
             result = client.get_crawl(crawl_id)
             if result.get("status") == "success" and result.get("result"):
                 # Verify successful completion
