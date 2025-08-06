@@ -82,7 +82,7 @@ def markdownify_movements():
     print("🚀 Starting Markdownify with Enhanced Features...")
     print(f"🌐 Website URL: {website_url}")
     print(f"📋 Custom Headers: {len(custom_headers)} headers configured")
-    print(f"🎯 Goal: Convert website to clean markdown format")
+    print("🎯 Goal: Convert website to clean markdown format")
     print("\n" + "=" * 60)
 
     # Start timer
@@ -133,7 +133,7 @@ def markdownify_movements():
                 lines = markdown_content.split("\n")
                 words = len(markdown_content.split())
 
-                print(f"📊 Statistics:")
+                print("📊 Statistics:")
                 print(f"   - Total Lines: {len(lines)}")
                 print(f"   - Total Words: {words}")
                 print(f"   - Total Characters: {len(markdown_content)}")
@@ -142,7 +142,7 @@ def markdownify_movements():
                 )
 
                 # Display first 500 characters
-                print(f"\n🔍 First 500 characters:")
+                print("\n🔍 First 500 characters:")
                 print("-" * 50)
                 print(markdown_content[:500])
                 if len(markdown_content) > 500:
@@ -207,7 +207,7 @@ def analyze_markdown_content(markdown_content: str):
     Args:
         markdown_content: The markdown content to analyze
     """
-    print(f"\n🔍 CONTENT ANALYSIS:")
+    print("\n🔍 CONTENT ANALYSIS:")
     print("-" * 50)
 
     # Count different markdown elements
@@ -224,7 +224,7 @@ def analyze_markdown_content(markdown_content: str):
 
     # Show first few headers if they exist
     if headers:
-        print(f"\n📋 First few headers:")
+        print("\n📋 First few headers:")
         for i, header in enumerate(headers[:3]):
             print(f"   {i+1}. {header.strip()}")
         if len(headers) > 3:

@@ -174,7 +174,7 @@ def step_6_process_results(result, duration):
 
         # Check for pagination success indicators
         if "data" in result:
-            print(f"\n✨ Pagination successful! Data extracted from multiple pages")
+            print("\n✨ Pagination successful! Data extracted from multiple pages")
 
     elif isinstance(result, list):
         print(f"\n✅ Pagination successful! Extracted {len(result)} items")

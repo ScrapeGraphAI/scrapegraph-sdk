@@ -209,7 +209,7 @@ async def test_pagination_with_different_parameters():
         return
 
     try:
-        client = AsyncClient(api_key=api_key)
+        AsyncClient(api_key=api_key)
     except Exception as e:
         print(f"❌ Error initializing client: {e}")
         return
@@ -246,7 +246,7 @@ async def test_pagination_with_different_parameters():
         try:
             # This is just to demonstrate the API call structure
             # In a real scenario, you'd make actual API calls
-            print(f"   ✅ Configuration valid")
+            print("   ✅ Configuration valid")
 
         except Exception as e:
             print(f"   ❌ Configuration error: {e}")

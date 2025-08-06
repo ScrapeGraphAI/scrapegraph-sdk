@@ -9,7 +9,6 @@ These tests focus on the complete crawl workflow including:
 """
 
 import json
-import time
 from unittest.mock import patch
 from uuid import uuid4
 

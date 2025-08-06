@@ -19,7 +19,7 @@ SGAI_API_KEY=your_api_key_here
 
 import json
 import os
-from typing import Dict, Optional
+from typing import Dict
 
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field

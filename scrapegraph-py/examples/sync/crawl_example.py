@@ -13,7 +13,6 @@ SGAI_API_KEY=your_api_key_here
 import json
 import os
 import time
-from typing import Any, Dict
 
 from dotenv import load_dotenv
 

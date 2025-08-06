@@ -143,7 +143,7 @@ def test_pagination_parameters():
         return
 
     try:
-        client = Client(api_key=api_key)
+        Client(api_key=api_key)
     except Exception as e:
         print(f"❌ Error initializing client: {e}")
         return
@@ -170,7 +170,7 @@ def test_pagination_parameters():
         try:
             # This is just to demonstrate the API call structure
             # In a real scenario, you'd use actual URLs
-            print(f"   ✅ Configuration valid")
+            print("   ✅ Configuration valid")
 
         except Exception as e:
             print(f"   ❌ Configuration error: {e}")

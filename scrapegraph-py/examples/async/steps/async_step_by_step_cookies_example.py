@@ -224,7 +224,7 @@ def step_7_process_results(result, duration):
 
         # Check for authentication success indicators
         if "result" in result:
-            print(f"\n✨ Authentication successful! Data extracted with cookies")
+            print("\n✨ Authentication successful! Data extracted with cookies")
 
     elif isinstance(result, list):
         print(f"\n✅ Authentication successful! Extracted {len(result)} items")
