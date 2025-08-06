@@ -1,3 +1,10 @@
+## [1.18.1](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.18.0...v1.18.1) (2025-08-06)
+
+
+### Bug Fixes
+
+* linting errors ([e88a710](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/e88a710a6a7c63c68e5ae8f4b632732c6c28f8ce))
+
 ## [1.18.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.17.0...v1.18.0) (2025-08-05)
 
 
