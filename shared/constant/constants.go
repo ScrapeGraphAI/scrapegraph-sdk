@@ -3,7 +3,7 @@
 package constant
 
 import (
-	"encoding/json"
+	shimjson "github.com/ScrapeGraphAI/scrapegraph-sdk/internal/encoding/json"
 )
 
 type Constant[T any] interface {
@@ -28,5 +28,5 @@ func marshalString[T ~string, PT constant[T]](v T) ([]byte, error) {
 	if v == zero {
 		v = PT(&v).Default()
 	}
-	return json.Marshal(string(v))
+	return shimjson.Marshal(string(v))
 }
