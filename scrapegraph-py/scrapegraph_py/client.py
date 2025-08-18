@@ -9,6 +9,10 @@ from requests.exceptions import RequestException
 from scrapegraph_py.config import API_BASE_URL, DEFAULT_HEADERS
 from scrapegraph_py.exceptions import APIError
 from scrapegraph_py.logger import sgai_logger as logger
+from scrapegraph_py.models.agenticscraper import (
+    AgenticScraperRequest,
+    GetAgenticScraperRequest,
+)
 from scrapegraph_py.models.crawl import CrawlRequest, GetCrawlRequest
 from scrapegraph_py.models.feedback import FeedbackRequest
 from scrapegraph_py.models.markdownify import GetMarkdownifyRequest, MarkdownifyRequest
@@ -390,6 +394,48 @@ class Client:
 
         result = self._make_request("GET", f"{API_BASE_URL}/crawl/{crawl_id}")
         logger.info(f"✨ Successfully retrieved result for request {crawl_id}")
+        return result
+
+    def agenticscraper(
+        self,
+        url: str,
+        steps: list[str],
+        use_session: bool = True,
+    ):
+        """Send an agentic scraper request to perform automated actions on a webpage
+        
+        Args:
+            url: The URL to scrape
+            steps: List of steps to perform on the webpage
+            use_session: Whether to use session for the scraping (default: True)
+        """
+        logger.info(f"🤖 Starting agentic scraper request for {url}")
+        logger.debug(f"🔧 Use session: {use_session}")
+        logger.debug(f"📋 Steps: {steps}")
+
+        request = AgenticScraperRequest(
+            url=url,
+            steps=steps,
+            use_session=use_session,
+        )
+        logger.debug("✅ Request validation passed")
+
+        result = self._make_request(
+            "POST", f"{API_BASE_URL}/agentic-scrapper", json=request.model_dump()
+        )
+        logger.info("✨ Agentic scraper request completed successfully")
+        return result
+
+    def get_agenticscraper(self, request_id: str):
+        """Get the result of a previous agentic scraper request"""
+        logger.info(f"🔍 Fetching agentic scraper result for request {request_id}")
+
+        # Validate input using Pydantic model
+        GetAgenticScraperRequest(request_id=request_id)
+        logger.debug("✅ Request ID validation passed")
+
+        result = self._make_request("GET", f"{API_BASE_URL}/agentic-scrapper/{request_id}")
+        logger.info(f"✨ Successfully retrieved result for request {request_id}")
         return result
 
     def close(self):
