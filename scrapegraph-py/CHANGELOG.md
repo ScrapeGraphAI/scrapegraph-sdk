@@ -1,3 +1,16 @@
+## [1.19.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.18.2...v1.19.0) (2025-08-18)
+
+
+### Features
+
+* add file for python ([2010ea1](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/2010ea14673a70fdf1aad3ef9b0485ee00a8bf1b))
+* add files ([bf3d42d](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/bf3d42d7534121f21e8cfec267760320c404a7f1))
+
+
+### chore
+
+* add tests ([b059fd6](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/b059fd6112b7f391b2b82f10255f27949c0767c7))
+
 ## [1.18.2](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.18.1...v1.18.2) (2025-08-06)
 
 
