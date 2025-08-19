@@ -1,3 +1,10 @@
+## [1.20.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.19.0...v1.20.0) (2025-08-19)
+
+
+### Features
+
+* add examples and md mode ([a02cb1e](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/a02cb1e6c31942c05a633aa5abddc5d3a9e105d9))
+
 ## [1.19.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.18.2...v1.19.0) (2025-08-18)
 
 
