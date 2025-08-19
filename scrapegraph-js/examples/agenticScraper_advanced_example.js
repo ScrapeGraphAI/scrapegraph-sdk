@@ -13,7 +13,7 @@ async function advancedAgenticScrapingExample() {
   // Example configurations for different scenarios
   const scenarios = [
     {
-      name: 'Social Media Login',
+      name: 'Social Media Login (No AI)',
       url: 'https://twitter.com/login',
       steps: [
         'click on email input field',
@@ -23,10 +23,11 @@ async function advancedAgenticScrapingExample() {
         'click login button',
         'wait for 3 seconds'
       ],
-      useSession: true
+      useSession: true,
+      aiExtraction: false
     },
     {
-      name: 'Form Submission',
+      name: 'Form Submission with AI Extraction',
       url: 'https://example.com/contact',
       steps: [
         'click on name input',
@@ -35,12 +36,26 @@ async function advancedAgenticScrapingExample() {
         'type "john@example.com" in email field',
         'click on message textarea',
         'type "Hello, this is a test message" in message field',
-        'click submit button'
+        'click submit button',
+        'wait for confirmation message'
       ],
-      useSession: false
+      useSession: false,
+      aiExtraction: true,
+      userPrompt: 'Extract the form submission result, confirmation message, and any reference numbers provided',
+      outputSchema: {
+        submission: {
+          type: "object",
+          properties: {
+            status: { type: "string" },
+            message: { type: "string" },
+            reference_id: { type: "string" }
+          },
+          required: ["status", "message"]
+        }
+      }
     },
     {
-      name: 'E-commerce Search',
+      name: 'E-commerce Search with Product Extraction',
       url: 'https://example-store.com',
       steps: [
         'wait for page to load',
@@ -50,9 +65,33 @@ async function advancedAgenticScrapingExample() {
         'wait for 2 seconds',
         'click on filter button',
         'select price range $50-$100',
-        'click apply filters'
+        'click apply filters',
+        'scroll down to see more products'
       ],
-      useSession: true
+      useSession: true,
+      aiExtraction: true,
+      userPrompt: 'Extract product information including names, prices, ratings, and availability from the search results',
+      outputSchema: {
+        search_results: {
+          type: "object",
+          properties: {
+            products: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  name: { type: "string" },
+                  price: { type: "string" },
+                  rating: { type: "number" },
+                  availability: { type: "string" }
+                }
+              }
+            },
+            total_results: { type: "number" },
+            current_page: { type: "number" }
+          }
+        }
+      }
     }
   ];
   
@@ -64,6 +103,11 @@ async function advancedAgenticScrapingExample() {
     console.log(`URL: ${scenario.url}`);
     console.log(`Steps: ${scenario.steps.length} automation actions`);
     console.log(`Use Session: ${scenario.useSession}`);
+    console.log(`AI Extraction: ${scenario.aiExtraction}`);
+    if (scenario.aiExtraction) {
+      console.log(`User Prompt: ${scenario.userPrompt}`);
+      console.log(`Output Schema: ${scenario.outputSchema ? 'Provided' : 'None'}`);
+    }
     
     // Validate inputs before making the request
     validateInputs(scenario.url, scenario.steps);
@@ -75,7 +119,10 @@ async function advancedAgenticScrapingExample() {
       apiKey, 
       scenario.url, 
       scenario.steps, 
-      scenario.useSession
+      scenario.useSession,
+      scenario.userPrompt || null,
+      scenario.outputSchema || null,
+      scenario.aiExtraction || false
     );
     
     console.log('✅ Request submitted successfully!');
@@ -86,7 +133,19 @@ async function advancedAgenticScrapingExample() {
     const result = await monitorRequest(response.request_id, 120); // 2 minute timeout
     
     console.log('\n🎉 Automation completed!');
-    console.log('Final Result:', JSON.stringify(result.result, null, 2));
+    
+    if (scenario.aiExtraction && result.result) {
+      console.log('🎯 Extracted Structured Data:');
+      console.log(JSON.stringify(result.result, null, 2));
+    } else if (result.markdown) {
+      console.log('📄 Raw Content (markdown):');
+      const preview = result.markdown.length > 500 
+        ? result.markdown.substring(0, 500) + '...'
+        : result.markdown;
+      console.log(preview);
+    } else {
+      console.log('Final Result:', JSON.stringify(result.result, null, 2));
+    }
     
     return result;
     

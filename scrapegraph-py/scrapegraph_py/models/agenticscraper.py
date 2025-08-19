@@ -1,6 +1,6 @@
 # Models for agentic scraper endpoint
 
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 from uuid import UUID
 
 from pydantic import BaseModel, Field, model_validator
@@ -25,6 +25,29 @@ class AgenticScraperRequest(BaseModel):
         ],
         description="List of steps to perform on the webpage"
     )
+    user_prompt: Optional[str] = Field(
+        default=None,
+        example="Extract user information and available dashboard sections",
+        description="Prompt for AI extraction (only used when ai_extraction=True)"
+    )
+    output_schema: Optional[Dict[str, Any]] = Field(
+        default=None,
+        example={
+            "user_info": {
+                "type": "object",
+                "properties": {
+                    "username": {"type": "string"},
+                    "email": {"type": "string"},
+                    "dashboard_sections": {"type": "array", "items": {"type": "string"}}
+                }
+            }
+        },
+        description="Schema for structured data extraction (only used when ai_extraction=True)"
+    )
+    ai_extraction: bool = Field(
+        default=False,
+        description="Whether to use AI for data extraction from the scraped content"
+    )
 
     @model_validator(mode="after")
     def validate_url(self) -> "AgenticScraperRequest":
@@ -43,6 +66,13 @@ class AgenticScraperRequest(BaseModel):
             raise ValueError("Steps cannot be empty")
         if any(not step.strip() for step in self.steps):
             raise ValueError("All steps must contain valid instructions")
+        return self
+
+    @model_validator(mode="after")
+    def validate_ai_extraction(self) -> "AgenticScraperRequest":
+        if self.ai_extraction:
+            if not self.user_prompt or not self.user_prompt.strip():
+                raise ValueError("user_prompt is required when ai_extraction=True")
         return self
 
     def model_dump(self, *args, **kwargs) -> dict:

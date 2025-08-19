@@ -4,6 +4,7 @@ The Agentic Scraper enables AI-powered browser automation for complex interactio
 
 ## 🚀 Quick Start
 
+### Basic Usage (No AI Extraction)
 ```javascript
 import { agenticScraper, getAgenticScraperRequest } from 'scrapegraph-js';
 
@@ -15,26 +16,76 @@ const steps = [
   'click on login'
 ];
 
-// Submit automation request
+// Submit automation request (basic scraping)
 const response = await agenticScraper(apiKey, url, steps, true);
 console.log('Request ID:', response.request_id);
 
 // Check results
 const result = await getAgenticScraperRequest(apiKey, response.request_id);
 console.log('Status:', result.status);
+console.log('Markdown Content:', result.markdown);
+```
+
+### AI Extraction Usage
+```javascript
+import { agenticScraper, getAgenticScraperRequest } from 'scrapegraph-js';
+
+const apiKey = 'your-api-key';
+const url = 'https://dashboard.scrapegraphai.com/';
+const steps = [
+  'Type email@gmail.com in email input box',
+  'Type test-password@123 in password inputbox',
+  'click on login',
+  'wait for dashboard to load'
+];
+
+// Define extraction schema
+const outputSchema = {
+  user_info: {
+    type: "object",
+    properties: {
+      username: { type: "string" },
+      email: { type: "string" },
+      dashboard_sections: { type: "array", items: { type: "string" } }
+    }
+  }
+};
+
+// Submit automation request with AI extraction
+const response = await agenticScraper(
+  apiKey, 
+  url, 
+  steps, 
+  true,                                                    // useSession
+  "Extract user information and available dashboard sections", // userPrompt
+  outputSchema,                                            // outputSchema
+  true                                                     // aiExtraction
+);
+
+console.log('Request ID:', response.request_id);
+
+// Check results
+const result = await getAgenticScraperRequest(apiKey, response.request_id);
+if (result.status === 'completed') {
+  console.log('Extracted Data:', result.result);
+  console.log('Raw Markdown:', result.markdown);
+}
 ```
 
 ## 📚 API Reference
 
-### `agenticScraper(apiKey, url, steps, useSession)`
+### `agenticScraper(apiKey, url, steps, useSession, userPrompt, outputSchema, aiExtraction)`
 
-Performs automated browser actions on a webpage.
+Performs automated browser actions on a webpage with optional AI extraction.
 
 **Parameters:**
 - `apiKey` (string): Your ScrapeGraph AI API key
 - `url` (string): The URL of the webpage to interact with
 - `steps` (string[]): Array of automation steps to perform
 - `useSession` (boolean, optional): Whether to use session management (default: true)
+- `userPrompt` (string, optional): Prompt for AI extraction (required when aiExtraction=true)
+- `outputSchema` (object, optional): Schema for structured data extraction (used with aiExtraction=true)
+- `aiExtraction` (boolean, optional): Whether to use AI for data extraction (default: false)
 
 **Returns:** Promise<Object> with `request_id` and initial `status`
 
@@ -66,6 +117,150 @@ Retrieves the status or result of an agentic scraper request.
 - `completed_at`: Completion timestamp (when completed)
 
 ## 🎯 Use Cases
+
+### 1. **Basic Automation (No AI)**
+Perfect for simple automation tasks where you just need the raw HTML/markdown content:
+- **Login automation**: Automate login flows and capture the resulting page
+- **Form submission**: Fill out forms and get confirmation pages
+- **Navigation**: Navigate through multi-step workflows
+- **Content scraping**: Get page content after performing actions
+
+### 2. **AI-Powered Data Extraction**
+Ideal when you need structured data from the automated interactions:
+- **Dashboard data extraction**: Login and extract user information, metrics, settings
+- **E-commerce scraping**: Search products and extract structured product data
+- **Form result parsing**: Submit forms and extract confirmation details, reference numbers
+- **Content analysis**: Navigate to content and extract key information in structured format
+
+### 3. **Hybrid Approach**
+Use both modes depending on your needs:
+- **Development/Testing**: Start with basic mode to test automation steps
+- **Production**: Add AI extraction for structured data processing
+- **Fallback**: Use basic mode when AI extraction isn't needed
+
+## 💡 AI Extraction Examples
+
+### E-commerce Product Search
+```javascript
+const steps = [
+  'click on search box',
+  'type "wireless headphones" in search',
+  'press enter',
+  'wait for results to load',
+  'scroll down 2 times'
+];
+
+const schema = {
+  products: {
+    type: "array",
+    items: {
+      type: "object", 
+      properties: {
+        name: { type: "string" },
+        price: { type: "string" },
+        rating: { type: "number" },
+        availability: { type: "string" }
+      }
+    }
+  }
+};
+
+const response = await agenticScraper(
+  apiKey, 
+  'https://example-store.com', 
+  steps, 
+  true,
+  'Extract product names, prices, ratings, and availability from search results',
+  schema,
+  true
+);
+```
+
+### Contact Form with Confirmation
+```javascript
+const steps = [
+  'type "John Doe" in name field',
+  'type "john@example.com" in email field',
+  'type "Product inquiry" in subject field',
+  'type "I need more information about pricing" in message field',
+  'click submit button',
+  'wait for confirmation'
+];
+
+const schema = {
+  submission: {
+    type: "object",
+    properties: {
+      status: { type: "string" },
+      message: { type: "string" },
+      reference_number: { type: "string" },
+      response_time: { type: "string" }
+    }
+  }
+};
+
+const response = await agenticScraper(
+  apiKey,
+  'https://company.com/contact',
+  steps,
+  true,
+  'Extract form submission status, confirmation message, and any reference numbers',
+  schema,
+  true
+);
+```
+
+### Social Media Data Extraction
+```javascript
+const steps = [
+  'type "username" in username field',
+  'type "password" in password field', 
+  'click login button',
+  'wait for dashboard',
+  'click on profile section'
+];
+
+const schema = {
+  profile: {
+    type: "object",
+    properties: {
+      username: { type: "string" },
+      followers: { type: "number" },
+      following: { type: "number" },
+      posts: { type: "number" },
+      recent_activity: { type: "array", items: { type: "string" } }
+    }
+  }
+};
+
+const response = await agenticScraper(
+  apiKey,
+  'https://social-platform.com/login',
+  steps,
+  true,
+  'Extract profile information including username, follower counts, and recent activity',
+  schema,
+  true
+);
+```
+
+## 🔧 Best Practices
+
+### When to Use AI Extraction
+- ✅ **Use AI extraction when**: You need structured data, specific information extraction, or data validation
+- ❌ **Skip AI extraction when**: You just need raw content, testing automation steps, or processing content externally
+
+### Schema Design Tips
+- **Be specific**: Define exact data types and required fields
+- **Use descriptions**: Add description fields to guide AI extraction
+- **Nested objects**: Use nested schemas for complex data structures
+- **Arrays**: Use arrays for lists of similar items (products, comments, etc.)
+
+### Step Optimization
+- **Wait steps**: Add wait steps after actions that trigger loading
+- **Specific selectors**: Use specific element descriptions ("click on blue submit button")
+- **Sequential actions**: Break complex actions into smaller, specific steps
+- **Error handling**: Include steps to handle common UI variations
 
 ### 🔐 Login Automation
 ```javascript

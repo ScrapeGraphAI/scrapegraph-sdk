@@ -401,6 +401,9 @@ class Client:
         url: str,
         steps: list[str],
         use_session: bool = True,
+        user_prompt: Optional[str] = None,
+        output_schema: Optional[Dict[str, Any]] = None,
+        ai_extraction: bool = False,
     ):
         """Send an agentic scraper request to perform automated actions on a webpage
         
@@ -408,15 +411,25 @@ class Client:
             url: The URL to scrape
             steps: List of steps to perform on the webpage
             use_session: Whether to use session for the scraping (default: True)
+            user_prompt: Prompt for AI extraction (required when ai_extraction=True)
+            output_schema: Schema for structured data extraction (optional, used with ai_extraction=True)
+            ai_extraction: Whether to use AI for data extraction from the scraped content (default: False)
         """
         logger.info(f"🤖 Starting agentic scraper request for {url}")
         logger.debug(f"🔧 Use session: {use_session}")
         logger.debug(f"📋 Steps: {steps}")
+        logger.debug(f"🧠 AI extraction: {ai_extraction}")
+        if ai_extraction:
+            logger.debug(f"💭 User prompt: {user_prompt}")
+            logger.debug(f"📋 Output schema provided: {output_schema is not None}")
 
         request = AgenticScraperRequest(
             url=url,
             steps=steps,
             use_session=use_session,
+            user_prompt=user_prompt,
+            output_schema=output_schema,
+            ai_extraction=ai_extraction,
         )
         logger.debug("✅ Request validation passed")
 

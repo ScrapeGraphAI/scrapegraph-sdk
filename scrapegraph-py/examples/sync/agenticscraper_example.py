@@ -21,7 +21,10 @@ if not api_key:
 
 sgai_client = Client(api_key=api_key)
 
-# AgenticScraper request - automated login example
+print("🤖 Example 1: Basic Agentic Scraping (No AI Extraction)")
+print("=" * 60)
+
+# AgenticScraper request - basic automated login example (no AI)
 response = sgai_client.agenticscraper(
     url="https://dashboard.scrapegraphai.com/",
     use_session=True,
@@ -29,11 +32,55 @@ response = sgai_client.agenticscraper(
         "Type email@gmail.com in email input box",
         "Type test-password@123 in password inputbox", 
         "click on login"
-    ]
+    ],
+    ai_extraction=False  # No AI extraction - just get raw content
 )
 
 # Print the response
 print(f"Request ID: {response['request_id']}")
-print(f"Result: {response['result']}")
+print(f"Result: {response.get('result', 'No result yet')}")
+print(f"Status: {response.get('status', 'Unknown')}")
+
+print("\n\n🧠 Example 2: Agentic Scraping with AI Extraction")
+print("=" * 60)
+
+# Define schema for AI extraction
+output_schema = {
+    "dashboard_info": {
+        "type": "object",
+        "properties": {
+            "username": {"type": "string"},
+            "email": {"type": "string"},
+            "dashboard_sections": {
+                "type": "array",
+                "items": {"type": "string"}
+            },
+            "credits_remaining": {"type": "number"}
+        },
+        "required": ["username", "dashboard_sections"]
+    }
+}
+
+# AgenticScraper request with AI extraction
+ai_response = sgai_client.agenticscraper(
+    url="https://dashboard.scrapegraphai.com/",
+    use_session=True,
+    steps=[
+        "Type email@gmail.com in email input box",
+        "Type test-password@123 in password inputbox", 
+        "click on login",
+        "wait for dashboard to load completely"
+    ],
+    user_prompt="Extract user information, available dashboard sections, and remaining credits from the dashboard",
+    output_schema=output_schema,
+    ai_extraction=True
+)
+
+# Print the AI extraction response
+print(f"AI Request ID: {ai_response['request_id']}")
+print(f"AI Result: {ai_response.get('result', 'No result yet')}")
+print(f"AI Status: {ai_response.get('status', 'Unknown')}")
+print(f"User Prompt: Extract user information, available dashboard sections, and remaining credits")
+print(f"Schema Provided: {'Yes' if output_schema else 'No'}")
 
 sgai_client.close()

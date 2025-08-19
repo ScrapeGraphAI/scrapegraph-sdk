@@ -8,11 +8,14 @@ import handleError from './utils/handleError.js';
  * @param {string} url - The URL of the webpage to interact with
  * @param {string[]} steps - Array of steps to perform on the webpage (e.g., ["Type email@gmail.com in email input box", "click on login"])
  * @param {boolean} [useSession=true] - Whether to use session for the scraping operations
+ * @param {string} [userPrompt=null] - Prompt for AI extraction (required when aiExtraction=true)
+ * @param {Object} [outputSchema=null] - Schema for structured data extraction (optional, used with aiExtraction=true)
+ * @param {boolean} [aiExtraction=false] - Whether to use AI for data extraction from the scraped content
  * @returns {Promise<Object>} Response from the API containing request_id and initial status
  * @throws {Error} Will throw an error in case of an HTTP failure or invalid parameters.
  *
  * @example
- * // Example usage for automated login:
+ * // Example usage for basic automated login (no AI extraction):
  * const apiKey = 'your-api-key';
  * const url = 'https://dashboard.scrapegraphai.com/';
  * const steps = [
@@ -28,8 +31,36 @@ import handleError from './utils/handleError.js';
  * } catch (error) {
  *   console.error('Error:', error.message);
  * }
+ *
+ * @example
+ * // Example usage with AI extraction:
+ * const outputSchema = {
+ *   user_info: {
+ *     type: "object",
+ *     properties: {
+ *       username: { type: "string" },
+ *       email: { type: "string" },
+ *       dashboard_sections: { type: "array", items: { type: "string" } }
+ *     }
+ *   }
+ * };
+ *
+ * try {
+ *   const result = await agenticScraper(
+ *     apiKey, 
+ *     url, 
+ *     steps, 
+ *     true,
+ *     "Extract user information and available dashboard sections",
+ *     outputSchema,
+ *     true
+ *   );
+ *   console.log('Request ID:', result.request_id);
+ * } catch (error) {
+ *   console.error('Error:', error.message);
+ * }
  */
-export async function agenticScraper(apiKey, url, steps, useSession = true) {
+export async function agenticScraper(apiKey, url, steps, useSession = true, userPrompt = null, outputSchema = null, aiExtraction = false) {
   const endpoint = 'https://api.scrapegraphai.com/v1/agentic-scrapper';
   const headers = {
     'accept': 'application/json',
@@ -62,11 +93,35 @@ export async function agenticScraper(apiKey, url, steps, useSession = true) {
     throw new Error('useSession must be a boolean value');
   }
 
+  if (typeof aiExtraction !== 'boolean') {
+    throw new Error('aiExtraction must be a boolean value');
+  }
+
+  // Validate AI extraction parameters
+  if (aiExtraction) {
+    if (!userPrompt || typeof userPrompt !== 'string' || !userPrompt.trim()) {
+      throw new Error('userPrompt is required and must be a non-empty string when aiExtraction=true');
+    }
+    
+    if (outputSchema !== null && (typeof outputSchema !== 'object' || Array.isArray(outputSchema))) {
+      throw new Error('outputSchema must be an object or null');
+    }
+  }
+
   const payload = {
     url: url,
     use_session: useSession,
     steps: steps,
+    ai_extraction: aiExtraction,
   };
+
+  // Add AI extraction parameters if enabled
+  if (aiExtraction) {
+    payload.user_prompt = userPrompt;
+    if (outputSchema) {
+      payload.output_schema = outputSchema;
+    }
+  }
 
   try {
     const response = await axios.post(endpoint, payload, { headers });
