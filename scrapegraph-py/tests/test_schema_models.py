@@ -450,3 +450,4 @@ class TestSchemaModelsIntegration:
         assert request.user_prompt == "Test prompt"
         assert response.user_prompt == request.user_prompt
         assert status_request.request_id == response.request_id
+
