@@ -553,3 +553,223 @@ def test_crawl_markdown_mode_validation(mock_api_key):
                 "Data schema should not be provided when extraction_mode=False"
                 in str(e)
             )
+
+
+# ============================================================================
+# HTMLFY TESTS
+# ============================================================================
+
+
+@responses.activate
+def test_htmlfy_basic(mock_api_key):
+    """Test basic HTMLfy request"""
+    responses.add(
+        responses.POST,
+        "https://api.scrapegraphai.com/v1/htmlfy",
+        json={
+            "htmlfy_request_id": str(uuid4()),
+            "status": "completed",
+            "html": "<html><body><h1>Example Page</h1><p>This is HTML content.</p></body></html>",
+        },
+    )
+
+    with Client(api_key=mock_api_key) as client:
+        response = client.htmlfy(website_url="https://example.com")
+        assert response["status"] == "completed"
+        assert "html" in response
+        assert "<h1>Example Page</h1>" in response["html"]
+
+
+@responses.activate
+def test_htmlfy_with_heavy_js(mock_api_key):
+    """Test HTMLfy request with heavy JavaScript rendering"""
+    responses.add(
+        responses.POST,
+        "https://api.scrapegraphai.com/v1/htmlfy",
+        json={
+            "htmlfy_request_id": str(uuid4()),
+            "status": "completed",
+            "html": "<html><body><div id='app'>JavaScript rendered content</div></body></html>",
+        },
+    )
+
+    with Client(api_key=mock_api_key) as client:
+        response = client.htmlfy(
+            website_url="https://example.com",
+            render_heavy_js=True
+        )
+        assert response["status"] == "completed"
+        assert "html" in response
+        assert "JavaScript rendered content" in response["html"]
+
+
+@responses.activate
+def test_htmlfy_with_headers(mock_api_key):
+    """Test HTMLfy request with custom headers"""
+    responses.add(
+        responses.POST,
+        "https://api.scrapegraphai.com/v1/htmlfy",
+        json={
+            "htmlfy_request_id": str(uuid4()),
+            "status": "completed",
+            "html": "<html><body><p>Content with custom headers</p></body></html>",
+        },
+    )
+
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+        "Cookie": "session=123"
+    }
+
+    with Client(api_key=mock_api_key) as client:
+        response = client.htmlfy(
+            website_url="https://example.com",
+            headers=headers
+        )
+        assert response["status"] == "completed"
+        assert "html" in response
+
+
+@responses.activate
+def test_htmlfy_with_all_options(mock_api_key):
+    """Test HTMLfy request with all options enabled"""
+    responses.add(
+        responses.POST,
+        "https://api.scrapegraphai.com/v1/htmlfy",
+        json={
+            "htmlfy_request_id": str(uuid4()),
+            "status": "completed",
+            "html": "<html><body><div>Full featured content</div></body></html>",
+        },
+    )
+
+    headers = {
+        "User-Agent": "Custom Agent",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+    }
+
+    with Client(api_key=mock_api_key) as client:
+        response = client.htmlfy(
+            website_url="https://example.com",
+            render_heavy_js=True,
+            headers=headers
+        )
+        assert response["status"] == "completed"
+        assert "html" in response
+
+
+@responses.activate
+def test_get_htmlfy(mock_api_key, mock_uuid):
+    """Test get HTMLfy result"""
+    responses.add(
+        responses.GET,
+        f"https://api.scrapegraphai.com/v1/htmlfy/{mock_uuid}",
+        json={
+            "htmlfy_request_id": mock_uuid,
+            "status": "completed",
+            "html": "<html><body><p>Retrieved HTML content</p></body></html>",
+        },
+    )
+
+    with Client(api_key=mock_api_key) as client:
+        response = client.get_htmlfy(mock_uuid)
+        assert response["status"] == "completed"
+        assert response["htmlfy_request_id"] == mock_uuid
+        assert "html" in response
+
+
+@responses.activate
+def test_htmlfy_error_response(mock_api_key):
+    """Test HTMLfy error response handling"""
+    responses.add(
+        responses.POST,
+        "https://api.scrapegraphai.com/v1/htmlfy",
+        json={
+            "error": "Website not accessible",
+            "status": "error"
+        },
+        status=400
+    )
+
+    with Client(api_key=mock_api_key) as client:
+        with pytest.raises(Exception):
+            client.htmlfy(website_url="https://inaccessible-site.com")
+
+
+@responses.activate
+def test_htmlfy_processing_status(mock_api_key):
+    """Test HTMLfy processing status response"""
+    responses.add(
+        responses.POST,
+        "https://api.scrapegraphai.com/v1/htmlfy",
+        json={
+            "htmlfy_request_id": str(uuid4()),
+            "status": "processing",
+            "message": "HTMLfy job started"
+        },
+    )
+
+    with Client(api_key=mock_api_key) as client:
+        response = client.htmlfy(website_url="https://example.com")
+        assert response["status"] == "processing"
+        assert "htmlfy_request_id" in response
+
+
+@responses.activate
+def test_htmlfy_complex_html_response(mock_api_key):
+    """Test HTMLfy with complex HTML response"""
+    complex_html = """
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Complex Page</title>
+        <style>
+            body { font-family: Arial, sans-serif; }
+        </style>
+    </head>
+    <body>
+        <header>
+            <nav>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                </ul>
+            </nav>
+        </header>
+        <main>
+            <h1>Welcome</h1>
+            <p>This is a complex HTML page with multiple elements.</p>
+            <div class="content">
+                <img src="image.jpg" alt="Sample image">
+                <table>
+                    <tr><td>Data 1</td><td>Data 2</td></tr>
+                </table>
+            </div>
+        </main>
+        <script>
+            console.log('JavaScript loaded');
+        </script>
+    </body>
+    </html>
+    """
+    
+    responses.add(
+        responses.POST,
+        "https://api.scrapegraphai.com/v1/htmlfy",
+        json={
+            "htmlfy_request_id": str(uuid4()),
+            "status": "completed",
+            "html": complex_html,
+        },
+    )
+
+    with Client(api_key=mock_api_key) as client:
+        response = client.htmlfy(website_url="https://complex-example.com")
+        assert response["status"] == "completed"
+        assert "html" in response
+        assert "<!DOCTYPE html>" in response["html"]
+        assert "<title>Complex Page</title>" in response["html"]
+        assert "<script>" in response["html"]
+        assert "<style>" in response["html"]
