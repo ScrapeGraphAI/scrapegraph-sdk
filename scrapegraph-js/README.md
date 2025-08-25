@@ -15,6 +15,7 @@ Official JavaScript/TypeScript SDK for the ScrapeGraph AI API - Smart web scrapi
 - 🔍 Detailed error handling
 - ⚡ Automatic retries and logging
 - 🔐 Secure API authentication
+- 🔧 AI-powered schema generation
 
 ## 📦 Installation
 
@@ -391,6 +392,108 @@ const feedbackText = 'This is a test feedback message.';
     console.log('Feedback response:', response);
   } catch (error) {
     console.error('Error sending feedback:', error);
+  }
+})();
+```
+
+### AI-Powered Schema Generation
+
+Generate JSON schemas from natural language prompts using AI. This feature helps you create structured data schemas for web scraping and data extraction.
+
+#### Basic Schema Generation
+
+```javascript
+import { generateSchema } from 'scrapegraph-js';
+
+const apiKey = 'your-api-key';
+const prompt = 'Find laptops with specifications like brand, processor, RAM, storage, and price';
+
+(async () => {
+  try {
+    const response = await generateSchema(prompt, null, { apiKey });
+    console.log('Generated schema:', response.generated_schema);
+    console.log('Request ID:', response.request_id);
+  } catch (error) {
+    console.error('Error generating schema:', error);
+  }
+})();
+```
+
+#### Modifying Existing Schemas
+
+```javascript
+import { generateSchema } from 'scrapegraph-js';
+
+const apiKey = 'your-api-key';
+const existingSchema = {
+  type: 'object',
+  properties: {
+    name: { type: 'string' },
+    price: { type: 'number' }
+  },
+  required: ['name', 'price']
+};
+
+const modificationPrompt = 'Add brand and rating fields to the existing schema';
+
+(async () => {
+  try {
+    const response = await generateSchema(modificationPrompt, existingSchema, { apiKey });
+    console.log('Modified schema:', response.generated_schema);
+  } catch (error) {
+    console.error('Error modifying schema:', error);
+  }
+})();
+```
+
+#### Checking Schema Generation Status
+
+```javascript
+import { getSchemaStatus } from 'scrapegraph-js';
+
+const apiKey = 'your-api-key';
+const requestId = '123e4567-e89b-12d3-a456-426614174000';
+
+(async () => {
+  try {
+    const response = await getSchemaStatus(requestId, { apiKey });
+    console.log('Status:', response.status);
+    if (response.status === 'completed') {
+      console.log('Generated schema:', response.generated_schema);
+    }
+  } catch (error) {
+    console.error('Error checking status:', error);
+  }
+})();
+```
+
+#### Polling for Completion with Progress Tracking
+
+```javascript
+import { pollSchemaGeneration } from 'scrapegraph-js';
+
+const apiKey = 'your-api-key';
+const requestId = '123e4567-e89b-12d3-a456-426614174000';
+
+(async () => {
+  try {
+    const finalResult = await pollSchemaGeneration(requestId, {
+      apiKey,
+      maxAttempts: 15,
+      delay: 3000,
+      onProgress: ({ attempt, maxAttempts, status, response }) => {
+        if (status === 'checking') {
+          console.log(`Checking status... (${attempt}/${maxAttempts})`);
+        } else {
+          console.log(`Status: ${status} (${attempt}/${maxAttempts})`);
+        }
+      }
+    });
+    
+    console.log('Schema generation completed!');
+    console.log('Final schema:', finalResult.generated_schema);
+  } catch (error) {
+    console.error('Error during polling:', error);
   }
 })();
 ```
