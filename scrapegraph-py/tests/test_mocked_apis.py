@@ -55,9 +55,9 @@ MOCK_MARKDOWNIFY_RESPONSE = {
     "data": "# Test Page\n\nThis is a test page in markdown format.",
 }
 
-MOCK_HTMLFY_RESPONSE = {
+MOCK_SCRAPE_RESPONSE = {
     "status": "completed",
-    "htmlfy_request_id": "abc12345-e89b-12d3-a456-426614174003",
+    "scrape_request_id": "abc12345-e89b-12d3-a456-426614174003",
     "html": "<!DOCTYPE html><html><head><title>Test Page</title></head><body><h1>Test Page</h1><p>This is a test page in HTML format.</p></body></html>",
 }
 
@@ -361,30 +361,30 @@ async def test_async_concurrent_requests_mocked():
 
 
 # ============================================================================
-# HTMLFY TESTS
+# SCRAPE TESTS
 # ============================================================================
 
 
 @patch("scrapegraph_py.client.Client._make_request")
-def test_htmlfy_basic_mocked(mock_request):
-    """Test basic HTMLfy with mocked API call"""
-    mock_request.return_value = MOCK_HTMLFY_RESPONSE
+def test_scrape_basic_mocked(mock_request):
+    """Test basic scrape with mocked API call"""
+    mock_request.return_value = MOCK_SCRAPE_RESPONSE
 
     with Client(api_key=api_key) as client:
-        response = client.htmlfy(website_url="https://example.com")
+        response = client.scrape(website_url="https://example.com")
         assert response["status"] == "completed"
-        assert "htmlfy_request_id" in response
+        assert "scrape_request_id" in response
         assert "html" in response
         assert "<title>Test Page</title>" in response["html"]
 
 
 @patch("scrapegraph_py.client.Client._make_request")
-def test_htmlfy_with_heavy_js_mocked(mock_request):
-    """Test HTMLfy with heavy JS rendering"""
-    mock_request.return_value = MOCK_HTMLFY_RESPONSE
+def test_scrape_with_heavy_js_mocked(mock_request):
+    """Test scrape with heavy JS rendering"""
+    mock_request.return_value = MOCK_SCRAPE_RESPONSE
 
     with Client(api_key=api_key) as client:
-        response = client.htmlfy(
+        response = client.scrape(
             website_url="https://example.com",
             render_heavy_js=True
         )
@@ -393,9 +393,9 @@ def test_htmlfy_with_heavy_js_mocked(mock_request):
 
 
 @patch("scrapegraph_py.client.Client._make_request")
-def test_htmlfy_with_headers_mocked(mock_request):
-    """Test HTMLfy with custom headers"""
-    mock_request.return_value = MOCK_HTMLFY_RESPONSE
+def test_scrape_with_headers_mocked(mock_request):
+    """Test scrape with custom headers"""
+    mock_request.return_value = MOCK_SCRAPE_RESPONSE
 
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
@@ -403,7 +403,7 @@ def test_htmlfy_with_headers_mocked(mock_request):
     }
 
     with Client(api_key=api_key) as client:
-        response = client.htmlfy(
+        response = client.scrape(
             website_url="https://example.com",
             headers=headers
         )
@@ -412,38 +412,38 @@ def test_htmlfy_with_headers_mocked(mock_request):
 
 
 @patch("scrapegraph_py.client.Client._make_request")
-def test_get_htmlfy_mocked(mock_request):
-    """Test get HTMLfy result"""
-    mock_request.return_value = MOCK_HTMLFY_RESPONSE
+def test_get_scrape_mocked(mock_request):
+    """Test get scrape result"""
+    mock_request.return_value = MOCK_SCRAPE_RESPONSE
 
     with Client(api_key=api_key) as client:
-        response = client.get_htmlfy("abc12345-e89b-12d3-a456-426614174003")
+        response = client.get_scrape("abc12345-e89b-12d3-a456-426614174003")
         assert response["status"] == "completed"
-        assert "htmlfy_request_id" in response
+        assert "scrape_request_id" in response
         assert "html" in response
 
 
 @pytest.mark.asyncio
 @patch("scrapegraph_py.async_client.AsyncClient._make_request")
-async def test_async_htmlfy_basic_mocked(mock_request):
-    """Test basic async HTMLfy"""
-    mock_request.return_value = MOCK_HTMLFY_RESPONSE
+async def test_async_scrape_basic_mocked(mock_request):
+    """Test basic async scrape"""
+    mock_request.return_value = MOCK_SCRAPE_RESPONSE
 
     async with AsyncClient(api_key=api_key) as client:
-        response = await client.htmlfy(website_url="https://example.com")
+        response = await client.scrape(website_url="https://example.com")
         assert response["status"] == "completed"
-        assert "htmlfy_request_id" in response
+        assert "scrape_request_id" in response
         assert "html" in response
 
 
 @pytest.mark.asyncio
 @patch("scrapegraph_py.async_client.AsyncClient._make_request")
-async def test_async_htmlfy_with_heavy_js_mocked(mock_request):
-    """Test async HTMLfy with heavy JS rendering"""
-    mock_request.return_value = MOCK_HTMLFY_RESPONSE
+async def test_async_scrape_with_heavy_js_mocked(mock_request):
+    """Test async scrape with heavy JS rendering"""
+    mock_request.return_value = MOCK_SCRAPE_RESPONSE
 
     async with AsyncClient(api_key=api_key) as client:
-        response = await client.htmlfy(
+        response = await client.scrape(
             website_url="https://example.com",
             render_heavy_js=True
         )
@@ -453,9 +453,9 @@ async def test_async_htmlfy_with_heavy_js_mocked(mock_request):
 
 @pytest.mark.asyncio
 @patch("scrapegraph_py.async_client.AsyncClient._make_request")
-async def test_async_htmlfy_with_headers_mocked(mock_request):
-    """Test async HTMLfy with custom headers"""
-    mock_request.return_value = MOCK_HTMLFY_RESPONSE
+async def test_async_scrape_with_headers_mocked(mock_request):
+    """Test async scrape with custom headers"""
+    mock_request.return_value = MOCK_SCRAPE_RESPONSE
 
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
@@ -463,7 +463,7 @@ async def test_async_htmlfy_with_headers_mocked(mock_request):
     }
 
     async with AsyncClient(api_key=api_key) as client:
-        response = await client.htmlfy(
+        response = await client.scrape(
             website_url="https://example.com",
             headers=headers
         )
@@ -473,12 +473,12 @@ async def test_async_htmlfy_with_headers_mocked(mock_request):
 
 @pytest.mark.asyncio
 @patch("scrapegraph_py.async_client.AsyncClient._make_request")
-async def test_async_get_htmlfy_mocked(mock_request):
-    """Test async get HTMLfy result"""
-    mock_request.return_value = MOCK_HTMLFY_RESPONSE
+async def test_async_get_scrape_mocked(mock_request):
+    """Test async get scrape result"""
+    mock_request.return_value = MOCK_SCRAPE_RESPONSE
 
     async with AsyncClient(api_key=api_key) as client:
-        response = await client.get_htmlfy("abc12345-e89b-12d3-a456-426614174003")
+        response = await client.get_scrape("abc12345-e89b-12d3-a456-426614174003")
         assert response["status"] == "completed"
-        assert "htmlfy_request_id" in response
+        assert "scrape_request_id" in response
         assert "html" in response

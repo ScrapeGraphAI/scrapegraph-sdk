@@ -1,7 +1,7 @@
 from .agenticscraper import AgenticScraperRequest, GetAgenticScraperRequest
 from .crawl import CrawlRequest, GetCrawlRequest
 from .feedback import FeedbackRequest
-from .htmlfy import GetHtmlfyRequest, HtmlfyRequest
+from .scrape import GetScrapeRequest, ScrapeRequest
 from .markdownify import GetMarkdownifyRequest, MarkdownifyRequest
 from .searchscraper import GetSearchScraperRequest, SearchScraperRequest
 from .smartscraper import GetSmartScraperRequest, SmartScraperRequest
@@ -12,8 +12,8 @@ __all__ = [
     "CrawlRequest",
     "GetCrawlRequest",
     "FeedbackRequest",
-    "GetHtmlfyRequest",
-    "HtmlfyRequest",
+    "GetScrapeRequest",
+    "ScrapeRequest",
     "GetMarkdownifyRequest",
     "MarkdownifyRequest",
     "GetSearchScraperRequest",

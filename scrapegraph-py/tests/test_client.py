@@ -556,45 +556,45 @@ def test_crawl_markdown_mode_validation(mock_api_key):
 
 
 # ============================================================================
-# HTMLFY TESTS
+# SCRAPE TESTS
 # ============================================================================
 
 
 @responses.activate
-def test_htmlfy_basic(mock_api_key):
-    """Test basic HTMLfy request"""
+def test_scrape_basic(mock_api_key):
+    """Test basic scrape request"""
     responses.add(
         responses.POST,
-        "https://api.scrapegraphai.com/v1/htmlfy",
+        "https://api.scrapegraphai.com/v1/scrape",
         json={
-            "htmlfy_request_id": str(uuid4()),
+            "scrape_request_id": str(uuid4()),
             "status": "completed",
             "html": "<html><body><h1>Example Page</h1><p>This is HTML content.</p></body></html>",
         },
     )
 
     with Client(api_key=mock_api_key) as client:
-        response = client.htmlfy(website_url="https://example.com")
+        response = client.scrape(website_url="https://example.com")
         assert response["status"] == "completed"
         assert "html" in response
         assert "<h1>Example Page</h1>" in response["html"]
 
 
 @responses.activate
-def test_htmlfy_with_heavy_js(mock_api_key):
-    """Test HTMLfy request with heavy JavaScript rendering"""
+def test_scrape_with_heavy_js(mock_api_key):
+    """Test scrape request with heavy JavaScript rendering"""
     responses.add(
         responses.POST,
-        "https://api.scrapegraphai.com/v1/htmlfy",
+        "https://api.scrapegraphai.com/v1/scrape",
         json={
-            "htmlfy_request_id": str(uuid4()),
+            "scrape_request_id": str(uuid4()),
             "status": "completed",
             "html": "<html><body><div id='app'>JavaScript rendered content</div></body></html>",
         },
     )
 
     with Client(api_key=mock_api_key) as client:
-        response = client.htmlfy(
+        response = client.scrape(
             website_url="https://example.com",
             render_heavy_js=True
         )
@@ -604,13 +604,13 @@ def test_htmlfy_with_heavy_js(mock_api_key):
 
 
 @responses.activate
-def test_htmlfy_with_headers(mock_api_key):
-    """Test HTMLfy request with custom headers"""
+def test_scrape_with_headers(mock_api_key):
+    """Test scrape request with custom headers"""
     responses.add(
         responses.POST,
-        "https://api.scrapegraphai.com/v1/htmlfy",
+        "https://api.scrapegraphai.com/v1/scrape",
         json={
-            "htmlfy_request_id": str(uuid4()),
+            "scrape_request_id": str(uuid4()),
             "status": "completed",
             "html": "<html><body><p>Content with custom headers</p></body></html>",
         },
@@ -622,7 +622,7 @@ def test_htmlfy_with_headers(mock_api_key):
     }
 
     with Client(api_key=mock_api_key) as client:
-        response = client.htmlfy(
+        response = client.scrape(
             website_url="https://example.com",
             headers=headers
         )
@@ -631,13 +631,13 @@ def test_htmlfy_with_headers(mock_api_key):
 
 
 @responses.activate
-def test_htmlfy_with_all_options(mock_api_key):
-    """Test HTMLfy request with all options enabled"""
+def test_scrape_with_all_options(mock_api_key):
+    """Test scrape request with all options enabled"""
     responses.add(
         responses.POST,
-        "https://api.scrapegraphai.com/v1/htmlfy",
+        "https://api.scrapegraphai.com/v1/scrape",
         json={
-            "htmlfy_request_id": str(uuid4()),
+            "scrape_request_id": str(uuid4()),
             "status": "completed",
             "html": "<html><body><div>Full featured content</div></body></html>",
         },
@@ -649,7 +649,7 @@ def test_htmlfy_with_all_options(mock_api_key):
     }
 
     with Client(api_key=mock_api_key) as client:
-        response = client.htmlfy(
+        response = client.scrape(
             website_url="https://example.com",
             render_heavy_js=True,
             headers=headers
@@ -659,31 +659,31 @@ def test_htmlfy_with_all_options(mock_api_key):
 
 
 @responses.activate
-def test_get_htmlfy(mock_api_key, mock_uuid):
-    """Test get HTMLfy result"""
+def test_get_scrape(mock_api_key, mock_uuid):
+    """Test get scrape result"""
     responses.add(
         responses.GET,
-        f"https://api.scrapegraphai.com/v1/htmlfy/{mock_uuid}",
+        f"https://api.scrapegraphai.com/v1/scrape/{mock_uuid}",
         json={
-            "htmlfy_request_id": mock_uuid,
+            "scrape_request_id": mock_uuid,
             "status": "completed",
             "html": "<html><body><p>Retrieved HTML content</p></body></html>",
         },
     )
 
     with Client(api_key=mock_api_key) as client:
-        response = client.get_htmlfy(mock_uuid)
+        response = client.get_scrape(mock_uuid)
         assert response["status"] == "completed"
-        assert response["htmlfy_request_id"] == mock_uuid
+        assert response["scrape_request_id"] == mock_uuid
         assert "html" in response
 
 
 @responses.activate
-def test_htmlfy_error_response(mock_api_key):
-    """Test HTMLfy error response handling"""
+def test_scrape_error_response(mock_api_key):
+    """Test scrape error response handling"""
     responses.add(
         responses.POST,
-        "https://api.scrapegraphai.com/v1/htmlfy",
+        "https://api.scrapegraphai.com/v1/scrape",
         json={
             "error": "Website not accessible",
             "status": "error"
@@ -693,31 +693,31 @@ def test_htmlfy_error_response(mock_api_key):
 
     with Client(api_key=mock_api_key) as client:
         with pytest.raises(Exception):
-            client.htmlfy(website_url="https://inaccessible-site.com")
+            client.scrape(website_url="https://inaccessible-site.com")
 
 
 @responses.activate
-def test_htmlfy_processing_status(mock_api_key):
-    """Test HTMLfy processing status response"""
+def test_scrape_processing_status(mock_api_key):
+    """Test scrape processing status response"""
     responses.add(
         responses.POST,
-        "https://api.scrapegraphai.com/v1/htmlfy",
+        "https://api.scrapegraphai.com/v1/scrape",
         json={
-            "htmlfy_request_id": str(uuid4()),
+            "scrape_request_id": str(uuid4()),
             "status": "processing",
-            "message": "HTMLfy job started"
+            "message": "Scrape job started"
         },
     )
 
     with Client(api_key=mock_api_key) as client:
-        response = client.htmlfy(website_url="https://example.com")
+        response = client.scrape(website_url="https://example.com")
         assert response["status"] == "processing"
-        assert "htmlfy_request_id" in response
+        assert "scrape_request_id" in response
 
 
 @responses.activate
-def test_htmlfy_complex_html_response(mock_api_key):
-    """Test HTMLfy with complex HTML response"""
+def test_scrape_complex_html_response(mock_api_key):
+    """Test scrape with complex HTML response"""
     complex_html = """
     <!DOCTYPE html>
     <html lang="en">
@@ -757,16 +757,16 @@ def test_htmlfy_complex_html_response(mock_api_key):
     
     responses.add(
         responses.POST,
-        "https://api.scrapegraphai.com/v1/htmlfy",
+        "https://api.scrapegraphai.com/v1/scrape",
         json={
-            "htmlfy_request_id": str(uuid4()),
+            "scrape_request_id": str(uuid4()),
             "status": "completed",
             "html": complex_html,
         },
     )
 
     with Client(api_key=mock_api_key) as client:
-        response = client.htmlfy(website_url="https://complex-example.com")
+        response = client.scrape(website_url="https://complex-example.com")
         assert response["status"] == "completed"
         assert "html" in response
         assert "<!DOCTYPE html>" in response["html"]

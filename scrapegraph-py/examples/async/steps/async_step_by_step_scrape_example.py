@@ -1,9 +1,9 @@
 """
-Step-by-step example demonstrating how to use the HTMLfy API with the scrapegraph-py SDK.
+Async step-by-step example demonstrating how to use the Scrape API with the scrapegraph-py async SDK.
 
-This example shows the basic workflow:
-1. Initialize the client
-2. Make an HTMLfy request
+This example shows the basic async workflow:
+1. Initialize the async client
+2. Make a scrape request asynchronously
 3. Handle the response
 4. Save the HTML content
 5. Basic analysis
@@ -12,52 +12,54 @@ Requirements:
 - Python 3.7+
 - scrapegraph-py
 - python-dotenv
+- aiohttp
 - A .env file with your SGAI_API_KEY
 
 Example .env file:
 SGAI_API_KEY=your_api_key_here
 """
 
+import asyncio
 import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-from scrapegraph_py import Client
+from scrapegraph_py import AsyncClient
 
 # Load environment variables from .env file
 load_dotenv()
 
 
-def step_1_initialize_client():
-    """Step 1: Initialize the scrapegraph-py client."""
-    print("🔑 Step 1: Initializing client...")
+async def step_1_initialize_async_client():
+    """Step 1: Initialize the scrapegraph-py async client."""
+    print("🔑 Step 1: Initializing async client...")
     
     try:
-        # Initialize client using environment variable
-        client = Client.from_env()
-        print("✅ Client initialized successfully")
+        # Initialize async client using environment variable
+        client = AsyncClient.from_env()
+        print("✅ Async client initialized successfully")
         return client
     except Exception as e:
-        print(f"❌ Failed to initialize client: {str(e)}")
+        print(f"❌ Failed to initialize async client: {str(e)}")
         print("Make sure you have SGAI_API_KEY in your .env file")
         raise
 
 
-def step_2_make_htmlfy_request(client, url, render_js=False):
-    """Step 2: Make an HTMLfy request."""
-    print(f"\n🌐 Step 2: Making HTMLfy request to {url}")
+async def step_2_make_async_scrape_request(client, url, render_js=False):
+    """Step 2: Make a scrape request asynchronously."""
+    print(f"\n🌐 Step 2: Making async scrape request to {url}")
     print(f"🔧 Render heavy JS: {render_js}")
     
     try:
-        # Make the HTMLfy request
-        result = client.htmlfy(
+        # Make the scrape request asynchronously
+        result = await client.scrape(
             website_url=url,
             render_heavy_js=render_js
         )
-        print("✅ HTMLfy request completed successfully")
+        print("✅ Async scrape request completed successfully")
         return result
     except Exception as e:
-        print(f"❌ HTMLfy request failed: {str(e)}")
+        print(f"❌ Async scrape request failed: {str(e)}")
         raise
 
 
@@ -87,7 +89,7 @@ def step_3_handle_response(result):
     return html_content
 
 
-def step_4_save_html_content(html_content, filename, output_dir="htmlfy_steps_output"):
+def step_4_save_html_content(html_content, filename, output_dir="async_scrape_steps_output"):
     """Step 4: Save the HTML content to a file."""
     print(f"\n💾 Step 4: Saving HTML content...")
     
@@ -136,43 +138,42 @@ def step_5_basic_analysis(html_content):
     return elements
 
 
-def main():
-    """Main function demonstrating step-by-step HTMLfy usage."""
-    print("🚀 Step-by-Step HTMLfy API Example")
-    print("=" * 50)
+async def main():
+    """Main function demonstrating async step-by-step scrape usage."""
+    print("🚀 Async Step-by-Step Scrape API Example")
+    print("=" * 55)
     
     # Test URL
     test_url = "https://example.com"
     
     try:
-        # Step 1: Initialize client
-        client = step_1_initialize_client()
-        
-        # Step 2: Make HTMLfy request
-        result = step_2_make_htmlfy_request(client, test_url, render_js=False)
-        
-        # Step 3: Handle response
-        html_content = step_3_handle_response(result)
-        if not html_content:
-            print("❌ Cannot proceed without HTML content")
-            return
-        
-        # Step 4: Save content
-        filename = "example_website"
-        saved_file = step_4_save_html_content(html_content, filename)
-        
-        # Step 5: Basic analysis
-        elements = step_5_basic_analysis(html_content)
-        
-        # Summary
-        print(f"\n🎯 Summary:")
-        print(f"✅ Successfully processed {test_url}")
-        print(f"💾 HTML saved to: {saved_file}")
-        print(f"📊 Analyzed {len(html_content):,} characters of HTML content")
-        
-        # Close client
-        client.close()
-        print("🔒 Client closed successfully")
+        # Step 1: Initialize async client
+        async with AsyncClient.from_env() as client:
+            print("✅ Async client initialized successfully")
+            
+            # Step 2: Make async scrape request
+            result = await step_2_make_async_scrape_request(client, test_url, render_js=False)
+            
+            # Step 3: Handle response
+            html_content = step_3_handle_response(result)
+            if not html_content:
+                print("❌ Cannot proceed without HTML content")
+                return
+            
+            # Step 4: Save content
+            filename = "async_example_website"
+            saved_file = step_4_save_html_content(html_content, filename)
+            
+            # Step 5: Basic analysis
+            elements = step_5_basic_analysis(html_content)
+            
+            # Summary
+            print(f"\n🎯 Summary:")
+            print(f"✅ Successfully processed {test_url} asynchronously")
+            print(f"💾 HTML saved to: {saved_file}")
+            print(f"📊 Analyzed {len(html_content):,} characters of HTML content")
+            
+            print("✅ Async client closed successfully")
         
     except Exception as e:
         print(f"\n💥 Error occurred: {str(e)}")
@@ -180,4 +181,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

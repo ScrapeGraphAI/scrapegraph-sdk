@@ -552,45 +552,45 @@ async def test_crawl_markdown_mode_validation(mock_api_key):
 
 
 # ============================================================================
-# ASYNC HTMLFY TESTS
+# ASYNC SCRAPE TESTS
 # ============================================================================
 
 
 @pytest.mark.asyncio
-async def test_async_htmlfy_basic(mock_api_key):
-    """Test basic async HTMLfy request"""
+async def test_async_scrape_basic(mock_api_key):
+    """Test basic async scrape request"""
     with aioresponses() as mocked:
         mocked.post(
-            "https://api.scrapegraphai.com/v1/htmlfy",
+            "https://api.scrapegraphai.com/v1/scrape",
             payload={
-                "htmlfy_request_id": str(uuid4()),
+                "scrape_request_id": str(uuid4()),
                 "status": "completed",
                 "html": "<html><body><h1>Example Page</h1><p>This is HTML content.</p></body></html>",
             },
         )
 
         async with AsyncClient(api_key=mock_api_key) as client:
-            response = await client.htmlfy(website_url="https://example.com")
+            response = await client.scrape(website_url="https://example.com")
             assert response["status"] == "completed"
             assert "html" in response
             assert "<h1>Example Page</h1>" in response["html"]
 
 
 @pytest.mark.asyncio
-async def test_async_htmlfy_with_heavy_js(mock_api_key):
-    """Test async HTMLfy request with heavy JavaScript rendering"""
+async def test_async_scrape_with_heavy_js(mock_api_key):
+    """Test async scrape request with heavy JavaScript rendering"""
     with aioresponses() as mocked:
         mocked.post(
-            "https://api.scrapegraphai.com/v1/htmlfy",
+            "https://api.scrapegraphai.com/v1/scrape",
             payload={
-                "htmlfy_request_id": str(uuid4()),
+                "scrape_request_id": str(uuid4()),
                 "status": "completed",
                 "html": "<html><body><div id='app'>JavaScript rendered content</div></body></html>",
             },
         )
 
         async with AsyncClient(api_key=mock_api_key) as client:
-            response = await client.htmlfy(
+            response = await client.scrape(
                 website_url="https://example.com",
                 render_heavy_js=True
             )
@@ -600,13 +600,13 @@ async def test_async_htmlfy_with_heavy_js(mock_api_key):
 
 
 @pytest.mark.asyncio
-async def test_async_htmlfy_with_headers(mock_api_key):
-    """Test async HTMLfy request with custom headers"""
+async def test_async_scrape_with_headers(mock_api_key):
+    """Test async scrape request with custom headers"""
     with aioresponses() as mocked:
         mocked.post(
-            "https://api.scrapegraphai.com/v1/htmlfy",
+            "https://api.scrapegraphai.com/v1/scrape",
             payload={
-                "htmlfy_request_id": str(uuid4()),
+                "scrape_request_id": str(uuid4()),
                 "status": "completed",
                 "html": "<html><body><p>Content with custom headers</p></body></html>",
             },
@@ -618,7 +618,7 @@ async def test_async_htmlfy_with_headers(mock_api_key):
         }
 
         async with AsyncClient(api_key=mock_api_key) as client:
-            response = await client.htmlfy(
+            response = await client.scrape(
                 website_url="https://example.com",
                 headers=headers
             )
@@ -627,13 +627,13 @@ async def test_async_htmlfy_with_headers(mock_api_key):
 
 
 @pytest.mark.asyncio
-async def test_async_htmlfy_with_all_options(mock_api_key):
-    """Test async HTMLfy request with all options enabled"""
+async def test_async_scrape_with_all_options(mock_api_key):
+    """Test async scrape request with all options enabled"""
     with aioresponses() as mocked:
         mocked.post(
-            "https://api.scrapegraphai.com/v1/htmlfy",
+            "https://api.scrapegraphai.com/v1/scrape",
             payload={
-                "htmlfy_request_id": str(uuid4()),
+                "scrape_request_id": str(uuid4()),
                 "status": "completed",
                 "html": "<html><body><div>Full featured content</div></body></html>",
             },
@@ -645,7 +645,7 @@ async def test_async_htmlfy_with_all_options(mock_api_key):
         }
 
         async with AsyncClient(api_key=mock_api_key) as client:
-            response = await client.htmlfy(
+            response = await client.scrape(
                 website_url="https://example.com",
                 render_heavy_js=True,
                 headers=headers
@@ -655,31 +655,31 @@ async def test_async_htmlfy_with_all_options(mock_api_key):
 
 
 @pytest.mark.asyncio
-async def test_async_get_htmlfy(mock_api_key, mock_uuid):
-    """Test async get HTMLfy result"""
+async def test_async_get_scrape(mock_api_key, mock_uuid):
+    """Test async get scrape result"""
     with aioresponses() as mocked:
         mocked.get(
-            f"https://api.scrapegraphai.com/v1/htmlfy/{mock_uuid}",
+            f"https://api.scrapegraphai.com/v1/scrape/{mock_uuid}",
             payload={
-                "htmlfy_request_id": mock_uuid,
+                "scrape_request_id": mock_uuid,
                 "status": "completed",
                 "html": "<html><body><p>Retrieved HTML content</p></body></html>",
             },
         )
 
         async with AsyncClient(api_key=mock_api_key) as client:
-            response = await client.get_htmlfy(mock_uuid)
+            response = await client.get_scrape(mock_uuid)
             assert response["status"] == "completed"
-            assert response["htmlfy_request_id"] == mock_uuid
+            assert response["scrape_request_id"] == mock_uuid
             assert "html" in response
 
 
 @pytest.mark.asyncio
-async def test_async_htmlfy_error_response(mock_api_key):
-    """Test async HTMLfy error response handling"""
+async def test_async_scrape_error_response(mock_api_key):
+    """Test async scrape error response handling"""
     with aioresponses() as mocked:
         mocked.post(
-            "https://api.scrapegraphai.com/v1/htmlfy",
+            "https://api.scrapegraphai.com/v1/scrape",
             payload={
                 "error": "Website not accessible",
                 "status": "error"
@@ -689,31 +689,31 @@ async def test_async_htmlfy_error_response(mock_api_key):
 
         async with AsyncClient(api_key=mock_api_key) as client:
             with pytest.raises(Exception):
-                await client.htmlfy(website_url="https://inaccessible-site.com")
+                await client.scrape(website_url="https://inaccessible-site.com")
 
 
 @pytest.mark.asyncio
-async def test_async_htmlfy_processing_status(mock_api_key):
-    """Test async HTMLfy processing status response"""
+async def test_async_scrape_processing_status(mock_api_key):
+    """Test async scrape processing status response"""
     with aioresponses() as mocked:
         mocked.post(
-            "https://api.scrapegraphai.com/v1/htmlfy",
+            "https://api.scrapegraphai.com/v1/scrape",
             payload={
-                "htmlfy_request_id": str(uuid4()),
+                "scrape_request_id": str(uuid4()),
                 "status": "processing",
-                "message": "HTMLfy job started"
+                "message": "Scrape job started"
             },
         )
 
         async with AsyncClient(api_key=mock_api_key) as client:
-            response = await client.htmlfy(website_url="https://example.com")
+            response = await client.scrape(website_url="https://example.com")
             assert response["status"] == "processing"
-            assert "htmlfy_request_id" in response
+            assert "scrape_request_id" in response
 
 
 @pytest.mark.asyncio
-async def test_async_htmlfy_complex_html_response(mock_api_key):
-    """Test async HTMLfy with complex HTML response"""
+async def test_async_scrape_complex_html_response(mock_api_key):
+    """Test async scrape with complex HTML response"""
     complex_html = """
     <!DOCTYPE html>
     <html lang="en">
@@ -753,16 +753,16 @@ async def test_async_htmlfy_complex_html_response(mock_api_key):
     
     with aioresponses() as mocked:
         mocked.post(
-            "https://api.scrapegraphai.com/v1/htmlfy",
+            "https://api.scrapegraphai.com/v1/scrape",
             payload={
-                "htmlfy_request_id": str(uuid4()),
+                "scrape_request_id": str(uuid4()),
                 "status": "completed",
                 "html": complex_html,
             },
         )
 
         async with AsyncClient(api_key=mock_api_key) as client:
-            response = await client.htmlfy(website_url="https://complex-example.com")
+            response = await client.scrape(website_url="https://complex-example.com")
             assert response["status"] == "completed"
             assert "html" in response
             assert "<!DOCTYPE html>" in response["html"]
@@ -772,15 +772,15 @@ async def test_async_htmlfy_complex_html_response(mock_api_key):
 
 
 @pytest.mark.asyncio
-async def test_async_htmlfy_concurrent_requests(mock_api_key):
-    """Test multiple concurrent async HTMLfy requests"""
+async def test_async_scrape_concurrent_requests(mock_api_key):
+    """Test multiple concurrent async scrape requests"""
     with aioresponses() as mocked:
         # Mock multiple responses
         for i in range(3):
             mocked.post(
-                "https://api.scrapegraphai.com/v1/htmlfy",
+                "https://api.scrapegraphai.com/v1/scrape",
                 payload={
-                    "htmlfy_request_id": str(uuid4()),
+                    "scrape_request_id": str(uuid4()),
                     "status": "completed",
                     "html": f"<html><body><h1>Page {i+1}</h1></body></html>",
                 },
@@ -789,7 +789,7 @@ async def test_async_htmlfy_concurrent_requests(mock_api_key):
         async with AsyncClient(api_key=mock_api_key) as client:
             # Make concurrent requests
             tasks = [
-                client.htmlfy(website_url=f"https://example{i}.com")
+                client.scrape(website_url=f"https://example{i}.com")
                 for i in range(3)
             ]
             

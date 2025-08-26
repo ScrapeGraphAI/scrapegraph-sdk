@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Simple integration test for HTMLfy functionality.
-This script tests the basic HTMLfy operations without requiring a real API key.
+Simple integration test for Scrape functionality.
+This script tests the basic Scrape operations without requiring a real API key.
 """
 
 import os
@@ -11,75 +11,75 @@ from pathlib import Path
 # Add the src directory to the path
 sys.path.insert(0, str(Path(__file__).parent / "scrapegraph_py"))
 
-from models.htmlfy import HtmlfyRequest, GetHtmlfyRequest
+from models.scrape import ScrapeRequest, GetScrapeRequest
 
 
-def test_htmlfy_models():
-    """Test HTMLfy model validation"""
-    print("🧪 Testing HTMLfy models...")
+def test_scrape_models():
+    """Test Scrape model validation"""
+    print("🧪 Testing Scrape models...")
     
     # Test valid requests
     try:
-        request = HtmlfyRequest(
+        request = ScrapeRequest(
             website_url="https://example.com",
             render_heavy_js=False
         )
-        print("✅ Basic HTMLfy request validation passed")
+        print("✅ Basic Scrape request validation passed")
         
-        request_with_headers = HtmlfyRequest(
+        request_with_headers = ScrapeRequest(
             website_url="https://example.com",
             render_heavy_js=True,
             headers={"User-Agent": "Test Agent"}
         )
-        print("✅ HTMLfy request with headers validation passed")
+        print("✅ Scrape request with headers validation passed")
         
     except Exception as e:
-        print(f"❌ HTMLfy request validation failed: {e}")
+        print(f"❌ Scrape request validation failed: {e}")
         return False
     
     # Test invalid requests
     try:
-        HtmlfyRequest(website_url="")
+        ScrapeRequest(website_url="")
         print("❌ Empty URL should have failed validation")
         return False
     except ValueError:
         print("✅ Empty URL validation correctly failed")
     
     try:
-        HtmlfyRequest(website_url="invalid-url")
+        ScrapeRequest(website_url="invalid-url")
         print("❌ Invalid URL should have failed validation")
         return False
     except ValueError:
         print("✅ Invalid URL validation correctly failed")
     
-    # Test GetHtmlfyRequest
+    # Test GetScrapeRequest
     try:
-        get_request = GetHtmlfyRequest(
+        get_request = GetScrapeRequest(
             request_id="123e4567-e89b-12d3-a456-426614174000"
         )
-        print("✅ Get HTMLfy request validation passed")
+        print("✅ Get Scrape request validation passed")
     except Exception as e:
-        print(f"❌ Get HTMLfy request validation failed: {e}")
+        print(f"❌ Get Scrape request validation failed: {e}")
         return False
     
     try:
-        GetHtmlfyRequest(request_id="invalid-uuid")
+        GetScrapeRequest(request_id="invalid-uuid")
         print("❌ Invalid UUID should have failed validation")
         return False
     except ValueError:
         print("✅ Invalid UUID validation correctly failed")
     
-    print("✅ All HTMLfy model tests passed!")
+    print("✅ All Scrape model tests passed!")
     return True
 
 
-def test_htmlfy_model_serialization():
-    """Test HTMLfy model serialization"""
-    print("\n🧪 Testing HTMLfy model serialization...")
+def test_scrape_model_serialization():
+    """Test Scrape model serialization"""
+    print("\n🧪 Testing Scrape model serialization...")
     
     try:
         # Test basic serialization
-        request = HtmlfyRequest(
+        request = ScrapeRequest(
             website_url="https://example.com",
             render_heavy_js=False
         )
@@ -91,7 +91,7 @@ def test_htmlfy_model_serialization():
         print("✅ Basic serialization test passed")
         
         # Test serialization with headers
-        request_with_headers = HtmlfyRequest(
+        request_with_headers = ScrapeRequest(
             website_url="https://example.com",
             render_heavy_js=True,
             headers={"User-Agent": "Test Agent"}
@@ -110,13 +110,13 @@ def test_htmlfy_model_serialization():
 
 
 def main():
-    """Run all HTMLfy tests"""
-    print("🚀 HTMLfy Integration Tests")
+    """Run all Scrape tests"""
+    print("🚀 Scrape Integration Tests")
     print("=" * 40)
     
     tests = [
-        test_htmlfy_models,
-        test_htmlfy_model_serialization,
+        test_scrape_models,
+        test_scrape_model_serialization,
     ]
     
     passed = 0

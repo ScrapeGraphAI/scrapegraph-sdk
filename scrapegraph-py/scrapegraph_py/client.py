@@ -15,7 +15,7 @@ from scrapegraph_py.models.agenticscraper import (
 )
 from scrapegraph_py.models.crawl import CrawlRequest, GetCrawlRequest
 from scrapegraph_py.models.feedback import FeedbackRequest
-from scrapegraph_py.models.htmlfy import GetHtmlfyRequest, HtmlfyRequest
+from scrapegraph_py.models.scrape import GetScrapeRequest, ScrapeRequest
 from scrapegraph_py.models.markdownify import GetMarkdownifyRequest, MarkdownifyRequest
 from scrapegraph_py.models.searchscraper import (
     GetSearchScraperRequest,
@@ -183,25 +183,25 @@ class Client:
         logger.info(f"✨ Successfully retrieved result for request {request_id}")
         return result
 
-    def htmlfy(
+    def scrape(
         self,
         website_url: str,
         render_heavy_js: bool = False,
         headers: Optional[dict[str, str]] = None,
     ):
-        """Send an HTMLfy request to get HTML content from a website
+        """Send a scrape request to get HTML content from a website
         
         Args:
             website_url: The URL of the website to get HTML from
             render_heavy_js: Whether to render heavy JavaScript (defaults to False)
             headers: Optional headers to send with the request
         """
-        logger.info(f"🔍 Starting HTMLfy request for {website_url}")
+        logger.info(f"🔍 Starting scrape request for {website_url}")
         logger.debug(f"🔧 Render heavy JS: {render_heavy_js}")
         if headers:
             logger.debug("🔧 Using custom headers")
 
-        request = HtmlfyRequest(
+        request = ScrapeRequest(
             website_url=website_url,
             render_heavy_js=render_heavy_js,
             headers=headers,
@@ -209,20 +209,20 @@ class Client:
         logger.debug("✅ Request validation passed")
 
         result = self._make_request(
-            "POST", f"{API_BASE_URL}/htmlfy", json=request.model_dump()
+            "POST", f"{API_BASE_URL}/scrape", json=request.model_dump()
         )
-        logger.info("✨ HTMLfy request completed successfully")
+        logger.info("✨ Scrape request completed successfully")
         return result
 
-    def get_htmlfy(self, request_id: str):
-        """Get the result of a previous HTMLfy request"""
-        logger.info(f"🔍 Fetching HTMLfy result for request {request_id}")
+    def get_scrape(self, request_id: str):
+        """Get the result of a previous scrape request"""
+        logger.info(f"🔍 Fetching scrape result for request {request_id}")
 
         # Validate input using Pydantic model
-        GetHtmlfyRequest(request_id=request_id)
+        GetScrapeRequest(request_id=request_id)
         logger.debug("✅ Request ID validation passed")
 
-        result = self._make_request("GET", f"{API_BASE_URL}/htmlfy/{request_id}")
+        result = self._make_request("GET", f"{API_BASE_URL}/scrape/{request_id}")
         logger.info(f"✨ Successfully retrieved result for request {request_id}")
         return result
 

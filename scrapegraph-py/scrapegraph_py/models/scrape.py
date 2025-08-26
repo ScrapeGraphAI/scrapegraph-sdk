@@ -1,4 +1,4 @@
-# Models for htmlfy endpoint
+# Models for scrape endpoint
 
 from typing import Optional
 from uuid import UUID
@@ -6,7 +6,7 @@ from uuid import UUID
 from pydantic import BaseModel, Field, model_validator
 
 
-class HtmlfyRequest(BaseModel):
+class ScrapeRequest(BaseModel):
     website_url: str = Field(..., example="https://scrapegraphai.com/")
     render_heavy_js: bool = Field(
         False,
@@ -24,7 +24,7 @@ class HtmlfyRequest(BaseModel):
     )
 
     @model_validator(mode="after")
-    def validate_url(self) -> "HtmlfyRequest":
+    def validate_url(self) -> "ScrapeRequest":
         if self.website_url is None or not self.website_url.strip():
             raise ValueError("Website URL cannot be empty")
         if not (
@@ -40,13 +40,13 @@ class HtmlfyRequest(BaseModel):
         return super().model_dump(*args, **kwargs)
 
 
-class GetHtmlfyRequest(BaseModel):
-    """Request model for get_htmlfy endpoint"""
+class GetScrapeRequest(BaseModel):
+    """Request model for get_scrape endpoint"""
 
     request_id: str = Field(..., example="123e4567-e89b-12d3-a456-426614174000")
 
     @model_validator(mode="after")
-    def validate_request_id(self) -> "GetHtmlfyRequest":
+    def validate_request_id(self) -> "GetScrapeRequest":
         try:
             # Validate the request_id is a valid UUID
             UUID(self.request_id)

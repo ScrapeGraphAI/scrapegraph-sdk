@@ -1,8 +1,8 @@
 """
-Example demonstrating how to use the HTMLfy API with the scrapegraph-py async SDK.
+Example demonstrating how to use the Scrape API with the scrapegraph-py SDK.
 
 This example shows how to:
-1. Set up the async client for HTMLfy
+1. Set up the client for Scrape
 2. Make the API call to get HTML content from a website
 3. Handle the response and save the HTML content
 4. Demonstrate both regular and heavy JS rendering modes
@@ -12,14 +12,12 @@ Requirements:
 - Python 3.7+
 - scrapegraph-py
 - python-dotenv
-- aiohttp
 - A .env file with your SGAI_API_KEY
 
 Example .env file:
 SGAI_API_KEY=your_api_key_here
 """
 
-import asyncio
 import json
 import os
 import time
@@ -28,23 +26,23 @@ from typing import Optional
 
 from dotenv import load_dotenv
 
-from scrapegraph_py import AsyncClient
+from scrapegraph_py import Client
 
 # Load environment variables from .env file
 load_dotenv()
 
 
-async def htmlfy_website(
-    client: AsyncClient,
+def scrape_website(
+    client: Client,
     website_url: str,
     render_heavy_js: bool = False,
     headers: Optional[dict[str, str]] = None,
 ) -> dict:
     """
-    Get HTML content from a website using the HTMLfy API.
+    Get HTML content from a website using the Scrape API.
 
     Args:
-        client: The scrapegraph-py async client instance
+        client: The scrapegraph-py client instance
         website_url: The URL of the website to get HTML from
         render_heavy_js: Whether to render heavy JavaScript (defaults to False)
         headers: Optional headers to send with the request
@@ -62,7 +60,7 @@ async def htmlfy_website(
     start_time = time.time()
     
     try:
-        result = await client.htmlfy(
+        result = client.scrape(
             website_url=website_url,
             render_heavy_js=render_heavy_js,
             headers=headers,
@@ -76,7 +74,7 @@ async def htmlfy_website(
 
 
 def save_html_content(
-    html_content: str, filename: str, output_dir: str = "htmlfy_output"
+    html_content: str, filename: str, output_dir: str = "scrape_output"
 ):
     """
     Save HTML content to a file.
@@ -127,9 +125,9 @@ def analyze_html_content(html_content: str) -> dict:
     return stats
 
 
-async def main():
+def main():
     """
-    Main function demonstrating HTMLfy API usage.
+    Main function demonstrating Scrape API usage.
     """
     # Example websites to test
     test_websites = [
@@ -147,71 +145,73 @@ async def main():
         },
     ]
 
-    print("HTMLfy API Example with scrapegraph-py Async SDK")
-    print("=" * 65)
+    print("Scrape API Example with scrapegraph-py SDK")
+    print("=" * 60)
 
-    # Initialize the async client
+    # Initialize the client
     try:
-        async with AsyncClient.from_env() as client:
-            print("✅ Async client initialized successfully")
-
-            for website in test_websites:
-                print(f"\nTesting: {website['description']}")
-                print("-" * 40)
-
-                try:
-                    # Get HTML content
-                    result = await htmlfy_website(
-                        client=client,
-                        website_url=website["url"],
-                        render_heavy_js=website["render_heavy_js"],
-                    )
-
-                    # Display response metadata
-                    print(f"Request ID: {result.get('htmlfy_request_id', 'N/A')}")
-                    print(f"Status: {result.get('status', 'N/A')}")
-                    print(f"Error: {result.get('error', 'None')}")
-
-                    # Analyze HTML content
-                    html_content = result.get("html", "")
-                    if html_content:
-                        stats = analyze_html_content(html_content)
-                        print(f"\nHTML Content Analysis:")
-                        print(f"  Total length: {stats['total_length']:,} characters")
-                        print(f"  Lines: {stats['lines']:,}")
-                        print(f"  Has DOCTYPE: {stats['has_doctype']}")
-                        print(f"  Has HTML tag: {stats['has_html_tag']}")
-                        print(f"  Has Head tag: {stats['has_head_tag']}")
-                        print(f"  Has Body tag: {stats['has_body_tag']}")
-                        print(f"  Script tags: {stats['script_tags']}")
-                        print(f"  Style tags: {stats['style_tags']}")
-                        print(f"  Div tags: {stats['div_tags']}")
-                        print(f"  Paragraph tags: {stats['p_tags']}")
-                        print(f"  Image tags: {stats['img_tags']}")
-                        print(f"  Link tags: {stats['link_tags']}")
-
-                        # Save HTML content
-                        filename = f"{website['name']}_{'js' if website['render_heavy_js'] else 'nojs'}"
-                        save_html_content(html_content, filename)
-
-                        # Show first 500 characters as preview
-                        preview = html_content[:500].replace("\n", " ").strip()
-                        print(f"\nHTML Preview (first 500 chars):")
-                        print(f"  {preview}...")
-                    else:
-                        print("No HTML content received")
-
-                except Exception as e:
-                    print(f"Error processing {website['url']}: {str(e)}")
-
-                print("\n" + "=" * 65)
-
-            print("\n✅ Async client closed successfully")
-
+        client = Client.from_env()
+        print("✅ Client initialized successfully")
     except Exception as e:
-        print(f"❌ Failed to initialize async client: {str(e)}")
+        print(f"❌ Failed to initialize client: {str(e)}")
         print("Make sure you have SGAI_API_KEY in your .env file")
+        return
+
+    for website in test_websites:
+        print(f"\nTesting: {website['description']}")
+        print("-" * 40)
+
+        try:
+            # Get HTML content
+            result = scrape_website(
+                client=client,
+                website_url=website["url"],
+                render_heavy_js=website["render_heavy_js"],
+            )
+
+            # Display response metadata
+            print(f"Request ID: {result.get('scrape_request_id', 'N/A')}")
+            print(f"Status: {result.get('status', 'N/A')}")
+            print(f"Error: {result.get('error', 'None')}")
+
+            # Analyze HTML content
+            html_content = result.get("html", "")
+            if html_content:
+                stats = analyze_html_content(html_content)
+                print(f"\nHTML Content Analysis:")
+                print(f"  Total length: {stats['total_length']:,} characters")
+                print(f"  Lines: {stats['lines']:,}")
+                print(f"  Has DOCTYPE: {stats['has_doctype']}")
+                print(f"  Has HTML tag: {stats['has_html_tag']}")
+                print(f"  Has Head tag: {stats['has_head_tag']}")
+                print(f"  Has Body tag: {stats['has_body_tag']}")
+                print(f"  Script tags: {stats['script_tags']}")
+                print(f"  Style tags: {stats['style_tags']}")
+                print(f"  Div tags: {stats['div_tags']}")
+                print(f"  Paragraph tags: {stats['p_tags']}")
+                print(f"  Image tags: {stats['img_tags']}")
+                print(f"  Link tags: {stats['link_tags']}")
+
+                # Save HTML content
+                filename = f"{website['name']}_{'js' if website['render_heavy_js'] else 'nojs'}"
+                save_html_content(html_content, filename)
+
+                # Show first 500 characters as preview
+                preview = html_content[:500].replace("\n", " ").strip()
+                print(f"\nHTML Preview (first 500 chars):")
+                print(f"  {preview}...")
+            else:
+                print("No HTML content received")
+
+        except Exception as e:
+            print(f"Error processing {website['url']}: {str(e)}")
+
+        print("\n" + "=" * 60)
+
+    # Close the client
+    client.close()
+    print("\n✅ Client closed successfully")
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
