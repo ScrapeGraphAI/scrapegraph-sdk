@@ -549,3 +549,253 @@ async def test_crawl_markdown_mode_validation(mock_api_key):
                 "Data schema should not be provided when extraction_mode=False"
                 in str(e)
             )
+
+
+# ============================================================================
+# ASYNC SCRAPE TESTS
+# ============================================================================
+
+
+@pytest.mark.asyncio
+async def test_async_scrape_basic(mock_api_key):
+    """Test basic async scrape request"""
+    with aioresponses() as mocked:
+        mocked.post(
+            "https://api.scrapegraphai.com/v1/scrape",
+            payload={
+                "scrape_request_id": str(uuid4()),
+                "status": "completed",
+                "html": "<html><body><h1>Example Page</h1><p>This is HTML content.</p></body></html>",
+            },
+        )
+
+        async with AsyncClient(api_key=mock_api_key) as client:
+            response = await client.scrape(website_url="https://example.com")
+            assert response["status"] == "completed"
+            assert "html" in response
+            assert "<h1>Example Page</h1>" in response["html"]
+
+
+@pytest.mark.asyncio
+async def test_async_scrape_with_heavy_js(mock_api_key):
+    """Test async scrape request with heavy JavaScript rendering"""
+    with aioresponses() as mocked:
+        mocked.post(
+            "https://api.scrapegraphai.com/v1/scrape",
+            payload={
+                "scrape_request_id": str(uuid4()),
+                "status": "completed",
+                "html": "<html><body><div id='app'>JavaScript rendered content</div></body></html>",
+            },
+        )
+
+        async with AsyncClient(api_key=mock_api_key) as client:
+            response = await client.scrape(
+                website_url="https://example.com",
+                render_heavy_js=True
+            )
+            assert response["status"] == "completed"
+            assert "html" in response
+            assert "JavaScript rendered content" in response["html"]
+
+
+@pytest.mark.asyncio
+async def test_async_scrape_with_headers(mock_api_key):
+    """Test async scrape request with custom headers"""
+    with aioresponses() as mocked:
+        mocked.post(
+            "https://api.scrapegraphai.com/v1/scrape",
+            payload={
+                "scrape_request_id": str(uuid4()),
+                "status": "completed",
+                "html": "<html><body><p>Content with custom headers</p></body></html>",
+            },
+        )
+
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+            "Cookie": "session=123"
+        }
+
+        async with AsyncClient(api_key=mock_api_key) as client:
+            response = await client.scrape(
+                website_url="https://example.com",
+                headers=headers
+            )
+            assert response["status"] == "completed"
+            assert "html" in response
+
+
+@pytest.mark.asyncio
+async def test_async_scrape_with_all_options(mock_api_key):
+    """Test async scrape request with all options enabled"""
+    with aioresponses() as mocked:
+        mocked.post(
+            "https://api.scrapegraphai.com/v1/scrape",
+            payload={
+                "scrape_request_id": str(uuid4()),
+                "status": "completed",
+                "html": "<html><body><div>Full featured content</div></body></html>",
+            },
+        )
+
+        headers = {
+            "User-Agent": "Custom Agent",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+        }
+
+        async with AsyncClient(api_key=mock_api_key) as client:
+            response = await client.scrape(
+                website_url="https://example.com",
+                render_heavy_js=True,
+                headers=headers
+            )
+            assert response["status"] == "completed"
+            assert "html" in response
+
+
+@pytest.mark.asyncio
+async def test_async_get_scrape(mock_api_key, mock_uuid):
+    """Test async get scrape result"""
+    with aioresponses() as mocked:
+        mocked.get(
+            f"https://api.scrapegraphai.com/v1/scrape/{mock_uuid}",
+            payload={
+                "scrape_request_id": mock_uuid,
+                "status": "completed",
+                "html": "<html><body><p>Retrieved HTML content</p></body></html>",
+            },
+        )
+
+        async with AsyncClient(api_key=mock_api_key) as client:
+            response = await client.get_scrape(mock_uuid)
+            assert response["status"] == "completed"
+            assert response["scrape_request_id"] == mock_uuid
+            assert "html" in response
+
+
+@pytest.mark.asyncio
+async def test_async_scrape_error_response(mock_api_key):
+    """Test async scrape error response handling"""
+    with aioresponses() as mocked:
+        mocked.post(
+            "https://api.scrapegraphai.com/v1/scrape",
+            payload={
+                "error": "Website not accessible",
+                "status": "error"
+            },
+            status=400
+        )
+
+        async with AsyncClient(api_key=mock_api_key) as client:
+            with pytest.raises(Exception):
+                await client.scrape(website_url="https://inaccessible-site.com")
+
+
+@pytest.mark.asyncio
+async def test_async_scrape_processing_status(mock_api_key):
+    """Test async scrape processing status response"""
+    with aioresponses() as mocked:
+        mocked.post(
+            "https://api.scrapegraphai.com/v1/scrape",
+            payload={
+                "scrape_request_id": str(uuid4()),
+                "status": "processing",
+                "message": "Scrape job started"
+            },
+        )
+
+        async with AsyncClient(api_key=mock_api_key) as client:
+            response = await client.scrape(website_url="https://example.com")
+            assert response["status"] == "processing"
+            assert "scrape_request_id" in response
+
+
+@pytest.mark.asyncio
+async def test_async_scrape_complex_html_response(mock_api_key):
+    """Test async scrape with complex HTML response"""
+    complex_html = """
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Complex Page</title>
+        <style>
+            body { font-family: Arial, sans-serif; }
+        </style>
+    </head>
+    <body>
+        <header>
+            <nav>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                </ul>
+            </nav>
+        </header>
+        <main>
+            <h1>Welcome</h1>
+            <p>This is a complex HTML page with multiple elements.</p>
+            <div class="content">
+                <img src="image.jpg" alt="Sample image">
+                <table>
+                    <tr><td>Data 1</td><td>Data 2</td></tr>
+                </table>
+            </div>
+        </main>
+        <script>
+            console.log('JavaScript loaded');
+        </script>
+    </body>
+    </html>
+    """
+    
+    with aioresponses() as mocked:
+        mocked.post(
+            "https://api.scrapegraphai.com/v1/scrape",
+            payload={
+                "scrape_request_id": str(uuid4()),
+                "status": "completed",
+                "html": complex_html,
+            },
+        )
+
+        async with AsyncClient(api_key=mock_api_key) as client:
+            response = await client.scrape(website_url="https://complex-example.com")
+            assert response["status"] == "completed"
+            assert "html" in response
+            assert "<!DOCTYPE html>" in response["html"]
+            assert "<title>Complex Page</title>" in response["html"]
+            assert "<script>" in response["html"]
+            assert "<style>" in response["html"]
+
+
+@pytest.mark.asyncio
+async def test_async_scrape_concurrent_requests(mock_api_key):
+    """Test multiple concurrent async scrape requests"""
+    with aioresponses() as mocked:
+        # Mock multiple responses
+        for i in range(3):
+            mocked.post(
+                "https://api.scrapegraphai.com/v1/scrape",
+                payload={
+                    "scrape_request_id": str(uuid4()),
+                    "status": "completed",
+                    "html": f"<html><body><h1>Page {i+1}</h1></body></html>",
+                },
+            )
+
+        async with AsyncClient(api_key=mock_api_key) as client:
+            # Make concurrent requests
+            tasks = [
+                client.scrape(website_url=f"https://example{i}.com")
+                for i in range(3)
+            ]
+            
+            responses = await asyncio.gather(*tasks)
+            
+            assert len(responses) == 3
+            for i, response in enumerate(responses):
+                assert response["status"] == "completed"
+                assert f"Page {i+1}" in response["html"]
