@@ -1,8 +1,8 @@
 /**
- * Example demonstrating how to use the HTMLfy API with the scrapegraph-js SDK.
+ * Example demonstrating how to use the Scrape API with the scrapegraph-js SDK.
  *
  * This example shows how to:
- * 1. Set up the API request for HTMLfy
+ * 1. Set up the API request for Scrape
  * 2. Make the API call to get HTML content from a website
  * 3. Handle the response and save the HTML content
  * 4. Demonstrate both regular and heavy JS rendering modes
@@ -14,25 +14,25 @@
  * - A valid API key
  *
  * Usage:
- * node htmlfy_example.js
+ * node scrape_example.js
  */
 
-import { htmlfy, getHtmlfyRequest } from '../index.js';
+import { scrape, getScrapeRequest } from '../index.js';
 import fs from 'fs/promises';
 import path from 'path';
 
 // Configuration
 const API_KEY = process.env.SGAI_API_KEY || 'your-api-key-here';
-const OUTPUT_DIR = 'htmlfy_output';
+const OUTPUT_DIR = 'scrape_output';
 
 /**
- * Get HTML content from a website using the HTMLfy API.
+ * Get HTML content from a website using the Scrape API.
  *
  * @param {string} websiteUrl - The URL of the website to get HTML from
- * @param {Object} options - Options for the HTMLfy request
+ * @param {Object} options - Options for the scrape request
  * @returns {Object} The API response containing HTML content and metadata
  */
-async function htmlfyWebsite(websiteUrl, options = {}) {
+async function scrapeWebsite(websiteUrl, options = {}) {
   const { renderHeavyJs = false, headers = {} } = options;
   
   const jsMode = renderHeavyJs ? 'with heavy JS rendering' : 'without JS rendering';
@@ -42,7 +42,7 @@ async function htmlfyWebsite(websiteUrl, options = {}) {
   const startTime = Date.now();
   
   try {
-    const result = await htmlfy(API_KEY, websiteUrl, {
+    const result = await scrape(API_KEY, websiteUrl, {
       renderHeavyJs,
       headers
     });
@@ -109,7 +109,7 @@ function analyzeHtmlContent(htmlContent) {
 }
 
 /**
- * Main function demonstrating HTMLfy API usage.
+ * Main function demonstrating Scrape API usage.
  */
 async function main() {
   // Example websites to test
@@ -128,7 +128,7 @@ async function main() {
     },
   ];
 
-  console.log('HTMLfy API Example with scrapegraph-js SDK');
+  console.log('Scrape API Example with scrapegraph-js SDK');
   console.log('='.repeat(60));
 
   // Check API key
@@ -146,12 +146,12 @@ async function main() {
 
     try {
       // Get HTML content
-      const result = await htmlfyWebsite(website.url, {
+      const result = await scrapeWebsite(website.url, {
         renderHeavyJs: website.renderHeavyJs
       });
 
       // Display response metadata
-      console.log(`Request ID: ${result.htmlfy_request_id || 'N/A'}`);
+      console.log(`Request ID: ${result.scrape_request_id || 'N/A'}`);
       console.log(`Status: ${result.status || 'N/A'}`);
       console.log(`Error: ${result.error || 'None'}`);
 
@@ -193,7 +193,7 @@ async function main() {
   }
 
   console.log(`\n📁 Output saved to: ${OUTPUT_DIR}/`);
-  console.log('✅ HTMLfy example completed successfully');
+  console.log('✅ Scrape example completed successfully');
 }
 
 // Run the example

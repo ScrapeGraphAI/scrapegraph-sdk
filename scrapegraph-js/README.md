@@ -55,19 +55,19 @@ const prompt = 'What does the company do?';
 
 ## 🎯 Examples
 
-### HTMLfy - Get HTML Content
+### Scrape - Get HTML Content
 
-#### Basic HTMLfy
+#### Basic Scrape
 
 ```javascript
-import { htmlfy } from 'scrapegraph-js';
+import { scrape } from 'scrapegraph-js';
 
 const apiKey = 'your-api-key';
 const url = 'https://example.com';
 
 (async () => {
   try {
-    const response = await htmlfy(apiKey, url);
+    const response = await scrape(apiKey, url);
     console.log('HTML content:', response.html);
     console.log('Status:', response.status);
   } catch (error) {
@@ -76,17 +76,17 @@ const url = 'https://example.com';
 })();
 ```
 
-#### HTMLfy with Heavy JavaScript Rendering
+#### Scrape with Heavy JavaScript Rendering
 
 ```javascript
-import { htmlfy } from 'scrapegraph-js';
+import { scrape } from 'scrapegraph-js';
 
 const apiKey = 'your-api-key';
 const url = 'https://example.com';
 
 (async () => {
   try {
-    const response = await htmlfy(apiKey, url, {
+    const response = await scrape(apiKey, url, {
       renderHeavyJs: true
     });
     console.log('HTML content with JS rendering:', response.html);
@@ -96,17 +96,17 @@ const url = 'https://example.com';
 })();
 ```
 
-#### HTMLfy with Custom Headers
+#### Scrape with Custom Headers
 
 ```javascript
-import { htmlfy } from 'scrapegraph-js';
+import { scrape } from 'scrapegraph-js';
 
 const apiKey = 'your-api-key';
 const url = 'https://example.com';
 
 (async () => {
   try {
-    const response = await htmlfy(apiKey, url, {
+    const response = await scrape(apiKey, url, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
         'Cookie': 'session=123'
@@ -119,17 +119,17 @@ const url = 'https://example.com';
 })();
 ```
 
-#### Get HTMLfy Request Status
+#### Get Scrape Request Status
 
 ```javascript
-import { getHtmlfyRequest } from 'scrapegraph-js';
+import { getScrapeRequest } from 'scrapegraph-js';
 
 const apiKey = 'your-api-key';
 const requestId = 'your-request-id';
 
 (async () => {
   try {
-    const response = await getHtmlfyRequest(apiKey, requestId);
+    const response = await getScrapeRequest(apiKey, requestId);
     console.log('Request status:', response.status);
     if (response.status === 'completed') {
       console.log('HTML content:', response.html);
@@ -482,9 +482,9 @@ const feedbackText = 'This is a test feedback message.';
 
 ## 🔧 Available Functions
 
-### HTMLfy
+### Scrape
 
-#### `htmlfy(apiKey, url, options)`
+#### `scrape(apiKey, url, options)`
 
 Converts a webpage into HTML format with optional JavaScript rendering.
 
@@ -498,30 +498,30 @@ Converts a webpage into HTML format with optional JavaScript rendering.
 **Returns:** Promise that resolves to an object containing:
 - `html`: The HTML content of the webpage
 - `status`: Request status ('completed', 'processing', 'failed')
-- `htmlfy_request_id`: Unique identifier for the request
+- `scrape_request_id`: Unique identifier for the request
 - `error`: Error message if the request failed
 
 **Example:**
 ```javascript
-const response = await htmlfy(apiKey, 'https://example.com', {
+const response = await scrape(apiKey, 'https://example.com', {
   renderHeavyJs: true,
   headers: { 'User-Agent': 'Custom Agent' }
 });
 ```
 
-#### `getHtmlfyRequest(apiKey, requestId)`
+#### `getScrapeRequest(apiKey, requestId)`
 
-Retrieves the status or result of a previous HTMLfy request.
+Retrieves the status or result of a previous scrape request.
 
 **Parameters:**
 - `apiKey` (string): Your ScrapeGraph AI API key
-- `requestId` (string): The unique identifier for the HTMLfy request
+- `requestId` (string): The unique identifier for the scrape request
 
 **Returns:** Promise that resolves to the request result object.
 
 **Example:**
 ```javascript
-const result = await getHtmlfyRequest(apiKey, 'request-id-here');
+const result = await getScrapeRequest(apiKey, 'request-id-here');
 ```
 
 ### Smart Scraper

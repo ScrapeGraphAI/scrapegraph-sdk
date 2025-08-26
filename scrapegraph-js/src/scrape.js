@@ -18,7 +18,7 @@ import handleError from './utils/handleError.js';
  * const url = 'https://example.com';
  *
  * try {
- *   const result = await htmlfy(apiKey, url);
+ *   const result = await scrape(apiKey, url);
  *   console.log('HTML content:', result.html);
  *   console.log('Status:', result.status);
  * } catch (error) {
@@ -27,13 +27,13 @@ import handleError from './utils/handleError.js';
  *
  * @example
  * // With JavaScript rendering:
- * const result = await htmlfy(apiKey, url, {
+ * const result = await scrape(apiKey, url, {
  *   renderHeavyJs: true
  * });
  *
  * @example
  * // With custom headers:
- * const result = await htmlfy(apiKey, url, {
+ * const result = await scrape(apiKey, url, {
  *   renderHeavyJs: false,
  *   headers: {
  *     'User-Agent': 'Custom Agent',
@@ -41,13 +41,13 @@ import handleError from './utils/handleError.js';
  *   }
  * });
  */
-export async function htmlfy(apiKey, url, options = {}) {
+export async function scrape(apiKey, url, options = {}) {
   const {
     renderHeavyJs = false,
     headers: customHeaders = {}
   } = options;
 
-  const endpoint = 'https://api.scrapegraphai.com/v1/htmlfy';
+  const endpoint = 'https://api.scrapegraphai.com/v1/scrape';
   const headers = {
     'accept': 'application/json',
     'SGAI-APIKEY': apiKey,
@@ -74,14 +74,14 @@ export async function htmlfy(apiKey, url, options = {}) {
 }
 
 /**
- * Retrieves the status or result of an HTMLfy request.
+ * Retrieves the status or result of a scrape request.
  *
  * @param {string} apiKey - Your ScrapeGraph AI API key.
- * @param {string} requestId - The unique identifier for the HTMLfy request.
+ * @param {string} requestId - The unique identifier for the scrape request.
  * @returns {Promise<Object>} A promise that resolves to an object containing:
  *   - status: The current status of the request ('pending', 'completed', 'failed')
  *   - html: The HTML content when status is 'completed'
- *   - htmlfy_request_id: The request identifier
+ *   - scrape_request_id: The request identifier
  *   - error: Error message if the request failed (when status is 'failed')
  *   - created_at: Timestamp of when the request was created
  *   - completed_at: Timestamp of when the request was completed (if applicable)
@@ -93,10 +93,10 @@ export async function htmlfy(apiKey, url, options = {}) {
  * const requestId = 'previously-obtained-request-id';
  *
  * try {
- *   const result = await getHtmlfyRequest(apiKey, requestId);
+ *   const result = await getScrapeRequest(apiKey, requestId);
  *   if (result.status === 'completed') {
  *     console.log('HTML content:', result.html);
- *     console.log('Request ID:', result.htmlfy_request_id);
+ *     console.log('Request ID:', result.scrape_request_id);
  *   } else if (result.status === 'pending') {
  *     console.log('HTML conversion is still in progress');
  *   } else {
@@ -114,8 +114,8 @@ export async function htmlfy(apiKey, url, options = {}) {
  *   - CSS styles and formatting
  *   - Images, links, and other media elements
  */
-export async function getHtmlfyRequest(apiKey, requestId) {
-  const endpoint = 'https://api.scrapegraphai.com/v1/htmlfy/' + requestId;
+export async function getScrapeRequest(apiKey, requestId) {
+  const endpoint = 'https://api.scrapegraphai.com/v1/scrape/' + requestId;
   const headers = {
     'accept': 'application/json',
     'SGAI-APIKEY': apiKey,
