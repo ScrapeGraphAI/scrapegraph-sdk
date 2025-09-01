@@ -55,6 +55,91 @@ const prompt = 'What does the company do?';
 
 ## 🎯 Examples
 
+### Scrape - Get HTML Content
+
+#### Basic Scrape
+
+```javascript
+import { scrape } from 'scrapegraph-js';
+
+const apiKey = 'your-api-key';
+const url = 'https://example.com';
+
+(async () => {
+  try {
+    const response = await scrape(apiKey, url);
+    console.log('HTML content:', response.html);
+    console.log('Status:', response.status);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+})();
+```
+
+#### Scrape with Heavy JavaScript Rendering
+
+```javascript
+import { scrape } from 'scrapegraph-js';
+
+const apiKey = 'your-api-key';
+const url = 'https://example.com';
+
+(async () => {
+  try {
+    const response = await scrape(apiKey, url, {
+      renderHeavyJs: true
+    });
+    console.log('HTML content with JS rendering:', response.html);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+})();
+```
+
+#### Scrape with Custom Headers
+
+```javascript
+import { scrape } from 'scrapegraph-js';
+
+const apiKey = 'your-api-key';
+const url = 'https://example.com';
+
+(async () => {
+  try {
+    const response = await scrape(apiKey, url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'Cookie': 'session=123'
+      }
+    });
+    console.log('HTML content with custom headers:', response.html);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+})();
+```
+
+#### Get Scrape Request Status
+
+```javascript
+import { getScrapeRequest } from 'scrapegraph-js';
+
+const apiKey = 'your-api-key';
+const requestId = 'your-request-id';
+
+(async () => {
+  try {
+    const response = await getScrapeRequest(apiKey, requestId);
+    console.log('Request status:', response.status);
+    if (response.status === 'completed') {
+      console.log('HTML content:', response.html);
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+})();
+```
+
 ### Scraping Websites
 
 #### Basic Scraping
@@ -394,6 +479,99 @@ const feedbackText = 'This is a test feedback message.';
   }
 })();
 ```
+
+## 🔧 Available Functions
+
+### Scrape
+
+#### `scrape(apiKey, url, options)`
+
+Converts a webpage into HTML format with optional JavaScript rendering.
+
+**Parameters:**
+- `apiKey` (string): Your ScrapeGraph AI API key
+- `url` (string): The URL of the webpage to convert
+- `options` (object, optional): Configuration options
+  - `renderHeavyJs` (boolean, optional): Whether to render heavy JavaScript (default: false)
+  - `headers` (object, optional): Custom headers to send with the request
+
+**Returns:** Promise that resolves to an object containing:
+- `html`: The HTML content of the webpage
+- `status`: Request status ('completed', 'processing', 'failed')
+- `scrape_request_id`: Unique identifier for the request
+- `error`: Error message if the request failed
+
+**Example:**
+```javascript
+const response = await scrape(apiKey, 'https://example.com', {
+  renderHeavyJs: true,
+  headers: { 'User-Agent': 'Custom Agent' }
+});
+```
+
+#### `getScrapeRequest(apiKey, requestId)`
+
+Retrieves the status or result of a previous scrape request.
+
+**Parameters:**
+- `apiKey` (string): Your ScrapeGraph AI API key
+- `requestId` (string): The unique identifier for the scrape request
+
+**Returns:** Promise that resolves to the request result object.
+
+**Example:**
+```javascript
+const result = await getScrapeRequest(apiKey, 'request-id-here');
+```
+
+### Smart Scraper
+
+#### `smartScraper(apiKey, url, prompt, schema, numberOfScrolls, totalPages, cookies)`
+
+Extracts structured data from websites using AI-powered scraping.
+
+**Parameters:**
+- `apiKey` (string): Your ScrapeGraph AI API key
+- `url` (string): The URL of the website to scrape
+- `prompt` (string): Natural language prompt describing what to extract
+- `schema` (object, optional): Zod schema for structured output
+- `numberOfScrolls` (number, optional): Number of scrolls for infinite scroll pages
+- `totalPages` (number, optional): Number of pages to scrape
+- `cookies` (object, optional): Cookies for authentication
+
+### Search Scraper
+
+#### `searchScraper(apiKey, prompt, url, numResults, headers, outputSchema)`
+
+Searches and extracts information from multiple web sources using AI.
+
+### Crawl API
+
+#### `crawl(apiKey, url, prompt, dataSchema, extractionMode, cacheWebsite, depth, maxPages, sameDomainOnly, sitemap, batchSize)`
+
+Starts a crawl job to extract structured data from a website and its linked pages.
+
+### Markdownify
+
+#### `markdownify(apiKey, url, headers)`
+
+Converts a webpage into clean, well-structured markdown format.
+
+### Agentic Scraper
+
+#### `agenticScraper(apiKey, url, steps, useSession, userPrompt, outputSchema, aiExtraction)`
+
+Performs automated actions on webpages using step-by-step instructions.
+
+### Utility Functions
+
+#### `getCredits(apiKey)`
+
+Retrieves your current credit balance and usage statistics.
+
+#### `sendFeedback(apiKey, requestId, rating, feedbackText)`
+
+Submits feedback for a specific request.
 
 ## 📚 Documentation
 
