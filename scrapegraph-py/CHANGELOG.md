@@ -1,3 +1,12 @@
+## [1.21.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.20.0...v1.21.0) (2025-09-01)
+
+
+### Features
+
+* add files for htmlify ([73539a0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/73539a0c486baad7c479ee2fa488e3571ca369df))
+* add js files ([013f3ce](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/013f3ceb932fa95c8d559a16cd9c78260d844fd8))
+* rebranding ([cf5a26d](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/cf5a26dc7a8c7d135fb5ce8f6c7eea9cca25b15b))
+
 ## [1.20.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.19.0...v1.20.0) (2025-08-19)
 
 
