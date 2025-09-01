@@ -182,7 +182,19 @@ export async function agenticScraper(apiKey, url, steps, useSession = true, user
  * allowing for complex interactions like form filling, clicking buttons,
  * and navigating through multi-step workflows with session management.
  */
-export async function getAgenticScraperRequest(apiKey, requestId) {
+export async function getAgenticScraperRequest(apiKey, requestId, options = {}) {
+  const { mock = null } = options;
+
+  // Check if mock mode is enabled
+  const useMock = mock !== null ? mock : isMockEnabled();
+  
+  if (useMock) {
+    console.log('🧪 Mock mode active. Returning stub for getAgenticScraperRequest');
+    const mockConfig = getMockConfig();
+    const mockData = getMockResponse('GET', `https://api.scrapegraphai.com/v1/agentic-scrapper/${requestId}`, mockConfig.customResponses, mockConfig.customHandler);
+    return mockData;
+  }
+
   const endpoint = 'https://api.scrapegraphai.com/v1/agentic-scrapper/' + requestId;
   const headers = {
     'accept': 'application/json',
