@@ -33,7 +33,7 @@ import {
   agenticScraper,
   getAgenticScraperRequest,
   getCredits,
-  submitFeedback
+  sendFeedback
 } from '../index.js';
 
 import { 
@@ -77,9 +77,9 @@ async function basicMockUsage() {
     const credits = await getCredits(API_KEY);
     console.log('Credits:', credits);
     
-    // Test submitFeedback endpoint
-    console.log('\n-- Testing submitFeedback endpoint --');
-    const feedback = await submitFeedback(API_KEY, 'mock-request-id', 5, 'Great service!');
+    // Test sendFeedback endpoint
+    console.log('\n-- Testing sendFeedback endpoint --');
+    const feedback = await sendFeedback(API_KEY, 'mock-request-id', 5, 'Great service!');
     console.log('Feedback result:', feedback);
     
   } catch (error) {
@@ -242,8 +242,8 @@ async function testAllEndpoints() {
     const credits = await getCredits(API_KEY);
     console.log('GetCredits:', credits.remaining_credits ? '✅' : '❌');
     
-    const feedback = await submitFeedback(API_KEY, 'mock-id', 5, 'Great!');
-    console.log('SubmitFeedback:', feedback.status ? '✅' : '❌');
+    const feedback = await sendFeedback(API_KEY, 'mock-id', 5, 'Great!');
+    console.log('SendFeedback:', feedback.status ? '✅' : '❌');
     
   } catch (error) {
     console.error('Error testing endpoints:', error.message);

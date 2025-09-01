@@ -2,6 +2,8 @@ import axios from 'axios';
 import handleError from './utils/handleError.js';
 import { ZodType } from 'zod';
 import { zodToJsonSchema } from 'zod-to-json-schema';
+import { isMockEnabled, getMockConfig } from './utils/mockConfig.js';
+import { getMockResponse } from './utils/mockResponse.js';
 
 /**
  * Search and extract information from multiple web sources using AI.
@@ -13,10 +15,23 @@ import { zodToJsonSchema } from 'zod-to-json-schema';
  *                                 Credit calculation: 30 base + 10 per additional website beyond 3.
  * @param {Object} [schema] - Optional schema object defining the output structure
  * @param {String} userAgent - the user agent like "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+ * @param {Object} options - Optional configuration options
+ * @param {boolean} options.mock - Override mock mode for this request
  * @returns {Promise<string>} Extracted data in JSON format matching the provided schema
  * @throws - Will throw an error in case of an HTTP failure.
  */
-export async function searchScraper(apiKey, prompt, numResults = 3, schema = null, userAgent = null) {
+export async function searchScraper(apiKey, prompt, numResults = 3, schema = null, userAgent = null, options = {}) {
+  const { mock = null } = options;
+
+  // Check if mock mode is enabled
+  const useMock = mock !== null ? mock : isMockEnabled();
+  
+  if (useMock) {
+    console.log('🧪 Mock mode active. Returning stub for searchScraper request');
+    const mockConfig = getMockConfig();
+    const mockData = getMockResponse('POST', 'https://api.scrapegraphai.com/v1/searchscraper', mockConfig.customResponses, mockConfig.customHandler);
+    return mockData;
+  }
   const endpoint = 'https://api.scrapegraphai.com/v1/searchscraper';
   const headers = {
     'accept': 'application/json',
@@ -92,7 +107,19 @@ export async function searchScraper(apiKey, prompt, numResults = 3, schema = nul
  * information based on the original search query. The results are structured according to
  * the schema provided in the original searchScraper call, if any.
  */
-export async function getSearchScraperRequest(apiKey, requestId) {
+export async function getSearchScraperRequest(apiKey, requestId, options = {}) {
+  const { mock = null } = options;
+
+  // Check if mock mode is enabled
+  const useMock = mock !== null ? mock : isMockEnabled();
+  
+  if (useMock) {
+    console.log('🧪 Mock mode active. Returning stub for getSearchScraperRequest');
+    const mockConfig = getMockConfig();
+    const mockData = getMockResponse('GET', `https://api.scrapegraphai.com/v1/searchscraper/${requestId}`, mockConfig.customResponses, mockConfig.customHandler);
+    return mockData;
+  }
+
   const endpoint = 'https://api.scrapegraphai.com/v1/searchscraper/' + requestId;
   const headers = {
     'accept': 'application/json',
