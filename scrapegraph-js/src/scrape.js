@@ -1,5 +1,7 @@
 import axios from 'axios';
 import handleError from './utils/handleError.js';
+import { isMockEnabled, getMockConfig } from './utils/mockConfig.js';
+import { getMockResponse, createMockAxiosResponse } from './utils/mockResponse.js';
 
 /**
  * Converts a webpage into HTML format with optional JavaScript rendering.
@@ -44,8 +46,19 @@ import handleError from './utils/handleError.js';
 export async function scrape(apiKey, url, options = {}) {
   const {
     renderHeavyJs = false,
-    headers: customHeaders = {}
+    headers: customHeaders = {},
+    mock = null
   } = options;
+
+  // Check if mock mode is enabled
+  const useMock = mock !== null ? mock : isMockEnabled();
+  
+  if (useMock) {
+    console.log('🧪 Mock mode active. Returning stub for scrape request');
+    const mockConfig = getMockConfig();
+    const mockData = getMockResponse('POST', 'https://api.scrapegraphai.com/v1/scrape', mockConfig.customResponses, mockConfig.customHandler);
+    return mockData;
+  }
 
   const endpoint = 'https://api.scrapegraphai.com/v1/scrape';
   const headers = {
@@ -114,7 +127,19 @@ export async function scrape(apiKey, url, options = {}) {
  *   - CSS styles and formatting
  *   - Images, links, and other media elements
  */
-export async function getScrapeRequest(apiKey, requestId) {
+export async function getScrapeRequest(apiKey, requestId, options = {}) {
+  const { mock = null } = options;
+
+  // Check if mock mode is enabled
+  const useMock = mock !== null ? mock : isMockEnabled();
+  
+  if (useMock) {
+    console.log('🧪 Mock mode active. Returning stub for getScrapeRequest');
+    const mockConfig = getMockConfig();
+    const mockData = getMockResponse('GET', `https://api.scrapegraphai.com/v1/scrape/${requestId}`, mockConfig.customResponses, mockConfig.customHandler);
+    return mockData;
+  }
+
   const endpoint = 'https://api.scrapegraphai.com/v1/scrape/' + requestId;
   const headers = {
     'accept': 'application/json',
