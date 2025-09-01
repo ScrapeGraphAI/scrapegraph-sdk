@@ -2,6 +2,8 @@ import axios from 'axios';
 import handleError from './utils/handleError.js';
 import { ZodType } from 'zod';
 import { zodToJsonSchema } from 'zod-to-json-schema';
+import { isMockEnabled, getMockConfig } from './utils/mockConfig.js';
+import { getMockResponse, createMockAxiosResponse } from './utils/mockResponse.js';
 
 /**
  * Scrape and extract structured data from a webpage using ScrapeGraph AI.
@@ -16,7 +18,19 @@ import { zodToJsonSchema } from 'zod-to-json-schema';
  * @returns {Promise<string>} Extracted data in JSON format matching the provided schema
  * @throws - Will throw an error in case of an HTTP failure.
  */
-export async function smartScraper(apiKey, url, prompt, schema = null, numberOfScrolls = null, totalPages = null, cookies = null) {
+export async function smartScraper(apiKey, url, prompt, schema = null, numberOfScrolls = null, totalPages = null, cookies = null, options = {}) {
+  const { mock = null } = options;
+
+  // Check if mock mode is enabled
+  const useMock = mock !== null ? mock : isMockEnabled();
+  
+  if (useMock) {
+    console.log('🧪 Mock mode active. Returning stub for smartScraper request');
+    const mockConfig = getMockConfig();
+    const mockData = getMockResponse('POST', 'https://api.scrapegraphai.com/v1/smartscraper', mockConfig.customResponses, mockConfig.customHandler);
+    return mockData;
+  }
+
   const endpoint = 'https://api.scrapegraphai.com/v1/smartscraper';
   const headers = {
     'accept': 'application/json',
@@ -98,7 +112,19 @@ export async function smartScraper(apiKey, url, prompt, schema = null, numberOfS
  *   console.error('Error fetching request:', error);
  * }
  */
-export async function getSmartScraperRequest(apiKey, requestId) {
+export async function getSmartScraperRequest(apiKey, requestId, options = {}) {
+  const { mock = null } = options;
+
+  // Check if mock mode is enabled
+  const useMock = mock !== null ? mock : isMockEnabled();
+  
+  if (useMock) {
+    console.log('🧪 Mock mode active. Returning stub for getSmartScraperRequest');
+    const mockConfig = getMockConfig();
+    const mockData = getMockResponse('GET', `https://api.scrapegraphai.com/v1/smartscraper/${requestId}`, mockConfig.customResponses, mockConfig.customHandler);
+    return mockData;
+  }
+
   const endpoint = 'https://api.scrapegraphai.com/v1/smartscraper/' + requestId;
   const headers = {
     'accept': 'application/json',

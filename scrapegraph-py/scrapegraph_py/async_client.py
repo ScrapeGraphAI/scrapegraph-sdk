@@ -1,9 +1,11 @@
 import asyncio
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Callable
 
 from aiohttp import ClientSession, ClientTimeout, TCPConnector
 from aiohttp.client_exceptions import ClientError
 from pydantic import BaseModel
+from urllib.parse import urlparse
+import uuid as _uuid
 
 from scrapegraph_py.config import API_BASE_URL, DEFAULT_HEADERS
 from scrapegraph_py.exceptions import APIError
@@ -35,6 +37,9 @@ class AsyncClient:
         timeout: Optional[float] = None,
         max_retries: int = 3,
         retry_delay: float = 1.0,
+        mock: Optional[bool] = None,
+        mock_handler: Optional[Callable[[str, str, Dict[str, Any]], Any]] = None,
+        mock_responses: Optional[Dict[str, Any]] = None,
     ):
         """Initialize AsyncClient using API key from environment variable.
 
@@ -46,15 +51,27 @@ class AsyncClient:
         """
         from os import getenv
 
+        # Allow enabling mock mode from environment if not explicitly provided
+        if mock is None:
+            mock_env = getenv("SGAI_MOCK", "0").strip().lower()
+            mock = mock_env in {"1", "true", "yes", "on"}
+        
         api_key = getenv("SGAI_API_KEY")
+        # In mock mode, we don't need a real API key
         if not api_key:
-            raise ValueError("SGAI_API_KEY environment variable not set")
+            if mock:
+                api_key = "sgai-00000000-0000-0000-0000-000000000000"
+            else:
+                raise ValueError("SGAI_API_KEY environment variable not set")
         return cls(
             api_key=api_key,
             verify_ssl=verify_ssl,
             timeout=timeout,
             max_retries=max_retries,
             retry_delay=retry_delay,
+            mock=bool(mock),
+            mock_handler=mock_handler,
+            mock_responses=mock_responses,
         )
 
     def __init__(
@@ -64,6 +81,9 @@ class AsyncClient:
         timeout: Optional[float] = None,
         max_retries: int = 3,
         retry_delay: float = 1.0,
+        mock: bool = False,
+        mock_handler: Optional[Callable[[str, str, Dict[str, Any]], Any]] = None,
+        mock_responses: Optional[Dict[str, Any]] = None,
     ):
         """Initialize AsyncClient with configurable parameters.
 
@@ -96,6 +116,9 @@ class AsyncClient:
         self.headers = {**DEFAULT_HEADERS, "SGAI-APIKEY": api_key}
         self.max_retries = max_retries
         self.retry_delay = retry_delay
+        self.mock = bool(mock)
+        self.mock_handler = mock_handler
+        self.mock_responses = mock_responses or {}
 
         ssl = None if verify_ssl else False
         self.timeout = ClientTimeout(total=timeout) if timeout is not None else None
@@ -108,6 +131,9 @@ class AsyncClient:
 
     async def _make_request(self, method: str, url: str, **kwargs) -> Any:
         """Make HTTP request with retry logic."""
+        # Short-circuit when mock mode is enabled
+        if getattr(self, "mock", False):
+            return self._mock_response(method, url, **kwargs)
         for attempt in range(self.max_retries):
             try:
                 logger.info(
@@ -144,6 +170,71 @@ class AsyncClient:
                 retry_delay = self.retry_delay * (attempt + 1)
                 logger.info(f"⏳ Waiting {retry_delay}s before retry {attempt + 2}")
                 await asyncio.sleep(retry_delay)
+
+    def _mock_response(self, method: str, url: str, **kwargs) -> Any:
+        """Return a deterministic mock response without performing network I/O.
+
+        Resolution order:
+        1) If a custom mock_handler is provided, delegate to it
+        2) If mock_responses contains a key for the request path, use it
+        3) Fallback to built-in defaults per endpoint family
+        """
+        logger.info(f"🧪 Mock mode active. Returning stub for {method} {url}")
+
+        # 1) Custom handler
+        if self.mock_handler is not None:
+            try:
+                return self.mock_handler(method, url, kwargs)
+            except Exception as handler_error:
+                logger.warning(f"Custom mock_handler raised: {handler_error}. Falling back to defaults.")
+
+        # 2) Path-based override
+        try:
+            parsed = urlparse(url)
+            path = parsed.path.rstrip("/")
+        except Exception:
+            path = url
+
+        override = self.mock_responses.get(path)
+        if override is not None:
+            return override() if callable(override) else override
+
+        # 3) Built-in defaults
+        def new_id(prefix: str) -> str:
+            return f"{prefix}-{_uuid.uuid4()}"
+
+        upper_method = method.upper()
+
+        # Credits endpoint
+        if path.endswith("/credits") and upper_method == "GET":
+            return {"remaining_credits": 1000, "total_credits_used": 0}
+
+        # Feedback acknowledge
+        if path.endswith("/feedback") and upper_method == "POST":
+            return {"status": "success"}
+
+        # Create-like endpoints (POST)
+        if upper_method == "POST":
+            if path.endswith("/crawl"):
+                return {"crawl_id": new_id("mock-crawl")}
+            # All other POST endpoints return a request id
+            return {"request_id": new_id("mock-req")}
+
+        # Status-like endpoints (GET)
+        if upper_method == "GET":
+            if "markdownify" in path:
+                return {"status": "completed", "content": "# Mock markdown\n\n..."}
+            if "smartscraper" in path:
+                return {"status": "completed", "result": [{"field": "value"}]}
+            if "searchscraper" in path:
+                return {"status": "completed", "results": [{"url": "https://example.com"}]}
+            if "crawl" in path:
+                return {"status": "completed", "pages": []}
+            if "agentic-scrapper" in path:
+                return {"status": "completed", "actions": []}
+
+        # Generic fallback
+        return {"status": "mock", "url": url, "method": method, "kwargs": kwargs}
 
     async def markdownify(
         self, website_url: str, headers: Optional[dict[str, str]] = None
