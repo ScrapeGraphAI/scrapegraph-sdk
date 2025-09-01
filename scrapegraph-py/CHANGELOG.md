@@ -1,3 +1,10 @@
+## [1.22.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.21.0...v1.22.0) (2025-09-01)
+
+
+### Features
+
+* add files ([e056508](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/e056508fd3b706ba40e2ab7cffd26e58f3f0c0ae))
+
 ## [1.21.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.20.0...v1.21.0) (2025-09-01)
 
 
