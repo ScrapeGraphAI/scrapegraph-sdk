@@ -1,3 +1,10 @@
+## [1.24.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.23.0...v1.24.0) (2025-09-03)
+
+
+### Features
+
+* add new mock ([db6a5ea](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/db6a5ea8baac250f70358c9ffc2a5ceb4d206993))
+
 ## [1.23.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.22.0...v1.23.0) (2025-09-01)
 
 
