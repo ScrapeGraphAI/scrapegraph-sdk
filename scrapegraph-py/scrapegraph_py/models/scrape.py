@@ -21,7 +21,8 @@ class ScrapeRequest(BaseModel):
         },
         description="Optional headers to send with the request, including cookies "
         "and user agent",
-    )
+    ),
+    mock: bool = Field(default=False, description="Whether to use mock mode for the request")
 
     @model_validator(mode="after")
     def validate_url(self) -> "ScrapeRequest":

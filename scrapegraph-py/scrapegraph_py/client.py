@@ -1,12 +1,12 @@
 # Client implementation goes here
-from typing import Any, Dict, Optional, Callable
+import uuid as _uuid
+from typing import Any, Callable, Dict, Optional
+from urllib.parse import urlparse
 
 import requests
 import urllib3
 from pydantic import BaseModel
 from requests.exceptions import RequestException
-from urllib.parse import urlparse
-import uuid as _uuid
 
 from scrapegraph_py.config import API_BASE_URL, DEFAULT_HEADERS
 from scrapegraph_py.exceptions import APIError
@@ -17,8 +17,8 @@ from scrapegraph_py.models.agenticscraper import (
 )
 from scrapegraph_py.models.crawl import CrawlRequest, GetCrawlRequest
 from scrapegraph_py.models.feedback import FeedbackRequest
-from scrapegraph_py.models.scrape import GetScrapeRequest, ScrapeRequest
 from scrapegraph_py.models.markdownify import GetMarkdownifyRequest, MarkdownifyRequest
+from scrapegraph_py.models.scrape import GetScrapeRequest, ScrapeRequest
 from scrapegraph_py.models.searchscraper import (
     GetSearchScraperRequest,
     SearchScraperRequest,
@@ -255,13 +255,13 @@ class Client:
         # Generic fallback
         return {"status": "mock", "url": url, "method": method, "kwargs": kwargs}
 
-    def markdownify(self, website_url: str, headers: Optional[dict[str, str]] = None):
+    def markdownify(self, website_url: str, headers: Optional[dict[str, str]] = None, mock:bool=False):
         """Send a markdownify request"""
         logger.info(f"🔍 Starting markdownify request for {website_url}")
         if headers:
             logger.debug("🔧 Using custom headers")
 
-        request = MarkdownifyRequest(website_url=website_url, headers=headers)
+        request = MarkdownifyRequest(website_url=website_url, headers=headers, mock=mock)
         logger.debug("✅ Request validation passed")
 
         result = self._make_request(
@@ -287,6 +287,7 @@ class Client:
         website_url: str,
         render_heavy_js: bool = False,
         headers: Optional[dict[str, str]] = None,
+        mock:bool=False,
     ):
         """Send a scrape request to get HTML content from a website
         
@@ -304,6 +305,7 @@ class Client:
             website_url=website_url,
             render_heavy_js=render_heavy_js,
             headers=headers,
+            mock=mock
         )
         logger.debug("✅ Request validation passed")
 
@@ -335,6 +337,8 @@ class Client:
         output_schema: Optional[BaseModel] = None,
         number_of_scrolls: Optional[int] = None,
         total_pages: Optional[int] = None,
+        mock:bool=False,
+        plain_text:bool=False
     ):
         """Send a smartscraper request with optional pagination support and cookies"""
         logger.info("🔍 Starting smartscraper request")
@@ -361,6 +365,8 @@ class Client:
             output_schema=output_schema,
             number_of_scrolls=number_of_scrolls,
             total_pages=total_pages,
+            mock=mock,
+            plain_text=plain_text,
         )
         logger.debug("✅ Request validation passed")
 
@@ -420,6 +426,7 @@ class Client:
         num_results: Optional[int] = 3,
         headers: Optional[dict[str, str]] = None,
         output_schema: Optional[BaseModel] = None,
+        mock: bool=False
     ):
         """Send a searchscraper request
 
@@ -443,6 +450,7 @@ class Client:
             num_results=num_results,
             headers=headers,
             output_schema=output_schema,
+            mock=mock
         )
         logger.debug("✅ Request validation passed")
 
@@ -547,6 +555,7 @@ class Client:
         user_prompt: Optional[str] = None,
         output_schema: Optional[Dict[str, Any]] = None,
         ai_extraction: bool = False,
+        mock: bool=False,
     ):
         """Send an agentic scraper request to perform automated actions on a webpage
         
@@ -573,6 +582,7 @@ class Client:
             user_prompt=user_prompt,
             output_schema=output_schema,
             ai_extraction=ai_extraction,
+            mock=mock
         )
         logger.debug("✅ Request validation passed")
 

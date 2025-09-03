@@ -49,6 +49,7 @@ class AgenticScraperRequest(BaseModel):
         description="Whether to use AI for data extraction from the scraped content"
     )
 
+    mock: bool = Field(default=False, description="Whether to use mock mode for the request")
     @model_validator(mode="after")
     def validate_url(self) -> "AgenticScraperRequest":
         if not self.url.strip():
