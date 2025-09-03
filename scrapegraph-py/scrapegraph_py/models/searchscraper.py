@@ -27,6 +27,7 @@ class SearchScraperRequest(BaseModel):
         "and user agent",
     )
     output_schema: Optional[Type[BaseModel]] = None
+    mock: bool = Field(default=False, description="Whether to use mock mode for the request")
 
     @model_validator(mode="after")
     def validate_user_prompt(self) -> "SearchScraperRequest":

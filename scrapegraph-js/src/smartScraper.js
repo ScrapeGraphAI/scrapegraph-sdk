@@ -18,7 +18,7 @@ import { getMockResponse, createMockAxiosResponse } from './utils/mockResponse.j
  * @returns {Promise<string>} Extracted data in JSON format matching the provided schema
  * @throws - Will throw an error in case of an HTTP failure.
  */
-export async function smartScraper(apiKey, url, prompt, schema = null, numberOfScrolls = null, totalPages = null, cookies = null, options = {}) {
+export async function smartScraper(apiKey, url, prompt, schema = null, numberOfScrolls = null, totalPages = null, cookies = null, options = {}, plain_text = false) {
   const { mock = null } = options;
 
   // Check if mock mode is enabled
@@ -41,6 +41,7 @@ export async function smartScraper(apiKey, url, prompt, schema = null, numberOfS
   const payload = {
     website_url: url,
     user_prompt: prompt,
+    plain_text: plain_text,
   };
 
   if (cookies) {
