@@ -112,7 +112,7 @@ class TestScrapeRequest:
             "https://example.com/path?param=value",
             "https://example.com/path#fragment"
         ]
-        
+
         for url in valid_urls:
             request = ScrapeRequest(website_url=url)
             assert request.website_url == url
@@ -124,7 +124,7 @@ class TestScrapeRequest:
             "/relative/path",
             "file:///path/to/file"
         ]
-        
+
         for url in invalid_urls:
             with pytest.raises(ValidationError):
                 ScrapeRequest(website_url=url)
@@ -178,7 +178,7 @@ class TestGetScrapeRequest:
             "987fcdeb-51a2-43c1-b567-890123456789",
             "00000000-0000-0000-0000-000000000000"
         ]
-        
+
         for uuid_str in valid_uuids:
             request = GetScrapeRequest(request_id=uuid_str)
             assert request.request_id == uuid_str
