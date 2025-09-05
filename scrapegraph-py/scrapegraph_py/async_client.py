@@ -253,11 +253,12 @@ class AsyncClient:
                     "next_run_at": "2024-01-08T09:00:00Z"
                 }
             elif "/trigger" in path:
+                task_id = new_id("mock-task")
                 return {
-                    "execution_id": new_id("mock-task"),
+                    "execution_id": task_id,
                     "scheduled_job_id": new_id("mock-job"),
                     "triggered_at": "2024-01-01T00:00:00Z",
-                    "message": f"Job triggered successfully. Task ID: {new_id('mock-task')}"
+                    "message": f"Job triggered successfully. Task ID: {task_id}"
                 }
             # All other POST endpoints return a request id
             return {"request_id": new_id("mock-req")}
