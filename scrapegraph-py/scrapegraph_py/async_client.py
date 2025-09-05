@@ -26,6 +26,15 @@ from scrapegraph_py.models.smartscraper import (
     GetSmartScraperRequest,
     SmartScraperRequest,
 )
+from scrapegraph_py.models.scheduled_jobs import (
+    GetJobExecutionsRequest,
+    GetScheduledJobRequest,
+    GetScheduledJobsRequest,
+    JobActionRequest,
+    ScheduledJobCreate,
+    ScheduledJobUpdate,
+    TriggerJobRequest,
+)
 from scrapegraph_py.utils.helpers import handle_async_response, validate_api_key
 
 
@@ -217,6 +226,39 @@ class AsyncClient:
         if upper_method == "POST":
             if path.endswith("/crawl"):
                 return {"crawl_id": new_id("mock-crawl")}
+            elif path.endswith("/scheduled-jobs"):
+                return {
+                    "id": new_id("mock-job"),
+                    "user_id": new_id("mock-user"),
+                    "job_name": "Mock Scheduled Job",
+                    "service_type": "smartscraper",
+                    "cron_expression": "0 9 * * 1",
+                    "job_config": {"mock": "config"},
+                    "is_active": True,
+                    "created_at": "2024-01-01T00:00:00Z",
+                    "updated_at": "2024-01-01T00:00:00Z",
+                    "next_run_at": "2024-01-08T09:00:00Z"
+                }
+            elif "/pause" in path:
+                return {
+                    "message": "Job paused successfully",
+                    "job_id": new_id("mock-job"),
+                    "is_active": False
+                }
+            elif "/resume" in path:
+                return {
+                    "message": "Job resumed successfully",
+                    "job_id": new_id("mock-job"),
+                    "is_active": True,
+                    "next_run_at": "2024-01-08T09:00:00Z"
+                }
+            elif "/trigger" in path:
+                return {
+                    "execution_id": new_id("mock-task"),
+                    "scheduled_job_id": new_id("mock-job"),
+                    "triggered_at": "2024-01-01T00:00:00Z",
+                    "message": f"Job triggered successfully. Task ID: {new_id('mock-task')}"
+                }
             # All other POST endpoints return a request id
             return {"request_id": new_id("mock-req")}
 
@@ -232,6 +274,77 @@ class AsyncClient:
                 return {"status": "completed", "pages": []}
             if "agentic-scrapper" in path:
                 return {"status": "completed", "actions": []}
+            if "scheduled-jobs" in path:
+                if "/executions" in path:
+                    return {
+                        "executions": [
+                            {
+                                "id": new_id("mock-exec"),
+                                "scheduled_job_id": new_id("mock-job"),
+                                "execution_id": new_id("mock-task"),
+                                "status": "completed",
+                                "started_at": "2024-01-01T00:00:00Z",
+                                "completed_at": "2024-01-01T00:01:00Z",
+                                "result": {"mock": "result"},
+                                "credits_used": 10
+                            }
+                        ],
+                        "total": 1,
+                        "page": 1,
+                        "page_size": 20
+                    }
+                elif path.endswith("/scheduled-jobs"):  # List jobs endpoint
+                    return {
+                        "jobs": [
+                            {
+                                "id": new_id("mock-job"),
+                                "user_id": new_id("mock-user"),
+                                "job_name": "Mock Scheduled Job",
+                                "service_type": "smartscraper",
+                                "cron_expression": "0 9 * * 1",
+                                "job_config": {"mock": "config"},
+                                "is_active": True,
+                                "created_at": "2024-01-01T00:00:00Z",
+                                "updated_at": "2024-01-01T00:00:00Z",
+                                "next_run_at": "2024-01-08T09:00:00Z"
+                            }
+                        ],
+                        "total": 1,
+                        "page": 1,
+                        "page_size": 20
+                    }
+                else:  # Single job endpoint
+                    return {
+                        "id": new_id("mock-job"),
+                        "user_id": new_id("mock-user"),
+                        "job_name": "Mock Scheduled Job",
+                        "service_type": "smartscraper",
+                        "cron_expression": "0 9 * * 1",
+                        "job_config": {"mock": "config"},
+                        "is_active": True,
+                        "created_at": "2024-01-01T00:00:00Z",
+                        "updated_at": "2024-01-01T00:00:00Z",
+                        "next_run_at": "2024-01-08T09:00:00Z"
+                    }
+
+        # Update operations (PATCH/PUT)
+        if upper_method in ["PATCH", "PUT"] and "scheduled-jobs" in path:
+            return {
+                "id": new_id("mock-job"),
+                "user_id": new_id("mock-user"),
+                "job_name": "Updated Mock Scheduled Job",
+                "service_type": "smartscraper",
+                "cron_expression": "0 10 * * 1",
+                "job_config": {"mock": "updated_config"},
+                "is_active": True,
+                "created_at": "2024-01-01T00:00:00Z",
+                "updated_at": "2024-01-01T01:00:00Z",
+                "next_run_at": "2024-01-08T10:00:00Z"
+            }
+
+        # Delete operations
+        if upper_method == "DELETE" and "scheduled-jobs" in path:
+            return {"message": "Scheduled job deleted successfully"}
 
         # Generic fallback
         return {"status": "mock", "url": url, "method": method, "kwargs": kwargs}
@@ -585,6 +698,188 @@ class AsyncClient:
 
         result = await self._make_request("GET", f"{API_BASE_URL}/agentic-scrapper/{request_id}")
         logger.info(f"✨ Successfully retrieved result for request {request_id}")
+        return result
+
+    async def create_scheduled_job(
+        self,
+        job_name: str,
+        service_type: str,
+        cron_expression: str,
+        job_config: dict,
+        is_active: bool = True,
+    ):
+        """Create a new scheduled job"""
+        logger.info(f"📅 Creating scheduled job: {job_name}")
+
+        request = ScheduledJobCreate(
+            job_name=job_name,
+            service_type=service_type,
+            cron_expression=cron_expression,
+            job_config=job_config,
+            is_active=is_active,
+        )
+
+        result = await self._make_request(
+            "POST", f"{API_BASE_URL}/scheduled-jobs", json=request.model_dump()
+        )
+        logger.info("✨ Scheduled job created successfully")
+        return result
+
+    async def get_scheduled_jobs(
+        self,
+        page: int = 1,
+        page_size: int = 20,
+        service_type: Optional[str] = None,
+        is_active: Optional[bool] = None,
+    ):
+        """Get list of scheduled jobs with pagination"""
+        logger.info("📋 Fetching scheduled jobs")
+
+        GetScheduledJobsRequest(
+            page=page,
+            page_size=page_size,
+            service_type=service_type,
+            is_active=is_active,
+        )
+
+        params = {"page": page, "page_size": page_size}
+        if service_type:
+            params["service_type"] = service_type
+        if is_active is not None:
+            params["is_active"] = is_active
+
+        result = await self._make_request("GET", f"{API_BASE_URL}/scheduled-jobs", params=params)
+        logger.info(f"✨ Successfully retrieved {len(result.get('jobs', []))} scheduled jobs")
+        return result
+
+    async def get_scheduled_job(self, job_id: str):
+        """Get details of a specific scheduled job"""
+        logger.info(f"🔍 Fetching scheduled job {job_id}")
+
+        GetScheduledJobRequest(job_id=job_id)
+
+        result = await self._make_request("GET", f"{API_BASE_URL}/scheduled-jobs/{job_id}")
+        logger.info(f"✨ Successfully retrieved scheduled job {job_id}")
+        return result
+
+    async def update_scheduled_job(
+        self,
+        job_id: str,
+        job_name: Optional[str] = None,
+        cron_expression: Optional[str] = None,
+        job_config: Optional[dict] = None,
+        is_active: Optional[bool] = None,
+    ):
+        """Update an existing scheduled job (partial update)"""
+        logger.info(f"📝 Updating scheduled job {job_id}")
+
+        update_data = {}
+        if job_name is not None:
+            update_data["job_name"] = job_name
+        if cron_expression is not None:
+            update_data["cron_expression"] = cron_expression
+        if job_config is not None:
+            update_data["job_config"] = job_config
+        if is_active is not None:
+            update_data["is_active"] = is_active
+
+        ScheduledJobUpdate(**update_data)
+
+        result = await self._make_request(
+            "PATCH", f"{API_BASE_URL}/scheduled-jobs/{job_id}", json=update_data
+        )
+        logger.info(f"✨ Successfully updated scheduled job {job_id}")
+        return result
+
+    async def replace_scheduled_job(
+        self,
+        job_id: str,
+        job_name: str,
+        cron_expression: str,
+        job_config: dict,
+        is_active: bool = True,
+    ):
+        """Replace an existing scheduled job (full update)"""
+        logger.info(f"🔄 Replacing scheduled job {job_id}")
+
+        request_data = {
+            "job_name": job_name,
+            "cron_expression": cron_expression,
+            "job_config": job_config,
+            "is_active": is_active,
+        }
+
+        result = await self._make_request(
+            "PUT", f"{API_BASE_URL}/scheduled-jobs/{job_id}", json=request_data
+        )
+        logger.info(f"✨ Successfully replaced scheduled job {job_id}")
+        return result
+
+    async def delete_scheduled_job(self, job_id: str):
+        """Delete a scheduled job"""
+        logger.info(f"🗑️ Deleting scheduled job {job_id}")
+
+        JobActionRequest(job_id=job_id)
+
+        result = await self._make_request("DELETE", f"{API_BASE_URL}/scheduled-jobs/{job_id}")
+        logger.info(f"✨ Successfully deleted scheduled job {job_id}")
+        return result
+
+    async def pause_scheduled_job(self, job_id: str):
+        """Pause a scheduled job"""
+        logger.info(f"⏸️ Pausing scheduled job {job_id}")
+
+        JobActionRequest(job_id=job_id)
+
+        result = await self._make_request("POST", f"{API_BASE_URL}/scheduled-jobs/{job_id}/pause")
+        logger.info(f"✨ Successfully paused scheduled job {job_id}")
+        return result
+
+    async def resume_scheduled_job(self, job_id: str):
+        """Resume a paused scheduled job"""
+        logger.info(f"▶️ Resuming scheduled job {job_id}")
+
+        JobActionRequest(job_id=job_id)
+
+        result = await self._make_request("POST", f"{API_BASE_URL}/scheduled-jobs/{job_id}/resume")
+        logger.info(f"✨ Successfully resumed scheduled job {job_id}")
+        return result
+
+    async def trigger_scheduled_job(self, job_id: str):
+        """Manually trigger a scheduled job"""
+        logger.info(f"🚀 Manually triggering scheduled job {job_id}")
+
+        TriggerJobRequest(job_id=job_id)
+
+        result = await self._make_request("POST", f"{API_BASE_URL}/scheduled-jobs/{job_id}/trigger")
+        logger.info(f"✨ Successfully triggered scheduled job {job_id}")
+        return result
+
+    async def get_job_executions(
+        self,
+        job_id: str,
+        page: int = 1,
+        page_size: int = 20,
+        status: Optional[str] = None,
+    ):
+        """Get execution history for a scheduled job"""
+        logger.info(f"📊 Fetching execution history for job {job_id}")
+
+        GetJobExecutionsRequest(
+            job_id=job_id,
+            page=page,
+            page_size=page_size,
+            status=status,
+        )
+
+        params = {"page": page, "page_size": page_size}
+        if status:
+            params["status"] = status
+
+        result = await self._make_request(
+            "GET", f"{API_BASE_URL}/scheduled-jobs/{job_id}/executions", params=params
+        )
+        logger.info(f"✨ Successfully retrieved execution history for job {job_id}")
         return result
 
     async def close(self):
