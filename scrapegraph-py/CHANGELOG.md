@@ -1,3 +1,11 @@
+## [1.25.1](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.25.0...v1.25.1) (2025-09-08)
+
+
+### Bug Fixes
+
+* removed unused name ([1147570](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/1147570d751d1aba75ce274d6c07261d44b5f829))
+* scheduled jobs ([6f5cbf3](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/6f5cbf3335dd7dfffa4803dd33c07c678a56ef0e))
+
 ## [1.25.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.24.0...v1.25.0) (2025-09-08)
 
 
