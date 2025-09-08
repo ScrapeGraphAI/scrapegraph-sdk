@@ -66,6 +66,44 @@ export function getMockResponse(method, url, customResponses = {}, customHandler
         crawl_id: generateMockId('mock-crawl')
       };
     }
+    if (path.endsWith('/scheduled-jobs')) {
+      return {
+        id: generateMockId('mock-job'),
+        user_id: generateMockId('mock-user'),
+        job_name: 'Mock Scheduled Job',
+        service_type: 'smartscraper',
+        cron_expression: '0 9 * * 1',
+        job_config: { mock: 'config' },
+        is_active: true,
+        created_at: '2024-01-01T00:00:00Z',
+        updated_at: '2024-01-01T00:00:00Z',
+        next_run_at: '2024-01-08T09:00:00Z'
+      };
+    }
+    if (path.includes('/pause')) {
+      return {
+        message: 'Job paused successfully',
+        job_id: generateMockId('mock-job'),
+        is_active: false
+      };
+    }
+    if (path.includes('/resume')) {
+      return {
+        message: 'Job resumed successfully',
+        job_id: generateMockId('mock-job'),
+        is_active: true,
+        next_run_at: '2024-01-08T09:00:00Z'
+      };
+    }
+    if (path.includes('/trigger')) {
+      const taskId = generateMockId('mock-task');
+      return {
+        execution_id: taskId,
+        scheduled_job_id: generateMockId('mock-job'),
+        triggered_at: '2024-01-01T00:00:00Z',
+        message: `Job triggered successfully. Task ID: ${taskId}`
+      };
+    }
     // All other POST endpoints return a request id
     return {
       request_id: generateMockId('mock-req')
@@ -108,6 +146,89 @@ export function getMockResponse(method, url, customResponses = {}, customHandler
       return {
         status: 'completed',
         html: '<!DOCTYPE html><html><head><title>Mock HTML</title></head><body><h1>Mock Content</h1></body></html>'
+      };
+    }
+    if (path.includes('scheduled-jobs')) {
+      if (path.includes('/executions')) {
+        return {
+          executions: [
+            {
+              id: generateMockId('mock-exec'),
+              scheduled_job_id: generateMockId('mock-job'),
+              execution_id: generateMockId('mock-task'),
+              status: 'completed',
+              started_at: '2024-01-01T00:00:00Z',
+              completed_at: '2024-01-01T00:01:00Z',
+              result: { mock: 'result' },
+              credits_used: 10
+            }
+          ],
+          total: 1,
+          page: 1,
+          page_size: 20
+        };
+      } else if (path.endsWith('/scheduled-jobs')) {
+        // List jobs endpoint
+        return {
+          jobs: [
+            {
+              id: generateMockId('mock-job'),
+              user_id: generateMockId('mock-user'),
+              job_name: 'Mock Scheduled Job',
+              service_type: 'smartscraper',
+              cron_expression: '0 9 * * 1',
+              job_config: { mock: 'config' },
+              is_active: true,
+              created_at: '2024-01-01T00:00:00Z',
+              updated_at: '2024-01-01T00:00:00Z',
+              next_run_at: '2024-01-08T09:00:00Z'
+            }
+          ],
+          total: 1,
+          page: 1,
+          page_size: 20
+        };
+      } else {
+        // Single job endpoint
+        return {
+          id: generateMockId('mock-job'),
+          user_id: generateMockId('mock-user'),
+          job_name: 'Mock Scheduled Job',
+          service_type: 'smartscraper',
+          cron_expression: '0 9 * * 1',
+          job_config: { mock: 'config' },
+          is_active: true,
+          created_at: '2024-01-01T00:00:00Z',
+          updated_at: '2024-01-01T00:00:00Z',
+          next_run_at: '2024-01-08T09:00:00Z'
+        };
+      }
+    }
+  }
+
+  // Update operations (PATCH/PUT)
+  if (upperMethod === 'PATCH' || upperMethod === 'PUT') {
+    if (path.includes('scheduled-jobs')) {
+      return {
+        id: generateMockId('mock-job'),
+        user_id: generateMockId('mock-user'),
+        job_name: 'Updated Mock Scheduled Job',
+        service_type: 'smartscraper',
+        cron_expression: '0 10 * * 1',
+        job_config: { mock: 'updated_config' },
+        is_active: true,
+        created_at: '2024-01-01T00:00:00Z',
+        updated_at: '2024-01-01T01:00:00Z',
+        next_run_at: '2024-01-08T10:00:00Z'
+      };
+    }
+  }
+
+  // Delete operations
+  if (upperMethod === 'DELETE') {
+    if (path.includes('scheduled-jobs')) {
+      return {
+        message: 'Scheduled job deleted successfully'
       };
     }
   }

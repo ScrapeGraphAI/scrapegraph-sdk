@@ -6,6 +6,18 @@ export { searchScraper, getSearchScraperRequest } from './src/searchScraper.js';
 export { getCredits } from './src/credits.js';
 export { sendFeedback } from './src/feedback.js';
 export { crawl, getCrawlRequest } from './src/crawl.js';
+export { 
+  createScheduledJob, 
+  getScheduledJobs, 
+  getScheduledJob, 
+  updateScheduledJob, 
+  replaceScheduledJob, 
+  deleteScheduledJob, 
+  pauseScheduledJob, 
+  resumeScheduledJob, 
+  triggerScheduledJob, 
+  getJobExecutions 
+} from './src/scheduledJobs.js';
 
 // Mock utilities
 export { 
