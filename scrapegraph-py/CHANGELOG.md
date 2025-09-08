@@ -1,3 +1,10 @@
+## [1.25.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.24.0...v1.25.0) (2025-09-08)
+
+
+### Features
+
+* add cron jobs ([d22e8eb](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/d22e8ebbc3bb978217ae5c486ab8bddd586b24f3))
+
 ## [1.24.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.23.0...v1.24.0) (2025-09-03)
 
 
