@@ -1,3 +1,10 @@
+## [1.26.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.25.1...v1.26.0) (2025-09-11)
+
+
+### Features
+
+* refactoring of the example folder ([78f2318](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/78f23184626061b22dfde6d6b5b3c3df93f2a73a))
+
 ## [1.25.1](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.25.0...v1.25.1) (2025-09-08)
 
 
