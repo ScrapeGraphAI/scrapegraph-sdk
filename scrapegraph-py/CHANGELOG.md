@@ -1,3 +1,10 @@
+## [1.27.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.26.0...v1.27.0) (2025-09-14)
+
+
+### Features
+
+* add user agent ([00bb21b](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/00bb21b72a5c859fc610b3a31ddfc42907c02eda))
+
 ## [1.26.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.25.1...v1.26.0) (2025-09-11)
 
 
