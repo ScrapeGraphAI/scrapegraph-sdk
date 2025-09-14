@@ -47,6 +47,15 @@ class CrawlRequest(BaseModel):
     sitemap: bool = Field(
         default=False, description="Whether to use sitemap for better page discovery"
     )
+    headers: Optional[dict[str, str]] = Field(
+        None,
+        example={
+            "User-Agent": "scrapegraph-py",
+            "Cookie": "cookie1=value1; cookie2=value2",
+        },
+        description="Optional headers to send with the request, including cookies "
+        "and user agent",
+    )
 
     @model_validator(mode="after")
     def validate_url(self) -> "CrawlRequest":

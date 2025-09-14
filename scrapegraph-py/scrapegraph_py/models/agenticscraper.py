@@ -48,7 +48,15 @@ class AgenticScraperRequest(BaseModel):
         default=False,
         description="Whether to use AI for data extraction from the scraped content"
     )
-
+    headers: Optional[dict[str, str]] = Field(
+        None,
+        example={
+            "User-Agent": "scrapegraph-py",
+            "Cookie": "cookie1=value1; cookie2=value2",
+        },
+        description="Optional headers to send with the request, including cookies "
+        "and user agent",
+    )
     mock: bool = Field(default=False, description="Whether to use mock mode for the request")
     @model_validator(mode="after")
     def validate_url(self) -> "AgenticScraperRequest":

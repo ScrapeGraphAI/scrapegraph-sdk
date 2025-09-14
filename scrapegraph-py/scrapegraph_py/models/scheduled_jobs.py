@@ -15,7 +15,18 @@ class ScheduledJobCreate(BaseModel):
     job_name: str = Field(..., description="Name of the scheduled job")
     service_type: str = Field(..., description="Type of service (smartscraper, searchscraper, etc.)")
     cron_expression: str = Field(..., description="Cron expression for scheduling")
-    job_config: Dict[str, Any] = Field(..., description="Configuration for the job")
+    job_config: Dict[str, Any] = Field(
+        ..., 
+        example={
+            "website_url": "https://example.com",
+            "user_prompt": "Extract company information",
+            "headers": {
+                "User-Agent": "scrapegraph-py",
+                "Cookie": "session=abc123"
+            }
+        },
+        description="Configuration for the job"
+    )
     is_active: bool = Field(default=True, description="Whether the job is active")
 
 

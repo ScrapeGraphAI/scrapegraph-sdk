@@ -15,8 +15,7 @@ class ScrapeRequest(BaseModel):
     headers: Optional[dict[str, str]] = Field(
         None,
         example={
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-            "AppleWebKit/537.36",
+            "User-Agent": "scrapegraph-py",
             "Cookie": "cookie1=value1; cookie2=value2",
         },
         description="Optional headers to send with the request, including cookies "
