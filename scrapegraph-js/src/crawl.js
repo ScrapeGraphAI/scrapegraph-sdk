@@ -21,6 +21,7 @@ import { getMockResponse } from './utils/mockResponse.js';
  * @param {boolean} [options.sitemap] - Whether to use sitemap for better page discovery
  * @param {number} [options.batchSize=1] - Batch size for processing pages (1-10)
  * @param {boolean} [options.mock] - Override mock mode for this request
+ * @param {boolean} [options.renderHeavyJs=false] - Whether to render heavy JavaScript on the page
  * @returns {Promise<Object>} The crawl job response
  * @throws {Error} Throws an error if the HTTP request fails
  */
@@ -31,7 +32,7 @@ export async function crawl(
   schema,
   options = {}
 ) {
-  const { mock = null } = options;
+  const { mock = null, renderHeavyJs = false } = options;
 
   // Check if mock mode is enabled
   const useMock = mock !== null ? mock : isMockEnabled();
@@ -77,6 +78,7 @@ export async function crawl(
     max_pages: maxPages,
     same_domain_only: sameDomainOnly,
     batch_size: batchSize,
+    render_heavy_js: renderHeavyJs,
   };
 
   try {

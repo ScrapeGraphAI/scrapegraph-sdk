@@ -56,6 +56,7 @@ class CrawlRequest(BaseModel):
         description="Optional headers to send with the request, including cookies "
         "and user agent",
     )
+    render_heavy_js: bool = Field(default=False, description="Whether to render heavy JavaScript on the page")
 
     @model_validator(mode="after")
     def validate_url(self) -> "CrawlRequest":

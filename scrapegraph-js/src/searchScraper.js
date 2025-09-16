@@ -17,11 +17,12 @@ import { getMockResponse } from './utils/mockResponse.js';
  * @param {String} userAgent - the user agent like "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
  * @param {Object} options - Optional configuration options
  * @param {boolean} options.mock - Override mock mode for this request
+ * @param {boolean} options.renderHeavyJs - Whether to render heavy JavaScript on the page
  * @returns {Promise<string>} Extracted data in JSON format matching the provided schema
  * @throws - Will throw an error in case of an HTTP failure.
  */
 export async function searchScraper(apiKey, prompt, numResults = 3, schema = null, userAgent = null, options = {}) {
-  const { mock = null } = options;
+  const { mock = null, renderHeavyJs = false } = options;
 
   // Check if mock mode is enabled
   const useMock = mock !== null ? mock : isMockEnabled();
@@ -49,6 +50,7 @@ export async function searchScraper(apiKey, prompt, numResults = 3, schema = nul
   const payload = {
     user_prompt: prompt,
     num_results: numResults,
+    render_heavy_js: renderHeavyJs,
   };
 
   if (schema) {
