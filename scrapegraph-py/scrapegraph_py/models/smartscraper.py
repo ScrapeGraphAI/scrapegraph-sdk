@@ -50,6 +50,7 @@ class SmartScraperRequest(BaseModel):
     )
     mock: bool = Field(default=False, description="Whether to use mock mode for the request")
     plain_text: bool = Field(default=False, description="Whether to return the result as plain text")
+    render_heavy_js: bool = Field(default=False, description="Whether to render heavy JavaScript on the page")
     
     @model_validator(mode="after")
     def validate_user_prompt(self) -> "SmartScraperRequest":

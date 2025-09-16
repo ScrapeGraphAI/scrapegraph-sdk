@@ -15,10 +15,11 @@ import { getMockResponse, createMockAxiosResponse } from './utils/mockResponse.j
  * @param {number} [numberOfScrolls] - Optional number of times to scroll the page (0-100). If not provided, no scrolling will be performed.
  * @param {number} [totalPages] - Optional number of pages to scrape (1-10). If not provided, only the first page will be scraped.
  * @param {Object} [cookies] - Optional cookies object for authentication and session management
+ * @param {boolean} [renderHeavyJs] - Optional flag to enable heavy JavaScript rendering on the page
  * @returns {Promise<string>} Extracted data in JSON format matching the provided schema
  * @throws - Will throw an error in case of an HTTP failure.
  */
-export async function smartScraper(apiKey, url, prompt, schema = null, numberOfScrolls = null, totalPages = null, cookies = null, options = {}, plain_text = false) {
+export async function smartScraper(apiKey, url, prompt, schema = null, numberOfScrolls = null, totalPages = null, cookies = null, options = {}, plain_text = false, renderHeavyJs = false) {
   const { mock = null } = options;
 
   // Check if mock mode is enabled
@@ -43,6 +44,10 @@ export async function smartScraper(apiKey, url, prompt, schema = null, numberOfS
     user_prompt: prompt,
     plain_text: plain_text,
   };
+
+  if (renderHeavyJs) {
+    payload.render_heavy_js = renderHeavyJs;
+  }
 
   if (cookies) {
     if (typeof cookies === 'object' && cookies !== null) {
