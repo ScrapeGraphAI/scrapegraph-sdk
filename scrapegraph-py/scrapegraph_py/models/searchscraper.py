@@ -26,6 +26,11 @@ class SearchScraperRequest(BaseModel):
         "and user agent",
     )
     output_schema: Optional[Type[BaseModel]] = None
+    extraction_mode: bool = Field(
+        default=True,
+        description="Whether to use AI extraction (True) or markdown conversion (False). "
+        "AI extraction costs 10 credits per page, markdown conversion costs 2 credits per page.",
+    )
     mock: bool = Field(default=False, description="Whether to use mock mode for the request")
     render_heavy_js: bool = Field(default=False, description="Whether to render heavy JavaScript on the page")
 

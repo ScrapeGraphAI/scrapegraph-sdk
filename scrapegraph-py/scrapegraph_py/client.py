@@ -293,7 +293,12 @@ class Client:
             if "smartscraper" in path:
                 return {"status": "completed", "result": [{"field": "value"}]}
             if "searchscraper" in path:
-                return {"status": "completed", "results": [{"url": "https://example.com"}]}
+                return {
+                    "status": "completed", 
+                    "results": [{"url": "https://example.com"}],
+                    "markdown_content": "# Mock Markdown Content\n\nThis is mock markdown content for testing purposes.\n\n## Section 1\n\nSome content here.\n\n## Section 2\n\nMore content here.",
+                    "reference_urls": ["https://example.com", "https://example2.com"]
+                }
             if "crawl" in path:
                 return {"status": "completed", "pages": []}
             if "agentic-scrapper" in path:
@@ -544,6 +549,7 @@ class Client:
         num_results: Optional[int] = 3,
         headers: Optional[dict[str, str]] = None,
         output_schema: Optional[BaseModel] = None,
+        extraction_mode: bool = True,
         mock: bool=False
     ):
         """Send a searchscraper request
@@ -556,10 +562,13 @@ class Client:
                         website beyond 3.
             headers: Optional headers to send with the request
             output_schema: Optional schema to structure the output
+            extraction_mode: Whether to use AI extraction (True) or markdown conversion (False).
+                           AI extraction costs 10 credits per page, markdown conversion costs 2 credits per page.
         """
         logger.info("🔍 Starting searchscraper request")
         logger.debug(f"📝 Prompt: {user_prompt}")
         logger.debug(f"🌐 Number of results: {num_results}")
+        logger.debug(f"🤖 Extraction mode: {'AI extraction' if extraction_mode else 'Markdown conversion'}")
         if headers:
             logger.debug("🔧 Using custom headers")
 
@@ -568,6 +577,7 @@ class Client:
             num_results=num_results,
             headers=headers,
             output_schema=output_schema,
+            extraction_mode=extraction_mode,
             mock=mock
         )
         logger.debug("✅ Request validation passed")

@@ -18,11 +18,13 @@ import { getMockResponse } from './utils/mockResponse.js';
  * @param {Object} options - Optional configuration options
  * @param {boolean} options.mock - Override mock mode for this request
  * @param {boolean} options.renderHeavyJs - Whether to render heavy JavaScript on the page
+ * @param {boolean} [options.extractionMode=true] - Whether to use AI extraction (true) or markdown conversion (false).
+ *                                                 AI extraction costs 10 credits per page, markdown conversion costs 2 credits per page.
  * @returns {Promise<string>} Extracted data in JSON format matching the provided schema
  * @throws - Will throw an error in case of an HTTP failure.
  */
 export async function searchScraper(apiKey, prompt, numResults = 3, schema = null, userAgent = null, options = {}) {
-  const { mock = null, renderHeavyJs = false } = options;
+  const { mock = null, renderHeavyJs = false, extractionMode = true } = options;
 
   // Check if mock mode is enabled
   const useMock = mock !== null ? mock : isMockEnabled();
@@ -51,6 +53,7 @@ export async function searchScraper(apiKey, prompt, numResults = 3, schema = nul
     user_prompt: prompt,
     num_results: numResults,
     render_heavy_js: renderHeavyJs,
+    extraction_mode: extractionMode,
   };
 
   if (schema) {
