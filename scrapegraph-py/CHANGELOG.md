@@ -1,3 +1,10 @@
+## [1.30.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.29.0...v1.30.0) (2025-09-17)
+
+
+### Features
+
+* add md mode in searchscraper ([c6b513a](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/c6b513a67413582e107451739f8eef23efa7c9d0))
+
 ## [1.29.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.28.0...v1.29.0) (2025-09-16)
 
 
