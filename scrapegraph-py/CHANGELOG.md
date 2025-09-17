@@ -1,3 +1,10 @@
+## [1.31.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.30.0...v1.31.0) (2025-09-17)
+
+
+### Features
+
+* add scrape endpoint ([43d1bf6](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/43d1bf6877e9ae132f40034888c8fd92946877ec))
+
 ## [1.30.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.29.0...v1.30.0) (2025-09-17)
 
 
