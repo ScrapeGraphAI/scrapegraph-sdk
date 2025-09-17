@@ -1,6 +1,12 @@
 from .async_client import AsyncClient
 from .client import Client
 
+# Scrape Models
+from .models.scrape import (
+    ScrapeRequest,
+    GetScrapeRequest,
+)
+
 # Scheduled Jobs Models
 from .models.scheduled_jobs import (
     GetJobExecutionsRequest,
@@ -22,6 +28,9 @@ from .models.scheduled_jobs import (
 __all__ = [
     "Client", 
     "AsyncClient",
+    # Scrape Models
+    "ScrapeRequest",
+    "GetScrapeRequest",
     # Scheduled Jobs Models
     "ServiceType",
     "ScheduledJobCreate",
