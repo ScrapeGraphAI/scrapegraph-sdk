@@ -5,6 +5,7 @@ from .scrape import GetScrapeRequest, ScrapeRequest
 from .markdownify import GetMarkdownifyRequest, MarkdownifyRequest
 from .searchscraper import GetSearchScraperRequest, SearchScraperRequest
 from .smartscraper import GetSmartScraperRequest, SmartScraperRequest
+from .schema import GenerateSchemaRequest, GetSchemaStatusRequest, SchemaGenerationResponse
 
 __all__ = [
     "AgenticScraperRequest",
@@ -20,4 +21,7 @@ __all__ = [
     "SearchScraperRequest",
     "GetSmartScraperRequest",
     "SmartScraperRequest",
+    "GenerateSchemaRequest",
+    "GetSchemaStatusRequest",
+    "SchemaGenerationResponse",
 ]

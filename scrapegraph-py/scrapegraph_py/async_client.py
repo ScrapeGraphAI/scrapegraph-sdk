@@ -18,6 +18,11 @@ from scrapegraph_py.models.crawl import CrawlRequest, GetCrawlRequest
 from scrapegraph_py.models.feedback import FeedbackRequest
 from scrapegraph_py.models.scrape import GetScrapeRequest, ScrapeRequest
 from scrapegraph_py.models.markdownify import GetMarkdownifyRequest, MarkdownifyRequest
+from scrapegraph_py.models.schema import (
+    GenerateSchemaRequest,
+    GetSchemaStatusRequest,
+    SchemaGenerationResponse,
+)
 from scrapegraph_py.models.searchscraper import (
     GetSearchScraperRequest,
     SearchScraperRequest,
@@ -709,6 +714,50 @@ class AsyncClient:
 
         result = await self._make_request("GET", f"{API_BASE_URL}/agentic-scrapper/{request_id}")
         logger.info(f"✨ Successfully retrieved result for request {request_id}")
+        return result
+
+    async def generate_schema(
+        self,
+        user_prompt: str,
+        existing_schema: Optional[Dict[str, Any]] = None,
+    ):
+        """Generate a JSON schema from a user prompt
+        
+        Args:
+            user_prompt: The user's search query to be refined into a schema
+            existing_schema: Optional existing JSON schema to modify/extend
+        """
+        logger.info("🔧 Starting schema generation request")
+        logger.debug(f"💭 User prompt: {user_prompt}")
+        if existing_schema:
+            logger.debug(f"📋 Existing schema provided: {existing_schema is not None}")
+
+        request = GenerateSchemaRequest(
+            user_prompt=user_prompt,
+            existing_schema=existing_schema,
+        )
+        logger.debug("✅ Request validation passed")
+
+        result = await self._make_request(
+            "POST", f"{API_BASE_URL}/generate_schema", json=request.model_dump()
+        )
+        logger.info("✨ Schema generation request completed successfully")
+        return result
+
+    async def get_schema_status(self, request_id: str):
+        """Get the result of a previous schema generation request
+        
+        Args:
+            request_id: The request ID returned from generate_schema
+        """
+        logger.info(f"🔍 Fetching schema generation status for request {request_id}")
+
+        # Validate input using Pydantic model
+        GetSchemaStatusRequest(request_id=request_id)
+        logger.debug("✅ Request ID validation passed")
+
+        result = await self._make_request("GET", f"{API_BASE_URL}/generate_schema/{request_id}")
+        logger.info(f"✨ Successfully retrieved schema status for request {request_id}")
         return result
 
     async def create_scheduled_job(
