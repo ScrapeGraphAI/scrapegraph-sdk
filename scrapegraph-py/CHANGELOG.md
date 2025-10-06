@@ -1,3 +1,11 @@
+## [1.33.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.32.0...v1.33.0) (2025-10-06)
+
+
+### Features
+
+* add examples ([c260512](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/c26051253a11b308b053518a66c2db4e5ccbbb38))
+* add generate schema ([5f3ccf2](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/5f3ccf27c0e0b3b03071900eb19bdaf11b8d1bf6))
+
 ## [1.32.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.31.0...v1.32.0) (2025-10-06)
 
 
