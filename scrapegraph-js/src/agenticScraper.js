@@ -1,5 +1,7 @@
 import axios from 'axios';
 import handleError from './utils/handleError.js';
+import { isMockEnabled, getMockConfig } from './utils/mockConfig.js';
+import { getMockResponse } from './utils/mockResponse.js';
 
 /**
  * Perform automated browser actions on a webpage using AI-powered agentic scraping.
@@ -11,6 +13,9 @@ import handleError from './utils/handleError.js';
  * @param {string} [userPrompt=null] - Prompt for AI extraction (required when aiExtraction=true)
  * @param {Object} [outputSchema=null] - Schema for structured data extraction (optional, used with aiExtraction=true)
  * @param {boolean} [aiExtraction=false] - Whether to use AI for data extraction from the scraped content
+ * @param {Object} options - Optional configuration options
+ * @param {boolean} options.mock - Override mock mode for this request
+ * @param {boolean} options.renderHeavyJs - Whether to render heavy JavaScript on the page
  * @returns {Promise<Object>} Response from the API containing request_id and initial status
  * @throws {Error} Will throw an error in case of an HTTP failure or invalid parameters.
  *
@@ -60,7 +65,19 @@ import handleError from './utils/handleError.js';
  *   console.error('Error:', error.message);
  * }
  */
-export async function agenticScraper(apiKey, url, steps, useSession = true, userPrompt = null, outputSchema = null, aiExtraction = false) {
+export async function agenticScraper(apiKey, url, steps, useSession = true, userPrompt = null, outputSchema = null, aiExtraction = false, options = {}) {
+  const { mock = null, renderHeavyJs = false } = options;
+
+  // Check if mock mode is enabled
+  const useMock = mock !== null ? mock : isMockEnabled();
+  
+  if (useMock) {
+    console.log('🧪 Mock mode active. Returning stub for agenticScraper request');
+    const mockConfig = getMockConfig();
+    const mockData = getMockResponse('POST', 'https://api.scrapegraphai.com/v1/agentic-scrapper', mockConfig.customResponses, mockConfig.customHandler);
+    return mockData;
+  }
+
   const endpoint = 'https://api.scrapegraphai.com/v1/agentic-scrapper';
   const headers = {
     'accept': 'application/json',
@@ -113,6 +130,7 @@ export async function agenticScraper(apiKey, url, steps, useSession = true, user
     use_session: useSession,
     steps: steps,
     ai_extraction: aiExtraction,
+    render_heavy_js: renderHeavyJs,
   };
 
   // Add AI extraction parameters if enabled
@@ -166,7 +184,19 @@ export async function agenticScraper(apiKey, url, steps, useSession = true, user
  * allowing for complex interactions like form filling, clicking buttons,
  * and navigating through multi-step workflows with session management.
  */
-export async function getAgenticScraperRequest(apiKey, requestId) {
+export async function getAgenticScraperRequest(apiKey, requestId, options = {}) {
+  const { mock = null } = options;
+
+  // Check if mock mode is enabled
+  const useMock = mock !== null ? mock : isMockEnabled();
+  
+  if (useMock) {
+    console.log('🧪 Mock mode active. Returning stub for getAgenticScraperRequest');
+    const mockConfig = getMockConfig();
+    const mockData = getMockResponse('GET', `https://api.scrapegraphai.com/v1/agentic-scrapper/${requestId}`, mockConfig.customResponses, mockConfig.customHandler);
+    return mockData;
+  }
+
   const endpoint = 'https://api.scrapegraphai.com/v1/agentic-scrapper/' + requestId;
   const headers = {
     'accept': 'application/json',

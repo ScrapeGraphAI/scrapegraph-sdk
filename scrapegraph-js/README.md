@@ -56,6 +56,91 @@ const prompt = 'What does the company do?';
 
 ## 🎯 Examples
 
+### Scrape - Get HTML Content
+
+#### Basic Scrape
+
+```javascript
+import { scrape } from 'scrapegraph-js';
+
+const apiKey = 'your-api-key';
+const url = 'https://example.com';
+
+(async () => {
+  try {
+    const response = await scrape(apiKey, url);
+    console.log('HTML content:', response.html);
+    console.log('Status:', response.status);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+})();
+```
+
+#### Scrape with Heavy JavaScript Rendering
+
+```javascript
+import { scrape } from 'scrapegraph-js';
+
+const apiKey = 'your-api-key';
+const url = 'https://example.com';
+
+(async () => {
+  try {
+    const response = await scrape(apiKey, url, {
+      renderHeavyJs: true
+    });
+    console.log('HTML content with JS rendering:', response.html);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+})();
+```
+
+#### Scrape with Custom Headers
+
+```javascript
+import { scrape } from 'scrapegraph-js';
+
+const apiKey = 'your-api-key';
+const url = 'https://example.com';
+
+(async () => {
+  try {
+    const response = await scrape(apiKey, url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'Cookie': 'session=123'
+      }
+    });
+    console.log('HTML content with custom headers:', response.html);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+})();
+```
+
+#### Get Scrape Request Status
+
+```javascript
+import { getScrapeRequest } from 'scrapegraph-js';
+
+const apiKey = 'your-api-key';
+const requestId = 'your-request-id';
+
+(async () => {
+  try {
+    const response = await getScrapeRequest(apiKey, requestId);
+    console.log('Request status:', response.status);
+    if (response.status === 'completed') {
+      console.log('HTML content:', response.html);
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+})();
+```
+
 ### Scraping Websites
 
 #### Basic Scraping
@@ -279,6 +364,7 @@ const schema = {
       depth: 2,
       maxPages: 2,
       sameDomainOnly: true,
+      sitemap: true, // Use sitemap for better page discovery
       batchSize: 1,
     });
     console.log('Crawl job started. Response:', crawlResponse);
@@ -308,7 +394,13 @@ const schema = {
 })();
 ```
 
-You can use a plain JSON schema or a [Zod](https://www.npmjs.com/package/zod) schema for the `schema` parameter. The crawl API supports options for crawl depth, max pages, domain restriction, and batch size.
+You can use a plain JSON schema or a [Zod](https://www.npmjs.com/package/zod) schema for the `schema` parameter. The crawl API supports options for crawl depth, max pages, domain restriction, sitemap discovery, and batch size.
+
+**Sitemap Benefits:**
+- Better page discovery using sitemap.xml
+- More comprehensive website coverage
+- Efficient crawling of structured websites
+- Perfect for e-commerce, news sites, and content-heavy websites
 
 ### Scraping local HTML
 
@@ -497,6 +589,120 @@ const requestId = '123e4567-e89b-12d3-a456-426614174000';
   }
 })();
 ```
+
+## 🔧 Available Functions
+
+### Scrape
+
+#### `scrape(apiKey, url, options)`
+
+Converts a webpage into HTML format with optional JavaScript rendering.
+
+**Parameters:**
+- `apiKey` (string): Your ScrapeGraph AI API key
+- `url` (string): The URL of the webpage to convert
+- `options` (object, optional): Configuration options
+  - `renderHeavyJs` (boolean, optional): Whether to render heavy JavaScript (default: false)
+  - `headers` (object, optional): Custom headers to send with the request
+
+**Returns:** Promise that resolves to an object containing:
+- `html`: The HTML content of the webpage
+- `status`: Request status ('completed', 'processing', 'failed')
+- `scrape_request_id`: Unique identifier for the request
+- `error`: Error message if the request failed
+
+**Example:**
+```javascript
+const response = await scrape(apiKey, 'https://example.com', {
+  renderHeavyJs: true,
+  headers: { 'User-Agent': 'Custom Agent' }
+});
+```
+
+#### `getScrapeRequest(apiKey, requestId)`
+
+Retrieves the status or result of a previous scrape request.
+
+**Parameters:**
+- `apiKey` (string): Your ScrapeGraph AI API key
+- `requestId` (string): The unique identifier for the scrape request
+
+**Returns:** Promise that resolves to the request result object.
+
+**Example:**
+```javascript
+const result = await getScrapeRequest(apiKey, 'request-id-here');
+```
+
+### Smart Scraper
+
+#### `smartScraper(apiKey, url, prompt, schema, numberOfScrolls, totalPages, cookies)`
+
+Extracts structured data from websites using AI-powered scraping.
+
+**Parameters:**
+- `apiKey` (string): Your ScrapeGraph AI API key
+- `url` (string): The URL of the website to scrape
+- `prompt` (string): Natural language prompt describing what to extract
+- `schema` (object, optional): Zod schema for structured output
+- `numberOfScrolls` (number, optional): Number of scrolls for infinite scroll pages
+- `totalPages` (number, optional): Number of pages to scrape
+- `cookies` (object, optional): Cookies for authentication
+
+### Search Scraper
+
+#### `searchScraper(apiKey, prompt, url, numResults, headers, outputSchema)`
+
+Searches and extracts information from multiple web sources using AI.
+
+### Crawl API
+
+#### `crawl(apiKey, url, prompt, dataSchema, options)`
+
+Starts a crawl job to extract structured data from a website and its linked pages.
+
+**Parameters:**
+- `apiKey` (string): Your ScrapeGraph AI API key
+- `url` (string): The starting URL for the crawl
+- `prompt` (string): AI prompt to guide data extraction (required for AI mode)
+- `dataSchema` (object): JSON schema defining extracted data structure (required for AI mode)
+- `options` (object): Optional crawl parameters
+  - `extractionMode` (boolean, default: true): true for AI extraction, false for markdown conversion
+  - `cacheWebsite` (boolean, default: true): Whether to cache website content
+  - `depth` (number, default: 2): Maximum crawl depth (1-10)
+  - `maxPages` (number, default: 2): Maximum pages to crawl (1-100)
+  - `sameDomainOnly` (boolean, default: true): Only crawl pages from the same domain
+  - `sitemap` (boolean, default: false): Use sitemap.xml for better page discovery
+  - `batchSize` (number, default: 1): Batch size for processing pages (1-10)
+  - `renderHeavyJs` (boolean, default: false): Whether to render heavy JavaScript
+
+**Sitemap Benefits:**
+- Better page discovery using sitemap.xml
+- More comprehensive website coverage
+- Efficient crawling of structured websites
+- Perfect for e-commerce, news sites, and content-heavy websites
+
+### Markdownify
+
+#### `markdownify(apiKey, url, headers)`
+
+Converts a webpage into clean, well-structured markdown format.
+
+### Agentic Scraper
+
+#### `agenticScraper(apiKey, url, steps, useSession, userPrompt, outputSchema, aiExtraction)`
+
+Performs automated actions on webpages using step-by-step instructions.
+
+### Utility Functions
+
+#### `getCredits(apiKey)`
+
+Retrieves your current credit balance and usage statistics.
+
+#### `sendFeedback(apiKey, requestId, rating, feedbackText)`
+
+Submits feedback for a specific request.
 
 ## 📚 Documentation
 

@@ -2,6 +2,8 @@ import axios from 'axios';
 import handleError from './utils/handleError.js';
 import { ZodType } from 'zod';
 import { zodToJsonSchema } from 'zod-to-json-schema';
+import { isMockEnabled, getMockConfig } from './utils/mockConfig.js';
+import { getMockResponse } from './utils/mockResponse.js';
 
 /**
  * Start a crawl job using the ScrapeGraphAI API.
@@ -18,6 +20,8 @@ import { zodToJsonSchema } from 'zod-to-json-schema';
  * @param {boolean} [options.sameDomainOnly=true] - Whether to only crawl pages from the same domain
  * @param {boolean} [options.sitemap] - Whether to use sitemap for better page discovery
  * @param {number} [options.batchSize=1] - Batch size for processing pages (1-10)
+ * @param {boolean} [options.mock] - Override mock mode for this request
+ * @param {boolean} [options.renderHeavyJs=false] - Whether to render heavy JavaScript on the page
  * @returns {Promise<Object>} The crawl job response
  * @throws {Error} Throws an error if the HTTP request fails
  */
@@ -28,6 +32,17 @@ export async function crawl(
   schema,
   options = {}
 ) {
+  const { mock = null, renderHeavyJs = false } = options;
+
+  // Check if mock mode is enabled
+  const useMock = mock !== null ? mock : isMockEnabled();
+  
+  if (useMock) {
+    console.log('🧪 Mock mode active. Returning stub for crawl request');
+    const mockConfig = getMockConfig();
+    const mockData = getMockResponse('POST', 'https://api.scrapegraphai.com/v1/crawl', mockConfig.customResponses, mockConfig.customHandler);
+    return mockData;
+  }
   const endpoint = 'https://api.scrapegraphai.com/v1/crawl';
   const headers = {
     'accept': 'application/json',
@@ -51,6 +66,7 @@ export async function crawl(
     depth = 2,
     maxPages = 2,
     sameDomainOnly = true,
+    sitemap = false,
     batchSize = 1,
   } = options;
 
@@ -62,7 +78,9 @@ export async function crawl(
     depth,
     max_pages: maxPages,
     same_domain_only: sameDomainOnly,
+    sitemap,
     batch_size: batchSize,
+    render_heavy_js: renderHeavyJs,
   };
 
   try {
@@ -81,7 +99,19 @@ export async function crawl(
  * @returns {Promise<Object>} The crawl result
  * @throws {Error} Throws an error if the HTTP request fails
  */
-export async function getCrawlRequest(apiKey, crawlId) {
+export async function getCrawlRequest(apiKey, crawlId, options = {}) {
+  const { mock = null } = options;
+
+  // Check if mock mode is enabled
+  const useMock = mock !== null ? mock : isMockEnabled();
+  
+  if (useMock) {
+    console.log('🧪 Mock mode active. Returning stub for getCrawlRequest');
+    const mockConfig = getMockConfig();
+    const mockData = getMockResponse('GET', `https://api.scrapegraphai.com/v1/crawl/${crawlId}`, mockConfig.customResponses, mockConfig.customHandler);
+    return mockData;
+  }
+
   const endpoint = `https://api.scrapegraphai.com/v1/crawl/${crawlId}`;
   const headers = {
     'accept': 'application/json',

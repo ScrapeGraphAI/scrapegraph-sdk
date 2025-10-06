@@ -7,6 +7,19 @@ from pydantic import BaseModel, Field, conint, model_validator
 
 
 class CrawlRequest(BaseModel):
+    """
+    Request model for the crawl endpoint.
+    
+    The crawl endpoint supports two modes:
+    1. AI Extraction Mode (extraction_mode=True): Uses AI to extract structured data
+    2. Markdown Conversion Mode (extraction_mode=False): Converts pages to markdown (80% cheaper)
+    
+    Sitemap Support:
+    - When sitemap=True, the crawler uses sitemap.xml for better page discovery
+    - Recommended for structured websites (e-commerce, news sites, blogs)
+    - Provides more comprehensive crawling coverage
+    - Works with both AI extraction and markdown conversion modes
+    """
     url: str = Field(
         ...,
         example="https://scrapegraphai.com/",
@@ -45,8 +58,21 @@ class CrawlRequest(BaseModel):
         default=None, description="Batch size for processing pages (1-10)"
     )
     sitemap: bool = Field(
-        default=False, description="Whether to use sitemap for better page discovery"
+        default=False, 
+        description="Whether to use sitemap.xml for better page discovery and more comprehensive crawling. "
+        "When enabled, the crawler will use the website's sitemap.xml to discover pages more efficiently, "
+        "providing better coverage for structured websites like e-commerce sites, news portals, and content-heavy websites."
     )
+    headers: Optional[dict[str, str]] = Field(
+        None,
+        example={
+            "User-Agent": "scrapegraph-py",
+            "Cookie": "cookie1=value1; cookie2=value2",
+        },
+        description="Optional headers to send with the request, including cookies "
+        "and user agent",
+    )
+    render_heavy_js: bool = Field(default=False, description="Whether to render heavy JavaScript on the page")
 
     @model_validator(mode="after")
     def validate_url(self) -> "CrawlRequest":
@@ -95,6 +121,16 @@ class CrawlRequest(BaseModel):
             self.batch_size < 1 or self.batch_size > 10
         ):
             raise ValueError("Batch size must be between 1 and 10")
+        return self
+
+    @model_validator(mode="after")
+    def validate_sitemap_usage(self) -> "CrawlRequest":
+        """Validate sitemap usage and provide recommendations"""
+        if self.sitemap:
+            # Log recommendation for sitemap usage
+            if self.max_pages < 5:
+                # This is just a recommendation, not an error
+                pass  # Could add logging here if needed
         return self
 
 

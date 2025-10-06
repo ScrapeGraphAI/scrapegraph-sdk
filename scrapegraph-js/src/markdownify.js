@@ -1,15 +1,31 @@
 import axios from 'axios';
 import handleError from './utils/handleError.js';
+import { isMockEnabled, getMockConfig } from './utils/mockConfig.js';
+import { getMockResponse } from './utils/mockResponse.js';
 
 /**
  * Converts a webpage into clean, well-structured markdown format.
  *
  * @param {string} apiKey - Your ScrapeGraph AI API key.
  * @param {string} url - The URL of the webpage to be converted.
+ * @param {Object} options - Optional configuration options.
+ * @param {boolean} options.mock - Override mock mode for this request
  * @returns {Promise<string>} A promise that resolves to the markdown representation of the webpage.
  * @throws {Error} Throws an error if the HTTP request fails.
  */
-export async function markdownify(apiKey, url) {
+export async function markdownify(apiKey, url, options = {}) {
+  const { mock = null } = options;
+
+  // Check if mock mode is enabled
+  const useMock = mock !== null ? mock : isMockEnabled();
+  
+  if (useMock) {
+    console.log('🧪 Mock mode active. Returning stub for markdownify request');
+    const mockConfig = getMockConfig();
+    const mockData = getMockResponse('POST', 'https://api.scrapegraphai.com/v1/markdownify', mockConfig.customResponses, mockConfig.customHandler);
+    return mockData;
+  }
+
   const endpoint = 'https://api.scrapegraphai.com/v1/markdownify';
   const headers = {
     'accept': 'application/json',
@@ -66,7 +82,19 @@ export async function markdownify(apiKey, url) {
  *   - Links and images
  *   - Text formatting (bold, italic, etc.)
  */
-export async function getMarkdownifyRequest(apiKey, requestId) {
+export async function getMarkdownifyRequest(apiKey, requestId, options = {}) {
+  const { mock = null } = options;
+
+  // Check if mock mode is enabled
+  const useMock = mock !== null ? mock : isMockEnabled();
+  
+  if (useMock) {
+    console.log('🧪 Mock mode active. Returning stub for getMarkdownifyRequest');
+    const mockConfig = getMockConfig();
+    const mockData = getMockResponse('GET', `https://api.scrapegraphai.com/v1/markdownify/${requestId}`, mockConfig.customResponses, mockConfig.customHandler);
+    return mockData;
+  }
+
   const endpoint = 'https://api.scrapegraphai.com/v1/markdownify/' + requestId;
   const headers = {
     'accept': 'application/json',

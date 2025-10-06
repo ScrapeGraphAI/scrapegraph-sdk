@@ -19,14 +19,20 @@ class SearchScraperRequest(BaseModel):
     headers: Optional[dict[str, str]] = Field(
         None,
         example={
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-            "AppleWebKit/537.36",
+            "User-Agent": "scrapegraph-py",
             "Cookie": "cookie1=value1; cookie2=value2",
         },
         description="Optional headers to send with the request, including cookies "
         "and user agent",
     )
     output_schema: Optional[Type[BaseModel]] = None
+    extraction_mode: bool = Field(
+        default=True,
+        description="Whether to use AI extraction (True) or markdown conversion (False). "
+        "AI extraction costs 10 credits per page, markdown conversion costs 2 credits per page.",
+    )
+    mock: bool = Field(default=False, description="Whether to use mock mode for the request")
+    render_heavy_js: bool = Field(default=False, description="Whether to render heavy JavaScript on the page")
 
     @model_validator(mode="after")
     def validate_user_prompt(self) -> "SearchScraperRequest":

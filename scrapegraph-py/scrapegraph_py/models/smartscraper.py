@@ -23,8 +23,7 @@ class SmartScraperRequest(BaseModel):
     headers: Optional[dict[str, str]] = Field(
         None,
         example={
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-            "AppleWebKit/537.36",
+            "User-Agent": "scrapegraph-py",
             "Cookie": "cookie1=value1; cookie2=value2",
         },
         description="Optional headers to send with the request, including cookies "
@@ -49,7 +48,10 @@ class SmartScraperRequest(BaseModel):
         "page will be scraped.",
         example=5,
     )
-
+    mock: bool = Field(default=False, description="Whether to use mock mode for the request")
+    plain_text: bool = Field(default=False, description="Whether to return the result as plain text")
+    render_heavy_js: bool = Field(default=False, description="Whether to render heavy JavaScript on the page")
+    
     @model_validator(mode="after")
     def validate_user_prompt(self) -> "SmartScraperRequest":
         if self.user_prompt is None or not self.user_prompt.strip():

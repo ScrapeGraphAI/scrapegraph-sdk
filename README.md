@@ -15,6 +15,11 @@ Get your [API key](https://scrapegraphai.com)!
 - 🔍 **SearchScraper**: AI-powered web search with structured results and reference URLs
 - 📝 **Markdownify**: Convert any webpage into clean, formatted markdown
 - 🕷️ **SmartCrawler**: Intelligently crawl and extract data from multiple pages
+- 🤖 **AgenticScraper**: Perform automated browser actions with AI-powered session management
+- 📄 **Scrape**: Convert webpages to HTML with JavaScript rendering and custom headers
+- ⏰ **Scheduled Jobs**: Create and manage automated scraping workflows with cron scheduling
+- 💳 **Credits Management**: Monitor API usage and credit balance
+- 💬 **Feedback System**: Provide ratings and feedback to improve service quality
 
 ## 🚀 Quick Links
 ScrapeGraphAI offers seamless integration with popular frameworks and tools to enhance your scraping capabilities. Whether you're building with Python or Node.js, using LLM frameworks, or working with no-code platforms, we've got you covered with our comprehensive integration options..
@@ -59,6 +64,24 @@ Perform AI-powered web searches with structured results and reference URLs.
 
 ### 📝 Markdownify
 Convert any webpage into clean, formatted markdown.
+
+### 🕷️ SmartCrawler
+Intelligently crawl and extract data from multiple pages with configurable depth and batch processing.
+
+### 🤖 AgenticScraper
+Perform automated browser actions on webpages using AI-powered agentic scraping with session management.
+
+### 📄 Scrape
+Convert webpages into HTML format with optional JavaScript rendering and custom headers.
+
+### ⏰ Scheduled Jobs
+Create, manage, and monitor scheduled scraping jobs with cron expressions and execution history.
+
+### 💳 Credits
+Check your API credit balance and usage.
+
+### 💬 Feedback
+Send feedback and ratings for scraping requests to help improve the service.
 
 ## 🌟 Key Benefits
 

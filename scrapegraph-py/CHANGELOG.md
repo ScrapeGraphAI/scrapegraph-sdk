@@ -1,3 +1,98 @@
+## [1.32.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.31.0...v1.32.0) (2025-10-06)
+
+
+### Features
+
+* update smartcrawler with sitemamp functionalities ([73e1e42](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/73e1e42361d80f7042c5082722f1ac49724b6cde))
+
+## [1.31.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.30.0...v1.31.0) (2025-09-17)
+
+
+### Features
+
+* add scrape endpoint ([43d1bf6](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/43d1bf6877e9ae132f40034888c8fd92946877ec))
+
+## [1.30.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.29.0...v1.30.0) (2025-09-17)
+
+
+### Features
+
+* add md mode in searchscraper ([c6b513a](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/c6b513a67413582e107451739f8eef23efa7c9d0))
+
+## [1.29.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.28.0...v1.29.0) (2025-09-16)
+
+
+### Features
+
+* add render_heavy_js ([8d6994f](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/8d6994f0885d521cedcd81cdf8e7510453a1eac6))
+
+## [1.28.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.27.0...v1.28.0) (2025-09-16)
+
+
+### Features
+
+* add render_heavy ([6874ed9](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/6874ed9a8fb01dad237db59dfda62814c6b6f750))
+
+## [1.27.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.26.0...v1.27.0) (2025-09-14)
+
+
+### Features
+
+* add user agent ([00bb21b](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/00bb21b72a5c859fc610b3a31ddfc42907c02eda))
+
+## [1.26.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.25.1...v1.26.0) (2025-09-11)
+
+
+### Features
+
+* refactoring of the example folder ([78f2318](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/78f23184626061b22dfde6d6b5b3c3df93f2a73a))
+
+## [1.25.1](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.25.0...v1.25.1) (2025-09-08)
+
+
+### Bug Fixes
+
+* removed unused name ([1147570](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/1147570d751d1aba75ce274d6c07261d44b5f829))
+* scheduled jobs ([6f5cbf3](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/6f5cbf3335dd7dfffa4803dd33c07c678a56ef0e))
+
+## [1.25.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.24.0...v1.25.0) (2025-09-08)
+
+
+### Features
+
+* add cron jobs ([d22e8eb](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/d22e8ebbc3bb978217ae5c486ab8bddd586b24f3))
+
+## [1.24.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.23.0...v1.24.0) (2025-09-03)
+
+
+### Features
+
+* add new mock ([db6a5ea](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/db6a5ea8baac250f70358c9ffc2a5ceb4d206993))
+
+## [1.23.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.22.0...v1.23.0) (2025-09-01)
+
+
+### Features
+
+* add examples ([710129e](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/710129e24e6e0d1bb2aa9576c20b4a0e2d483be3))
+* add files ([af63d00](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/af63d0034cb7b2ce50123bc4698fe94a6b628cfe))
+
+## [1.22.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.21.0...v1.22.0) (2025-09-01)
+
+
+### Features
+
+* add files ([e056508](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/e056508fd3b706ba40e2ab7cffd26e58f3f0c0ae))
+
+## [1.21.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.20.0...v1.21.0) (2025-09-01)
+
+
+### Features
+
+* add files for htmlify ([73539a0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/73539a0c486baad7c479ee2fa488e3571ca369df))
+* add js files ([013f3ce](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/013f3ceb932fa95c8d559a16cd9c78260d844fd8))
+* rebranding ([cf5a26d](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/cf5a26dc7a8c7d135fb5ce8f6c7eea9cca25b15b))
+
 ## [1.20.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.19.0...v1.20.0) (2025-08-19)
 
 
