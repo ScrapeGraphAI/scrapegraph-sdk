@@ -363,6 +363,7 @@ const schema = {
       depth: 2,
       maxPages: 2,
       sameDomainOnly: true,
+      sitemap: true, // Use sitemap for better page discovery
       batchSize: 1,
     });
     console.log('Crawl job started. Response:', crawlResponse);
@@ -392,7 +393,13 @@ const schema = {
 })();
 ```
 
-You can use a plain JSON schema or a [Zod](https://www.npmjs.com/package/zod) schema for the `schema` parameter. The crawl API supports options for crawl depth, max pages, domain restriction, and batch size.
+You can use a plain JSON schema or a [Zod](https://www.npmjs.com/package/zod) schema for the `schema` parameter. The crawl API supports options for crawl depth, max pages, domain restriction, sitemap discovery, and batch size.
+
+**Sitemap Benefits:**
+- Better page discovery using sitemap.xml
+- More comprehensive website coverage
+- Efficient crawling of structured websites
+- Perfect for e-commerce, news sites, and content-heavy websites
 
 ### Scraping local HTML
 
@@ -547,9 +554,30 @@ Searches and extracts information from multiple web sources using AI.
 
 ### Crawl API
 
-#### `crawl(apiKey, url, prompt, dataSchema, extractionMode, cacheWebsite, depth, maxPages, sameDomainOnly, sitemap, batchSize)`
+#### `crawl(apiKey, url, prompt, dataSchema, options)`
 
 Starts a crawl job to extract structured data from a website and its linked pages.
+
+**Parameters:**
+- `apiKey` (string): Your ScrapeGraph AI API key
+- `url` (string): The starting URL for the crawl
+- `prompt` (string): AI prompt to guide data extraction (required for AI mode)
+- `dataSchema` (object): JSON schema defining extracted data structure (required for AI mode)
+- `options` (object): Optional crawl parameters
+  - `extractionMode` (boolean, default: true): true for AI extraction, false for markdown conversion
+  - `cacheWebsite` (boolean, default: true): Whether to cache website content
+  - `depth` (number, default: 2): Maximum crawl depth (1-10)
+  - `maxPages` (number, default: 2): Maximum pages to crawl (1-100)
+  - `sameDomainOnly` (boolean, default: true): Only crawl pages from the same domain
+  - `sitemap` (boolean, default: false): Use sitemap.xml for better page discovery
+  - `batchSize` (number, default: 1): Batch size for processing pages (1-10)
+  - `renderHeavyJs` (boolean, default: false): Whether to render heavy JavaScript
+
+**Sitemap Benefits:**
+- Better page discovery using sitemap.xml
+- More comprehensive website coverage
+- Efficient crawling of structured websites
+- Perfect for e-commerce, news sites, and content-heavy websites
 
 ### Markdownify
 

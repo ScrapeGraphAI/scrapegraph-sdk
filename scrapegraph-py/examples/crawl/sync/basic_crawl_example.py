@@ -95,6 +95,7 @@ def main():
             depth=2,
             max_pages=2,
             same_domain_only=True,
+            sitemap=True,  # Use sitemap for better page discovery
             batch_size=1,
         )
         execution_time = time.time() - start_time

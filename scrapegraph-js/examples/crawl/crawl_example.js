@@ -71,6 +71,7 @@ const prompt = 'What does the company do? and I need text content from there pri
       depth: 2,
       maxPages: 2,
       sameDomainOnly: true,
+      sitemap: true, // Use sitemap for better page discovery
       batchSize: 1,
     });
     console.log('\nCrawl job started. Response:');

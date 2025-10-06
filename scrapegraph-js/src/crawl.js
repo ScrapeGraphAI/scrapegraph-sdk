@@ -66,6 +66,7 @@ export async function crawl(
     depth = 2,
     maxPages = 2,
     sameDomainOnly = true,
+    sitemap = false,
     batchSize = 1,
   } = options;
 
@@ -77,6 +78,7 @@ export async function crawl(
     depth,
     max_pages: maxPages,
     same_domain_only: sameDomainOnly,
+    sitemap,
     batch_size: batchSize,
     render_heavy_js: renderHeavyJs,
   };

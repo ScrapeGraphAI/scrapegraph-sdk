@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
 /**
- * Example demonstrating the ScrapeGraphAI Crawler markdown conversion mode.
+ * Example demonstrating the ScrapeGraphAI Crawler with sitemap functionality.
  *
- * This example shows how to use the crawler in markdown conversion mode:
- * - Cost-effective markdown conversion (NO AI/LLM processing)
- * - 2 credits per page (80% savings compared to AI mode)
- * - Clean HTML to markdown conversion with metadata extraction
+ * This example shows how to use the crawler with sitemap enabled for better page discovery:
+ * - Sitemap helps discover more pages efficiently
+ * - Better coverage of website content
+ * - More comprehensive crawling results
  *
  * Requirements:
  * - Node.js 14+
@@ -15,7 +15,7 @@
  * - A valid API key (set in .env file as SGAI_APIKEY=your_key or environment variable)
  *
  * Usage:
- *   node crawl_markdown_example.js
+ *   node crawl_sitemap_example.js
  */
 
 import { crawl, getCrawlRequest } from '../index.js';
@@ -76,50 +76,74 @@ async function pollForResult(crawlId, maxAttempts = 20) {
 }
 
 /**
- * Markdown Conversion Mode (NO AI/LLM Used)
+ * Sitemap-enabled Crawling Example
  *
- * This example demonstrates cost-effective crawling that converts pages to clean markdown
- * WITHOUT any AI processing. Perfect for content archival and when you only need clean markdown.
+ * This example demonstrates how to use sitemap for better page discovery.
+ * Sitemap helps the crawler find more pages efficiently by using the website's sitemap.xml.
  */
-async function markdownCrawlingExample() {
+async function sitemapCrawlingExample() {
   console.log("=".repeat(60));
-  console.log("MARKDOWN CONVERSION MODE (NO AI/LLM)");
+  console.log("SITEMAP-ENABLED CRAWLING EXAMPLE");
   console.log("=".repeat(60));
-  console.log("Use case: Get clean markdown content without AI processing");
-  console.log("Cost: 2 credits per page (80% savings!)");
-  console.log("Features: Clean markdown conversion, metadata extraction");
-  console.log("⚠️ NO AI/LLM PROCESSING - Pure HTML to markdown conversion only!");
+  console.log("Use case: Comprehensive website crawling with sitemap discovery");
+  console.log("Benefits: Better page coverage, more efficient crawling");
+  console.log("Features: Sitemap-based page discovery, structured data extraction");
   console.log();
 
-  // Target URL for markdown conversion
-  const url = "https://scrapegraphai.com/";
+  // Target URL - using a website that likely has a sitemap
+  const url = "https://www.giemmeagordo.com/risultati-ricerca-annunci/?sort=newest&search_city=&search_lat=null&search_lng=null&search_category=0&search_type=0&search_min_price=&search_max_price=&bagni=&bagni_comparison=equal&camere=&camere_comparison=equal";
+
+  // Schema for real estate listings
+  const schema = {
+    "type": "object",
+    "properties": {
+      "listings": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "title": { "type": "string" },
+            "price": { "type": "string" },
+            "location": { "type": "string" },
+            "description": { "type": "string" },
+            "features": { "type": "array", "items": { "type": "string" } },
+            "url": { "type": "string" }
+          }
+        }
+      }
+    }
+  };
+
+  const prompt = "Extract all real estate listings with their details including title, price, location, description, and features";
 
   console.log(`🌐 Target URL: ${url}`);
-  console.log("🤖 AI Prompt: None (no AI processing)");
-  console.log("📊 Crawl Depth: 2");
-  console.log("📄 Max Pages: 2");
-  console.log("🗺️ Use Sitemap: true");
-  console.log("💡 Mode: Pure HTML to markdown conversion");
+  console.log("🤖 AI Prompt: Extract real estate listings");
+  console.log("📊 Crawl Depth: 1");
+  console.log("📄 Max Pages: 10");
+  console.log("🗺️ Use Sitemap: true (enabled for better page discovery)");
+  console.log("🏠 Same Domain Only: true");
+  console.log("💾 Cache Website: true");
+  console.log("💡 Mode: AI extraction with sitemap discovery");
   console.log();
 
-  // Start the markdown conversion job
-  console.log("🚀 Starting markdown conversion job...");
+  // Start the sitemap-enabled crawl job
+  console.log("🚀 Starting sitemap-enabled crawl job...");
 
   try {
-    // Call crawl with extractionMode=false for markdown conversion
-    const response = await crawl(apiKey, url, null, null, {
-      extractionMode: false, // FALSE = Markdown conversion mode (NO AI/LLM used)
-      depth: 2,
-      maxPages: 2,
+    // Call crawl with sitemap=true for better page discovery
+    const response = await crawl(apiKey, url, prompt, schema, {
+      extractionMode: true, // AI extraction mode
+      depth: 1,
+      maxPages: 10,
       sameDomainOnly: true,
-      sitemap: true, // Use sitemap for better page discovery
-      // Note: No prompt or dataSchema needed when extractionMode=false
+      cacheWebsite: true,
+      sitemap: true, // Enable sitemap for better page discovery
     });
 
     const crawlId = response.id || response.task_id || response.crawl_id;
 
     if (!crawlId) {
-      console.log("❌ Failed to start markdown conversion job");
+      console.log("❌ Failed to start sitemap-enabled crawl job");
       return;
     }
 
@@ -130,62 +154,53 @@ async function markdownCrawlingExample() {
     // Poll for results with rate-limit protection
     const result = await pollForResult(crawlId, 20);
 
-    console.log("✅ Markdown conversion completed successfully!");
+    console.log("✅ Sitemap-enabled crawl completed successfully!");
     console.log();
 
     const resultData = result.result || {};
-    const pages = resultData.pages || [];
+    const llmResult = resultData.llm_result || {};
     const crawledUrls = resultData.crawled_urls || [];
     const creditsUsed = resultData.credits_used || 0;
     const pagesProcessed = resultData.pages_processed || 0;
 
     // Prepare JSON output
     const jsonOutput = {
-      conversion_results: {
+      crawl_results: {
         pages_processed: pagesProcessed,
         credits_used: creditsUsed,
         cost_per_page: pagesProcessed > 0 ? creditsUsed / pagesProcessed : 0,
-        crawled_urls: crawledUrls
+        crawled_urls: crawledUrls,
+        sitemap_enabled: true
       },
-      markdown_content: {
-        total_pages: pages.length,
-        pages: []
-      }
+      extracted_data: llmResult
     };
-
-    // Add page details to JSON
-    pages.forEach((page, i) => {
-      const metadata = page.metadata || {};
-      const pageData = {
-        page_number: i + 1,
-        url: page.url,
-        title: page.title,
-        metadata: {
-          word_count: metadata.word_count || 0,
-          headers: metadata.headers || [],
-          links_count: metadata.links_count || 0
-        },
-        markdown_content: page.markdown || ""
-      };
-      jsonOutput.markdown_content.pages.push(pageData);
-    });
 
     // Print JSON output
     console.log("📊 RESULTS IN JSON FORMAT:");
     console.log("-".repeat(40));
     console.log(JSON.stringify(jsonOutput, null, 2));
 
+    // Print summary
+    console.log("\n" + "=".repeat(60));
+    console.log("📈 CRAWL SUMMARY:");
+    console.log("=".repeat(60));
+    console.log(`✅ Pages processed: ${pagesProcessed}`);
+    console.log(`💰 Credits used: ${creditsUsed}`);
+    console.log(`🔗 URLs crawled: ${crawledUrls.length}`);
+    console.log(`🗺️ Sitemap enabled: Yes`);
+    console.log(`📊 Data extracted: ${llmResult.listings ? llmResult.listings.length : 0} listings found`);
+
   } catch (error) {
-    console.log(`❌ Markdown conversion failed: ${error.message}`);
+    console.log(`❌ Sitemap-enabled crawl failed: ${error.message}`);
   }
 }
 
 /**
- * Main function to run the markdown crawling example.
+ * Main function to run the sitemap crawling example.
  */
 async function main() {
-  console.log("🌐 ScrapeGraphAI Crawler - Markdown Conversion Example");
-  console.log("Cost-effective HTML to Markdown conversion (NO AI/LLM)");
+  console.log("🌐 ScrapeGraphAI Crawler - Sitemap Example");
+  console.log("Comprehensive website crawling with sitemap discovery");
   console.log("=".repeat(60));
 
   // Check if API key is set
@@ -201,16 +216,16 @@ async function main() {
   console.log(`🔑 Using API key: ${apiKey.substring(0, 10)}...`);
   console.log();
 
-  // Run the markdown conversion example
-  await markdownCrawlingExample();
+  // Run the sitemap crawling example
+  await sitemapCrawlingExample();
 
   console.log("\n" + "=".repeat(60));
   console.log("🎉 Example completed!");
-  console.log("💡 This demonstrates markdown conversion mode:");
-  console.log("   • Cost-effective: Only 2 credits per page");
-  console.log("   • No AI/LLM processing - pure HTML to markdown conversion");
-  console.log("   • Perfect for content archival and documentation");
-  console.log("   • 80% cheaper than AI extraction modes!");
+  console.log("💡 This demonstrates sitemap-enabled crawling:");
+  console.log("   • Better page discovery using sitemap.xml");
+  console.log("   • More comprehensive website coverage");
+  console.log("   • Efficient crawling of structured websites");
+  console.log("   • Perfect for e-commerce, news sites, and content-heavy websites");
 }
 
 // Run the example

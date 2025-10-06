@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-Example demonstrating the ScrapeGraphAI Crawler markdown conversion mode.
+Example demonstrating the ScrapeGraphAI Crawler with sitemap functionality.
 
-This example shows how to use the crawler in markdown conversion mode:
-- Cost-effective markdown conversion (NO AI/LLM processing)
-- 2 credits per page (80% savings compared to AI mode)
-- Clean HTML to markdown conversion with metadata extraction
+This example shows how to use the crawler with sitemap enabled for better page discovery:
+- Sitemap helps discover more pages efficiently
+- Better coverage of website content
+- More comprehensive crawling results
 
 Requirements:
 - Python 3.7+
@@ -14,7 +14,7 @@ Requirements:
 - A valid API key (set in .env file as SGAI_API_KEY=your_key or environment variable)
 
 Usage:
-    python crawl_markdown_example.py
+    python crawl_sitemap_example.py
 """
 
 import json
@@ -81,54 +81,80 @@ def poll_for_result(
     raise Exception(f"⏰ Timeout: Job did not complete after {max_attempts} attempts")
 
 
-def markdown_crawling_example():
+def sitemap_crawling_example():
     """
-    Markdown Conversion Mode (NO AI/LLM Used)
+    Sitemap-enabled Crawling Example
 
-    This example demonstrates cost-effective crawling that converts pages to clean markdown
-    WITHOUT any AI processing. Perfect for content archival and when you only need clean markdown.
+    This example demonstrates how to use sitemap for better page discovery.
+    Sitemap helps the crawler find more pages efficiently by using the website's sitemap.xml.
     """
     print("=" * 60)
-    print("MARKDOWN CONVERSION MODE (NO AI/LLM)")
+    print("SITEMAP-ENABLED CRAWLING EXAMPLE")
     print("=" * 60)
-    print("Use case: Get clean markdown content without AI processing")
-    print("Cost: 2 credits per page (80% savings!)")
-    print("Features: Clean markdown conversion, metadata extraction")
-    print("⚠️ NO AI/LLM PROCESSING - Pure HTML to markdown conversion only!")
+    print("Use case: Comprehensive website crawling with sitemap discovery")
+    print("Benefits: Better page coverage, more efficient crawling")
+    print("Features: Sitemap-based page discovery, structured data extraction")
     print()
 
     # Initialize the client
     client = Client.from_env()
 
-    # Target URL for markdown conversion
-    url = "https://scrapegraphai.com/"
+    # Target URL - using a website that likely has a sitemap
+    url = "https://www.giemmeagordo.com/risultati-ricerca-annunci/?sort=newest&search_city=&search_lat=null&search_lng=null&search_category=0&search_type=0&search_min_price=&search_max_price=&bagni=&bagni_comparison=equal&camere=&camere_comparison=equal"
+
+    # Schema for real estate listings
+    schema = {
+        "type": "object",
+        "properties": {
+            "listings": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "title": {"type": "string"},
+                        "price": {"type": "string"},
+                        "location": {"type": "string"},
+                        "description": {"type": "string"},
+                        "features": {"type": "array", "items": {"type": "string"}},
+                        "url": {"type": "string"},
+                    },
+                },
+            }
+        },
+    }
+
+    prompt = "Extract all real estate listings with their details including title, price, location, description, and features"
 
     print(f"🌐 Target URL: {url}")
-    print("🤖 AI Prompt: None (no AI processing)")
-    print("📊 Crawl Depth: 2")
-    print("📄 Max Pages: 2")
-    print("🗺️ Use Sitemap: True")
-    print("💡 Mode: Pure HTML to markdown conversion")
+    print("🤖 AI Prompt: Extract real estate listings")
+    print("📊 Crawl Depth: 1")
+    print("📄 Max Pages: 10")
+    print("🗺️ Use Sitemap: True (enabled for better page discovery)")
+    print("🏠 Same Domain Only: True")
+    print("💾 Cache Website: True")
+    print("💡 Mode: AI extraction with sitemap discovery")
     print()
 
-    # Start the markdown conversion job
-    print("🚀 Starting markdown conversion job...")
+    # Start the sitemap-enabled crawl job
+    print("🚀 Starting sitemap-enabled crawl job...")
 
-    # Call crawl with extraction_mode=False for markdown conversion
+    # Call crawl with sitemap=True for better page discovery
     response = client.crawl(
         url=url,
-        extraction_mode=False,  # FALSE = Markdown conversion mode (NO AI/LLM used)
-        depth=2,
-        max_pages=2,
+        prompt=prompt,
+        data_schema=schema,
+        extraction_mode=True,  # AI extraction mode
+        depth=1,
+        max_pages=10,
         same_domain_only=True,
-        sitemap=True,  # Use sitemap for better coverage
-        # Note: No prompt or data_schema needed when extraction_mode=False
+        cache_website=True,
+        sitemap=True,  # Enable sitemap for better page discovery
     )
 
     crawl_id = response.get("crawl_id") or response.get("task_id")
 
     if not crawl_id:
-        print("❌ Failed to start markdown conversion job")
+        print("❌ Failed to start sitemap-enabled crawl job")
         return
 
     print(f"📋 Crawl ID: {crawl_id}")
@@ -139,57 +165,52 @@ def markdown_crawling_example():
     try:
         result = poll_for_result(client, crawl_id, max_attempts=20)
 
-        print("✅ Markdown conversion completed successfully!")
+        print("✅ Sitemap-enabled crawl completed successfully!")
         print()
 
         result_data = result.get("result", {})
-        pages = result_data.get("pages", [])
+        llm_result = result_data.get("llm_result", {})
         crawled_urls = result_data.get("crawled_urls", [])
         credits_used = result_data.get("credits_used", 0)
         pages_processed = result_data.get("pages_processed", 0)
 
         # Prepare JSON output
         json_output = {
-            "conversion_results": {
+            "crawl_results": {
                 "pages_processed": pages_processed,
                 "credits_used": credits_used,
                 "cost_per_page": (
                     credits_used / pages_processed if pages_processed > 0 else 0
                 ),
                 "crawled_urls": crawled_urls,
+                "sitemap_enabled": True,
             },
-            "markdown_content": {"total_pages": len(pages), "pages": []},
+            "extracted_data": llm_result,
         }
-
-        # Add page details to JSON
-        for i, page in enumerate(pages):
-            metadata = page.get("metadata", {})
-            page_data = {
-                "page_number": i + 1,
-                "url": page.get("url"),
-                "title": page.get("title"),
-                "metadata": {
-                    "word_count": metadata.get("word_count", 0),
-                    "headers": metadata.get("headers", []),
-                    "links_count": metadata.get("links_count", 0),
-                },
-                "markdown_content": page.get("markdown", ""),
-            }
-            json_output["markdown_content"]["pages"].append(page_data)
 
         # Print JSON output
         print("📊 RESULTS IN JSON FORMAT:")
         print("-" * 40)
         print(json.dumps(json_output, indent=2, ensure_ascii=False))
 
+        # Print summary
+        print("\n" + "=" * 60)
+        print("📈 CRAWL SUMMARY:")
+        print("=" * 60)
+        print(f"✅ Pages processed: {pages_processed}")
+        print(f"💰 Credits used: {credits_used}")
+        print(f"🔗 URLs crawled: {len(crawled_urls)}")
+        print(f"🗺️ Sitemap enabled: Yes")
+        print(f"📊 Data extracted: {len(llm_result.get('listings', []))} listings found")
+
     except Exception as e:
-        print(f"❌ Markdown conversion failed: {str(e)}")
+        print(f"❌ Sitemap-enabled crawl failed: {str(e)}")
 
 
 def main():
-    """Run the markdown crawling example."""
-    print("🌐 ScrapeGraphAI Crawler - Markdown Conversion Example")
-    print("Cost-effective HTML to Markdown conversion (NO AI/LLM)")
+    """Run the sitemap crawling example."""
+    print("🌐 ScrapeGraphAI Crawler - Sitemap Example")
+    print("Comprehensive website crawling with sitemap discovery")
     print("=" * 60)
 
     # Load environment variables from .env file
@@ -210,16 +231,16 @@ def main():
     print(f"🔑 Using API key: {api_key[:10]}...")
     print()
 
-    # Run the markdown conversion example
-    markdown_crawling_example()
+    # Run the sitemap crawling example
+    sitemap_crawling_example()
 
     print("\n" + "=" * 60)
     print("🎉 Example completed!")
-    print("💡 This demonstrates markdown conversion mode:")
-    print("   • Cost-effective: Only 2 credits per page")
-    print("   • No AI/LLM processing - pure HTML to markdown conversion")
-    print("   • Perfect for content archival and documentation")
-    print("   • 80% cheaper than AI extraction modes!")
+    print("💡 This demonstrates sitemap-enabled crawling:")
+    print("   • Better page discovery using sitemap.xml")
+    print("   • More comprehensive website coverage")
+    print("   • Efficient crawling of structured websites")
+    print("   • Perfect for e-commerce, news sites, and content-heavy websites")
 
 
 if __name__ == "__main__":

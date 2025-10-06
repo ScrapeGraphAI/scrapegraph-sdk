@@ -300,13 +300,19 @@ for page in result["result"]["pages"]:
 - **depth** (default: 2): Maximum crawl depth (1-10)
 - **max_pages** (default: 2): Maximum pages to crawl (1-100)
 - **same_domain_only** (default: True): Only crawl pages from the same domain
-- **sitemap** (default: False): Use sitemap for better page discovery
+- **sitemap** (default: False): Use sitemap.xml for better page discovery and more comprehensive crawling
 - **cache_website** (default: True): Cache website content
 - **batch_size** (optional): Batch size for processing pages (1-10)
 
 **Cost Comparison:**
 - AI Extraction Mode: ~10 credits per page
 - Markdown Conversion Mode: ~2 credits per page (80% savings!)
+
+**Sitemap Benefits:**
+- Better page discovery using sitemap.xml
+- More comprehensive website coverage
+- Efficient crawling of structured websites
+- Perfect for e-commerce, news sites, and content-heavy websites
 
 </details>
 

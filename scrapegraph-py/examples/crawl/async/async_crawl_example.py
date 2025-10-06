@@ -67,6 +67,7 @@ async def main():
                 depth=2,
                 max_pages=2,
                 same_domain_only=True,
+                sitemap=True,  # Use sitemap for better page discovery
                 # batch_size is optional and will be excluded if not provided
             )
             execution_time = time.time() - start_time
