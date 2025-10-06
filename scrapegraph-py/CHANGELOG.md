@@ -1,3 +1,10 @@
+## [1.32.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.31.0...v1.32.0) (2025-10-06)
+
+
+### Features
+
+* update smartcrawler with sitemamp functionalities ([73e1e42](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/73e1e42361d80f7042c5082722f1ac49724b6cde))
+
 ## [1.31.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.30.0...v1.31.0) (2025-09-17)
 
 
