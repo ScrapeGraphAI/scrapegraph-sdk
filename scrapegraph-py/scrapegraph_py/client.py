@@ -28,6 +28,7 @@ from scrapegraph_py.models.searchscraper import (
     GetSearchScraperRequest,
     SearchScraperRequest,
 )
+from scrapegraph_py.models.sitemap import SitemapRequest, SitemapResponse
 from scrapegraph_py.models.smartscraper import (
     GetSmartScraperRequest,
     SmartScraperRequest,
@@ -454,6 +455,49 @@ class Client:
         result = self._make_request("GET", f"{API_BASE_URL}/scrape/{request_id}")
         logger.info(f"✨ Successfully retrieved result for request {request_id}")
         return result
+
+    def sitemap(
+        self,
+        website_url: str,
+        mock: bool = False,
+    ) -> SitemapResponse:
+        """Extract all URLs from a website's sitemap.
+
+        Automatically discovers sitemap from robots.txt or common sitemap locations.
+
+        Args:
+            website_url: The URL of the website to extract sitemap from
+            mock: Whether to use mock mode for this request
+
+        Returns:
+            SitemapResponse: Object containing list of URLs extracted from sitemap
+
+        Raises:
+            ValueError: If website_url is invalid
+            APIError: If the API request fails
+
+        Examples:
+            >>> client = Client(api_key="your-api-key")
+            >>> response = client.sitemap("https://example.com")
+            >>> print(f"Found {len(response.urls)} URLs")
+            >>> for url in response.urls[:5]:
+            ...     print(url)
+        """
+        logger.info(f"🗺️  Starting sitemap extraction for {website_url}")
+
+        request = SitemapRequest(
+            website_url=website_url,
+            mock=mock
+        )
+        logger.debug("✅ Request validation passed")
+
+        result = self._make_request(
+            "POST", f"{API_BASE_URL}/sitemap", json=request.model_dump()
+        )
+        logger.info(f"✨ Sitemap extraction completed successfully - found {len(result.get('urls', []))} URLs")
+
+        # Parse response into SitemapResponse model
+        return SitemapResponse(**result)
 
     def smartscraper(
         self,
