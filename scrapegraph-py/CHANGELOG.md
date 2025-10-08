@@ -1,3 +1,16 @@
+## [1.34.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.33.0...v1.34.0) (2025-10-08)
+
+
+### Features
+
+* add sitemap endpoint ([f5e907e](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/f5e907ed5de2974817d9fb9bba7b66a0a209b24e))
+* add sitemap example ([e07cd76](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/e07cd769e6baaff4961f48723e7703cab48e61e6))
+
+
+### Docs
+
+* update for agentic doc oriented development ([d0a10e5](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/d0a10e5b1e838a6867317955253a7f5696593601))
+
 ## [1.33.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.32.0...v1.33.0) (2025-10-06)
 
 
