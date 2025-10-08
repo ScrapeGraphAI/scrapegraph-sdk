@@ -1,4 +1,14 @@
-# Models for markdownify endpoint
+"""
+Pydantic models for the Markdownify API endpoint.
+
+This module defines request and response models for the Markdownify endpoint,
+which converts web pages into clean markdown format.
+
+The Markdownify endpoint is useful for:
+- Converting HTML to markdown for easier processing
+- Extracting clean text content from websites
+- Preparing content for LLM consumption
+"""
 
 from typing import Optional
 from uuid import UUID
@@ -7,6 +17,20 @@ from pydantic import BaseModel, Field, model_validator
 
 
 class MarkdownifyRequest(BaseModel):
+    """
+    Request model for the Markdownify endpoint.
+
+    This model validates and structures requests for converting web pages
+    to markdown format.
+
+    Attributes:
+        website_url: URL of the website to convert to markdown
+        headers: Optional HTTP headers including cookies
+        mock: Whether to use mock mode for testing
+
+    Example:
+        >>> request = MarkdownifyRequest(website_url="https://example.com")
+    """
     website_url: str = Field(..., example="https://scrapegraphai.com/")
     headers: Optional[dict[str, str]] = Field(
         None,

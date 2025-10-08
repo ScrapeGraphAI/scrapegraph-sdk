@@ -1,3 +1,38 @@
+"""
+Asynchronous HTTP client for the ScrapeGraphAI API.
+
+This module provides an asynchronous client for interacting with all ScrapeGraphAI
+API endpoints including smartscraper, searchscraper, crawl, agentic scraper,
+markdownify, schema generation, scheduled jobs, and utility functions.
+
+The AsyncClient class supports:
+- API key authentication
+- SSL verification configuration
+- Request timeout configuration
+- Automatic retry logic with exponential backoff
+- Mock mode for testing
+- Async context manager support for proper resource cleanup
+- Concurrent requests using asyncio
+
+Example:
+    Basic usage with environment variables:
+        >>> import asyncio
+        >>> from scrapegraph_py import AsyncClient
+        >>> async def main():
+        ...     client = AsyncClient.from_env()
+        ...     result = await client.smartscraper(
+        ...         website_url="https://example.com",
+        ...         user_prompt="Extract product information"
+        ...     )
+        ...     await client.close()
+        >>> asyncio.run(main())
+
+    Using async context manager:
+        >>> async def main():
+        ...     async with AsyncClient(api_key="sgai-...") as client:
+        ...         result = await client.scrape(website_url="https://example.com")
+        >>> asyncio.run(main())
+"""
 import asyncio
 from typing import Any, Dict, Optional, Callable
 
@@ -44,6 +79,30 @@ from scrapegraph_py.utils.helpers import handle_async_response, validate_api_key
 
 
 class AsyncClient:
+    """
+    Asynchronous client for the ScrapeGraphAI API.
+
+    This class provides asynchronous methods for all ScrapeGraphAI API endpoints.
+    It handles authentication, request management, error handling, and supports
+    mock mode for testing. Uses aiohttp for efficient async HTTP requests.
+
+    Attributes:
+        api_key (str): The API key for authentication
+        headers (dict): Default headers including API key
+        timeout (ClientTimeout): Request timeout configuration
+        max_retries (int): Maximum number of retry attempts
+        retry_delay (float): Base delay between retries in seconds
+        mock (bool): Whether mock mode is enabled
+        session (ClientSession): Aiohttp session for connection pooling
+
+    Example:
+        >>> async def example():
+        ...     async with AsyncClient.from_env() as client:
+        ...         result = await client.smartscraper(
+        ...             website_url="https://example.com",
+        ...             user_prompt="Extract all products"
+        ...         )
+    """
     @classmethod
     def from_env(
         cls,
@@ -144,7 +203,25 @@ class AsyncClient:
         logger.info("✅ AsyncClient initialized successfully")
 
     async def _make_request(self, method: str, url: str, **kwargs) -> Any:
-        """Make HTTP request with retry logic."""
+        """
+        Make asynchronous HTTP request with retry logic and error handling.
+
+        Args:
+            method: HTTP method (GET, POST, etc.)
+            url: Full URL for the request
+            **kwargs: Additional arguments to pass to aiohttp
+
+        Returns:
+            Parsed JSON response data
+
+        Raises:
+            APIError: If the API returns an error response
+            ConnectionError: If unable to connect after all retries
+
+        Note:
+            In mock mode, this method returns deterministic responses without
+            making actual HTTP requests.
+        """
         # Short-circuit when mock mode is enabled
         if getattr(self, "mock", False):
             return self._mock_response(method, url, **kwargs)

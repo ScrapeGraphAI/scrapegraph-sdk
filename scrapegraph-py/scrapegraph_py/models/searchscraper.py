@@ -1,4 +1,16 @@
-# Models for searchscraper endpoint
+"""
+Pydantic models for the SearchScraper API endpoint.
+
+This module defines request and response models for the SearchScraper endpoint,
+which performs AI-powered web research by searching, scraping, and synthesizing
+information from multiple sources.
+
+The SearchScraper:
+- Searches the web for relevant pages based on a query
+- Scrapes multiple websites (3-20 configurable)
+- Extracts and synthesizes information using AI
+- Supports both AI extraction and markdown conversion modes
+"""
 
 from typing import Optional, Type
 from uuid import UUID
@@ -7,6 +19,28 @@ from pydantic import BaseModel, Field, model_validator
 
 
 class SearchScraperRequest(BaseModel):
+    """
+    Request model for the SearchScraper endpoint.
+
+    This model validates and structures requests for web research and scraping
+    across multiple search results.
+
+    Attributes:
+        user_prompt: The search query/prompt
+        num_results: Number of websites to scrape (3-20, default 3)
+        headers: Optional HTTP headers
+        output_schema: Optional Pydantic model for structured extraction
+        extraction_mode: Use AI extraction (True) or markdown (False)
+        mock: Whether to use mock mode for testing
+        render_heavy_js: Whether to render heavy JavaScript
+
+    Example:
+        >>> request = SearchScraperRequest(
+        ...     user_prompt="What is the latest version of Python?",
+        ...     num_results=5,
+        ...     extraction_mode=True
+        ... )
+    """
     user_prompt: str = Field(..., example="What is the latest version of Python?")
     num_results: Optional[int] = Field(
         default=3,
