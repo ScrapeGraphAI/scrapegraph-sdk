@@ -212,6 +212,7 @@ Both SDKs support the following endpoints:
 | SmartScraper | ✅ | ✅ | AI-powered data extraction |
 | SearchScraper | ✅ | ✅ | Multi-website search extraction |
 | Markdownify | ✅ | ✅ | HTML to Markdown conversion |
+| Sitemap | ❌ | ✅ | Sitemap URL extraction |
 | SmartCrawler | ✅ | ✅ | Sitemap generation & crawling |
 | AgenticScraper | ✅ | ✅ | Browser automation |
 | Scrape | ✅ | ✅ | Basic HTML extraction |
@@ -259,6 +260,7 @@ Both SDKs support the following endpoints:
   - `searchScraper.js`
   - `crawl.js`
   - `markdownify.js`
+  - `sitemap.js`
   - `agenticScraper.js`
   - `scrape.js`
   - `scheduledJobs.js`

@@ -7,17 +7,18 @@ export { getCredits } from './src/credits.js';
 export { sendFeedback } from './src/feedback.js';
 export { crawl, getCrawlRequest } from './src/crawl.js';
 export { generateSchema, getSchemaStatus, pollSchemaGeneration } from './src/schema.js';
-export { 
-  createScheduledJob, 
-  getScheduledJobs, 
-  getScheduledJob, 
-  updateScheduledJob, 
-  replaceScheduledJob, 
-  deleteScheduledJob, 
-  pauseScheduledJob, 
-  resumeScheduledJob, 
-  triggerScheduledJob, 
-  getJobExecutions 
+export { sitemap } from './src/sitemap.js';
+export {
+  createScheduledJob,
+  getScheduledJobs,
+  getScheduledJob,
+  updateScheduledJob,
+  replaceScheduledJob,
+  deleteScheduledJob,
+  pauseScheduledJob,
+  resumeScheduledJob,
+  triggerScheduledJob,
+  getJobExecutions
 } from './src/scheduledJobs.js';
 
 // Mock utilities
