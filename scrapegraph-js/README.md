@@ -451,6 +451,27 @@ const url = 'https://scrapegraphai.com/';
 })();
 ```
 
+### Sitemap
+
+Extract all URLs from a website's sitemap. Automatically discovers sitemap from robots.txt or common sitemap locations.
+
+```javascript
+import { sitemap } from 'scrapegraph-js';
+
+const apiKey = 'your-api-key';
+const websiteUrl = 'https://example.com';
+
+(async () => {
+  try {
+    const response = await sitemap(apiKey, websiteUrl);
+    console.log('Total URLs found:', response.urls.length);
+    console.log('URLs:', response.urls);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+})();
+```
+
 ### Checking API Credits
 
 ```javascript
@@ -687,6 +708,21 @@ Starts a crawl job to extract structured data from a website and its linked page
 #### `markdownify(apiKey, url, headers)`
 
 Converts a webpage into clean, well-structured markdown format.
+
+### Sitemap
+
+#### `sitemap(apiKey, websiteUrl, options)`
+
+Extracts all URLs from a website's sitemap. Automatically discovers sitemap from robots.txt or common sitemap locations.
+
+**Parameters:**
+- `apiKey` (string): Your ScrapeGraph AI API key
+- `websiteUrl` (string): The URL of the website to extract sitemap from
+- `options` (object, optional): Additional options
+  - `mock` (boolean): Override mock mode for this request
+
+**Returns:** Promise resolving to an object containing:
+- `urls` (array): List of URLs extracted from the sitemap
 
 ### Agentic Scraper
 

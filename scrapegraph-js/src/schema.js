@@ -2,7 +2,7 @@
  * Schema generation functionality for ScrapeGraph JavaScript SDK
  */
 
-import { handleError } from './utils/handleError.js';
+import handleError from './utils/handleError.js';
 
 /**
  * Generate a JSON schema from a user prompt
