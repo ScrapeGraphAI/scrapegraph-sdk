@@ -1,3 +1,20 @@
+"""
+Logging utilities for the ScrapeGraphAI SDK.
+
+This module provides a custom logging system with emoji support and
+configurable output for debugging and monitoring SDK operations.
+
+The logger can be enabled/disabled dynamically and supports both
+console and file output with customizable formatting.
+
+Example:
+    Enable logging:
+        >>> from scrapegraph_py.logger import sgai_logger
+        >>> sgai_logger.set_logging(level="DEBUG", log_file="scraping.log")
+
+    Disable logging:
+        >>> sgai_logger.disable()
+"""
 import logging
 import logging.handlers
 from typing import Dict, Optional
@@ -13,9 +30,25 @@ LOG_EMOJIS: Dict[int, str] = {
 
 
 class EmojiFormatter(logging.Formatter):
-    """Custom formatter that adds emojis to log messages"""
+    """
+    Custom log formatter that adds emojis to log messages.
+
+    This formatter enhances log messages by prepending relevant emojis
+    based on the log level, making logs more visually distinctive.
+
+    The emoji is added to the log record before formatting.
+    """
 
     def format(self, record: logging.LogRecord) -> str:
+        """
+        Format the log record with an emoji prefix.
+
+        Args:
+            record: The log record to format
+
+        Returns:
+            Formatted log string with emoji prefix
+        """
         # Add emoji based on log level
         emoji = LOG_EMOJIS.get(record.levelno, "")
         record.emoji = emoji
@@ -23,7 +56,22 @@ class EmojiFormatter(logging.Formatter):
 
 
 class ScrapegraphLogger:
-    """Class to manage Scrapegraph logging configuration"""
+    """
+    Singleton logger manager for the ScrapeGraphAI SDK.
+
+    This class manages SDK-wide logging configuration, providing methods
+    to enable, disable, and configure logging behavior. It implements the
+    singleton pattern to ensure consistent logging across the SDK.
+
+    Attributes:
+        logger (logging.Logger): The underlying Python logger instance
+        enabled (bool): Whether logging is currently enabled
+
+    Example:
+        >>> logger = ScrapegraphLogger()
+        >>> logger.set_logging(level="INFO", log_file="api.log")
+        >>> logger.info("Starting API request")
+    """
 
     _instance = None
     _initialized = False
@@ -85,32 +133,62 @@ class ScrapegraphLogger:
             self.logger.addHandler(file_handler)
 
     def disable(self) -> None:
-        """Disable all logging"""
+        """
+        Disable all logging.
+
+        Clears all handlers and sets enabled flag to False, effectively
+        silencing all log output from the SDK.
+        """
         self.logger.handlers.clear()
         self.enabled = False
 
     def debug(self, message: str) -> None:
-        """Log debug message if logging is enabled"""
+        """
+        Log debug message if logging is enabled.
+
+        Args:
+            message: The debug message to log
+        """
         if self.enabled:
             self.logger.debug(message)
 
     def info(self, message: str) -> None:
-        """Log info message if logging is enabled"""
+        """
+        Log info message if logging is enabled.
+
+        Args:
+            message: The info message to log
+        """
         if self.enabled:
             self.logger.info(message)
 
     def warning(self, message: str) -> None:
-        """Log warning message if logging is enabled"""
+        """
+        Log warning message if logging is enabled.
+
+        Args:
+            message: The warning message to log
+        """
         if self.enabled:
             self.logger.warning(message)
 
     def error(self, message: str) -> None:
-        """Log error message if logging is enabled"""
+        """
+        Log error message if logging is enabled.
+
+        Args:
+            message: The error message to log
+        """
         if self.enabled:
             self.logger.error(message)
 
     def critical(self, message: str) -> None:
-        """Log critical message if logging is enabled"""
+        """
+        Log critical message if logging is enabled.
+
+        Args:
+            message: The critical message to log
+        """
         if self.enabled:
             self.logger.critical(message)
 

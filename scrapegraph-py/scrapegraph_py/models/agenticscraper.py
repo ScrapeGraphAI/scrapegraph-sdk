@@ -1,4 +1,15 @@
-# Models for agentic scraper endpoint
+"""
+Pydantic models for the Agentic Scraper API endpoint.
+
+This module defines request and response models for the Agentic Scraper endpoint,
+which performs automated browser interactions and optional AI data extraction.
+
+The Agentic Scraper can:
+- Execute a sequence of browser actions (click, type, scroll, etc.)
+- Handle authentication flows and form submissions
+- Optionally extract structured data using AI after interactions
+- Maintain browser sessions across multiple steps
+"""
 
 from typing import Any, Dict, List, Optional
 from uuid import UUID
@@ -7,6 +18,35 @@ from pydantic import BaseModel, Field, model_validator
 
 
 class AgenticScraperRequest(BaseModel):
+    """
+    Request model for the Agentic Scraper endpoint.
+
+    This model validates and structures requests for automated browser
+    interactions with optional AI extraction.
+
+    Attributes:
+        url: The starting URL for the scraping session
+        use_session: Whether to maintain browser session across steps
+        steps: List of actions to perform (e.g., "Type email@example.com in email input")
+        user_prompt: Optional prompt for AI extraction (required if ai_extraction=True)
+        output_schema: Optional schema for structured data extraction
+        ai_extraction: Whether to use AI for data extraction after interactions
+        headers: Optional HTTP headers
+        mock: Whether to use mock mode for testing
+        render_heavy_js: Whether to render heavy JavaScript
+
+    Example:
+        >>> request = AgenticScraperRequest(
+        ...     url="https://dashboard.example.com",
+        ...     steps=[
+        ...         "Type user@example.com in email input",
+        ...         "Type password123 in password input",
+        ...         "Click login button"
+        ...     ],
+        ...     ai_extraction=True,
+        ...     user_prompt="Extract user dashboard information"
+        ... )
+    """
     url: str = Field(
         ...,
         example="https://dashboard.scrapegraphai.com/",

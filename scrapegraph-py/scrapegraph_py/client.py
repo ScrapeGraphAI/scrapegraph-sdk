@@ -1,4 +1,31 @@
-# Client implementation goes here
+"""
+Synchronous HTTP client for the ScrapeGraphAI API.
+
+This module provides a synchronous client for interacting with all ScrapeGraphAI
+API endpoints including smartscraper, searchscraper, crawl, agentic scraper,
+markdownify, schema generation, scheduled jobs, and utility functions.
+
+The Client class supports:
+- API key authentication
+- SSL verification configuration
+- Request timeout configuration
+- Automatic retry logic with exponential backoff
+- Mock mode for testing
+- Context manager support for proper resource cleanup
+
+Example:
+    Basic usage with environment variables:
+        >>> from scrapegraph_py import Client
+        >>> client = Client.from_env()
+        >>> result = client.smartscraper(
+        ...     website_url="https://example.com",
+        ...     user_prompt="Extract product information"
+        ... )
+
+    Using context manager:
+        >>> with Client(api_key="sgai-...") as client:
+        ...     result = client.scrape(website_url="https://example.com")
+"""
 import uuid as _uuid
 from typing import Any, Callable, Dict, Optional
 from urllib.parse import urlparse
@@ -50,6 +77,29 @@ from scrapegraph_py.utils.helpers import handle_sync_response, validate_api_key
 
 
 class Client:
+    """
+    Synchronous client for the ScrapeGraphAI API.
+
+    This class provides synchronous methods for all ScrapeGraphAI API endpoints.
+    It handles authentication, request management, error handling, and supports
+    mock mode for testing.
+
+    Attributes:
+        api_key (str): The API key for authentication
+        headers (dict): Default headers including API key
+        timeout (Optional[float]): Request timeout in seconds
+        max_retries (int): Maximum number of retry attempts
+        retry_delay (float): Delay between retries in seconds
+        mock (bool): Whether mock mode is enabled
+        session (requests.Session): HTTP session for connection pooling
+
+    Example:
+        >>> client = Client.from_env()
+        >>> result = client.smartscraper(
+        ...     website_url="https://example.com",
+        ...     user_prompt="Extract all products"
+        ... )
+    """
     @classmethod
     def from_env(
         cls,
@@ -173,7 +223,25 @@ class Client:
         logger.info("✅ Client initialized successfully")
 
     def _make_request(self, method: str, url: str, **kwargs) -> Any:
-        """Make HTTP request with error handling."""
+        """
+        Make HTTP request with error handling and retry logic.
+
+        Args:
+            method: HTTP method (GET, POST, etc.)
+            url: Full URL for the request
+            **kwargs: Additional arguments to pass to requests
+
+        Returns:
+            Parsed JSON response data
+
+        Raises:
+            APIError: If the API returns an error response
+            ConnectionError: If unable to connect to the API
+
+        Note:
+            In mock mode, this method returns deterministic responses without
+            making actual HTTP requests.
+        """
         # Short-circuit when mock mode is enabled
         if getattr(self, "mock", False):
             return self._mock_response(method, url, **kwargs)

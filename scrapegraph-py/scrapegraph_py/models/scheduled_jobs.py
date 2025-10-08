@@ -1,10 +1,31 @@
+"""
+Pydantic models for the Scheduled Jobs API endpoints.
+
+This module defines request and response models for managing scheduled jobs,
+which allow you to automate recurring scraping tasks using cron expressions.
+
+Scheduled Jobs support:
+- Creating recurring scraping jobs
+- Managing job lifecycle (pause, resume, delete)
+- Manually triggering jobs on demand
+- Viewing execution history
+- Filtering and pagination
+"""
+
 from typing import Any, Dict, Optional
 from enum import Enum
 from pydantic import BaseModel, Field
 
 
 class ServiceType(str, Enum):
-    """Enum for service types"""
+    """
+    Enum defining available service types for scheduled jobs.
+
+    Available services:
+        SMART_SCRAPER: AI-powered web scraping
+        SEARCH_SCRAPER: Web research across multiple sources
+        AGENTIC_SCRAPER: Automated browser interactions
+    """
     SMART_SCRAPER = "smartscraper"
     SEARCH_SCRAPER = "searchscraper"
     AGENTIC_SCRAPER = "agenticscraper"
