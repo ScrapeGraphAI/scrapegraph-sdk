@@ -1,3 +1,10 @@
+## [1.35.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.34.0...v1.35.0) (2025-10-15)
+
+
+### Features
+
+* add docstring ([8984f4b](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/8984f4b36849a078fc05da8abdf66d646216c022))
+
 ## [1.34.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.33.0...v1.34.0) (2025-10-08)
 
 
