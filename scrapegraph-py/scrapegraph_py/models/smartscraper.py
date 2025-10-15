@@ -1,4 +1,16 @@
-# Models for smartscraper endpoint
+"""
+Pydantic models for the SmartScraper API endpoint.
+
+This module defines request and response models for the SmartScraper endpoint,
+which performs AI-powered web scraping with optional pagination and scrolling support.
+
+The SmartScraper can:
+- Extract structured data from websites based on user prompts
+- Handle infinite scroll scenarios
+- Support pagination across multiple pages
+- Accept custom output schemas for structured extraction
+- Process either URLs or raw HTML content
+"""
 
 from typing import Dict, Optional, Type
 from uuid import UUID
@@ -8,6 +20,31 @@ from pydantic import BaseModel, Field, conint, model_validator
 
 
 class SmartScraperRequest(BaseModel):
+    """
+    Request model for the SmartScraper endpoint.
+
+    This model validates and structures requests for AI-powered web scraping.
+    You must provide either website_url or website_html (but not both).
+
+    Attributes:
+        user_prompt: Natural language prompt describing what to extract
+        website_url: URL of the website to scrape (optional)
+        website_html: Raw HTML content to scrape (optional, max 2MB)
+        headers: Optional HTTP headers including cookies
+        cookies: Optional cookies for authentication/session management
+        output_schema: Optional Pydantic model defining the output structure
+        number_of_scrolls: Number of times to scroll (0-100) for infinite scroll pages
+        total_pages: Number of pages to scrape (1-10) for pagination
+        mock: Whether to use mock mode for testing
+        plain_text: Whether to return plain text instead of structured data
+        render_heavy_js: Whether to render heavy JavaScript content
+
+    Example:
+        >>> request = SmartScraperRequest(
+        ...     website_url="https://example.com",
+        ...     user_prompt="Extract all product names and prices"
+        ... )
+    """
     user_prompt: str = Field(
         ...,
         example="Extract info about the company",

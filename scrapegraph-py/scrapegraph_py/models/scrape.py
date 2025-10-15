@@ -1,4 +1,14 @@
-# Models for scrape endpoint
+"""
+Pydantic models for the Scrape API endpoint.
+
+This module defines request and response models for the basic Scrape endpoint,
+which retrieves raw HTML content from websites.
+
+The Scrape endpoint is useful for:
+- Getting clean HTML content from websites
+- Handling JavaScript-heavy sites
+- Preprocessing before AI extraction
+"""
 
 from typing import Optional
 from uuid import UUID
@@ -7,6 +17,24 @@ from pydantic import BaseModel, Field, model_validator
 
 
 class ScrapeRequest(BaseModel):
+    """
+    Request model for the Scrape endpoint.
+
+    This model validates and structures requests for basic HTML scraping
+    without AI extraction.
+
+    Attributes:
+        website_url: URL of the website to scrape
+        render_heavy_js: Whether to render heavy JavaScript (default: False)
+        headers: Optional HTTP headers including cookies
+        mock: Whether to use mock mode for testing
+
+    Example:
+        >>> request = ScrapeRequest(
+        ...     website_url="https://example.com",
+        ...     render_heavy_js=True
+        ... )
+    """
     website_url: str = Field(..., example="https://scrapegraphai.com/")
     render_heavy_js: bool = Field(
         False,

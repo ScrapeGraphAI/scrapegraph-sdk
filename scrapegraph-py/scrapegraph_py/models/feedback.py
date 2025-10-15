@@ -1,4 +1,9 @@
-# Models for feedback endpoint
+"""
+Pydantic models for the Feedback API endpoint.
+
+This module defines request models for submitting user feedback about
+API requests, helping improve the service quality.
+"""
 
 from typing import Optional
 from uuid import UUID

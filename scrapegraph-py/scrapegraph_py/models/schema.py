@@ -1,4 +1,14 @@
-# Models for schema generation endpoint
+"""
+Pydantic models for the Schema Generation API endpoint.
+
+This module defines request and response models for the Schema Generation endpoint,
+which uses AI to generate or refine JSON schemas based on user prompts.
+
+The Schema Generation endpoint can:
+- Generate new schemas from natural language descriptions
+- Refine and extend existing schemas
+- Create structured data models for web scraping
+"""
 
 from typing import Any, Dict, Optional
 from uuid import UUID
