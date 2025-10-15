@@ -16,6 +16,7 @@ import { getMockResponse } from './utils/mockResponse.js';
  * @param {Object} options - Optional configuration options
  * @param {boolean} options.mock - Override mock mode for this request
  * @param {boolean} options.renderHeavyJs - Whether to render heavy JavaScript on the page
+ * @param {boolean} [options.stealth=false] - Enable stealth mode to avoid bot detection
  * @returns {Promise<Object>} Response from the API containing request_id and initial status
  * @throws {Error} Will throw an error in case of an HTTP failure or invalid parameters.
  *
@@ -52,9 +53,9 @@ import { getMockResponse } from './utils/mockResponse.js';
  *
  * try {
  *   const result = await agenticScraper(
- *     apiKey, 
- *     url, 
- *     steps, 
+ *     apiKey,
+ *     url,
+ *     steps,
  *     true,
  *     "Extract user information and available dashboard sections",
  *     outputSchema,
@@ -66,7 +67,7 @@ import { getMockResponse } from './utils/mockResponse.js';
  * }
  */
 export async function agenticScraper(apiKey, url, steps, useSession = true, userPrompt = null, outputSchema = null, aiExtraction = false, options = {}) {
-  const { mock = null, renderHeavyJs = false } = options;
+  const { mock = null, renderHeavyJs = false, stealth = false } = options;
 
   // Check if mock mode is enabled
   const useMock = mock !== null ? mock : isMockEnabled();
@@ -132,6 +133,10 @@ export async function agenticScraper(apiKey, url, steps, useSession = true, user
     ai_extraction: aiExtraction,
     render_heavy_js: renderHeavyJs,
   };
+
+  if (stealth) {
+    payload.stealth = stealth;
+  }
 
   // Add AI extraction parameters if enabled
   if (aiExtraction) {

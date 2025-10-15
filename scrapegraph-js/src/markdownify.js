@@ -10,11 +10,12 @@ import { getMockResponse } from './utils/mockResponse.js';
  * @param {string} url - The URL of the webpage to be converted.
  * @param {Object} options - Optional configuration options.
  * @param {boolean} options.mock - Override mock mode for this request
+ * @param {boolean} [options.stealth=false] - Enable stealth mode to avoid bot detection
  * @returns {Promise<string>} A promise that resolves to the markdown representation of the webpage.
  * @throws {Error} Throws an error if the HTTP request fails.
  */
 export async function markdownify(apiKey, url, options = {}) {
-  const { mock = null } = options;
+  const { mock = null, stealth = false } = options;
 
   // Check if mock mode is enabled
   const useMock = mock !== null ? mock : isMockEnabled();
@@ -35,6 +36,10 @@ export async function markdownify(apiKey, url, options = {}) {
   const payload = {
     website_url: url,
   };
+
+  if (stealth) {
+    payload.stealth = stealth;
+  }
 
   try {
     const response = await axios.post(endpoint, payload, { headers });
