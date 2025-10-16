@@ -1,3 +1,10 @@
+## [1.36.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.35.0...v1.36.0) (2025-10-16)
+
+
+### Features
+
+* add stealth mode ([0d658c1](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/0d658c18ca50588fb165a8e57cd761bef0fbf318))
+
 ## [1.35.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.34.0...v1.35.0) (2025-10-15)
 
 
