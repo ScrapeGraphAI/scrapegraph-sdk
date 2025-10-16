@@ -11,6 +11,7 @@ import { getMockResponse, createMockAxiosResponse } from './utils/mockResponse.j
  * @param {Object} options - Optional configuration options.
  * @param {boolean} options.renderHeavyJs - Whether to render heavy JavaScript (defaults to false).
  * @param {Object} options.headers - Optional custom headers to send with the request.
+ * @param {boolean} [options.stealth=false] - Enable stealth mode to avoid bot detection
  * @returns {Promise<Object>} A promise that resolves to the HTML content and metadata.
  * @throws {Error} Throws an error if the HTTP request fails.
  *
@@ -47,7 +48,8 @@ export async function scrape(apiKey, url, options = {}) {
   const {
     renderHeavyJs = false,
     headers: customHeaders = {},
-    mock = null
+    mock = null,
+    stealth = false
   } = options;
 
   // Check if mock mode is enabled
@@ -72,6 +74,10 @@ export async function scrape(apiKey, url, options = {}) {
     website_url: url,
     render_heavy_js: renderHeavyJs,
   };
+
+  if (stealth) {
+    payload.stealth = stealth;
+  }
 
   // Only include headers in payload if they are provided
   if (Object.keys(customHeaders).length > 0) {

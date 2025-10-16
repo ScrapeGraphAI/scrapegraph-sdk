@@ -22,6 +22,7 @@ import { getMockResponse } from './utils/mockResponse.js';
  * @param {number} [options.batchSize=1] - Batch size for processing pages (1-10)
  * @param {boolean} [options.mock] - Override mock mode for this request
  * @param {boolean} [options.renderHeavyJs=false] - Whether to render heavy JavaScript on the page
+ * @param {boolean} [options.stealth=false] - Enable stealth mode to avoid bot detection
  * @returns {Promise<Object>} The crawl job response
  * @throws {Error} Throws an error if the HTTP request fails
  */
@@ -32,7 +33,7 @@ export async function crawl(
   schema,
   options = {}
 ) {
-  const { mock = null, renderHeavyJs = false } = options;
+  const { mock = null, renderHeavyJs = false, stealth = false } = options;
 
   // Check if mock mode is enabled
   const useMock = mock !== null ? mock : isMockEnabled();
@@ -82,6 +83,10 @@ export async function crawl(
     batch_size: batchSize,
     render_heavy_js: renderHeavyJs,
   };
+
+  if (stealth) {
+    payload.stealth = stealth;
+  }
 
   try {
     const response = await axios.post(endpoint, payload, { headers });

@@ -16,10 +16,11 @@ import { getMockResponse, createMockAxiosResponse } from './utils/mockResponse.j
  * @param {number} [totalPages] - Optional number of pages to scrape (1-10). If not provided, only the first page will be scraped.
  * @param {Object} [cookies] - Optional cookies object for authentication and session management
  * @param {boolean} [renderHeavyJs] - Optional flag to enable heavy JavaScript rendering on the page
+ * @param {boolean} [stealth] - Optional flag to enable stealth mode to avoid bot detection
  * @returns {Promise<string>} Extracted data in JSON format matching the provided schema
  * @throws - Will throw an error in case of an HTTP failure.
  */
-export async function smartScraper(apiKey, url, prompt, schema = null, numberOfScrolls = null, totalPages = null, cookies = null, options = {}, plain_text = false, renderHeavyJs = false) {
+export async function smartScraper(apiKey, url, prompt, schema = null, numberOfScrolls = null, totalPages = null, cookies = null, options = {}, plain_text = false, renderHeavyJs = false, stealth = false) {
   const { mock = null } = options;
 
   // Check if mock mode is enabled
@@ -77,6 +78,10 @@ export async function smartScraper(apiKey, url, prompt, schema = null, numberOfS
       throw new Error('totalPages must be an integer between 1 and 10');
     }
     payload.total_pages = totalPages;
+  }
+
+  if (stealth) {
+    payload.stealth = stealth;
   }
 
   try {

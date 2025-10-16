@@ -73,6 +73,7 @@ class CrawlRequest(BaseModel):
         "and user agent",
     )
     render_heavy_js: bool = Field(default=False, description="Whether to render heavy JavaScript on the page")
+    stealth: bool = Field(default=False, description="Enable stealth mode to avoid bot detection")
 
     @model_validator(mode="after")
     def validate_url(self) -> "CrawlRequest":

@@ -452,13 +452,15 @@ class Client:
         # Generic fallback
         return {"status": "mock", "url": url, "method": method, "kwargs": kwargs}
 
-    def markdownify(self, website_url: str, headers: Optional[dict[str, str]] = None, mock:bool=False):
+    def markdownify(self, website_url: str, headers: Optional[dict[str, str]] = None, mock:bool=False, stealth:bool=False):
         """Send a markdownify request"""
         logger.info(f"🔍 Starting markdownify request for {website_url}")
         if headers:
             logger.debug("🔧 Using custom headers")
+        if stealth:
+            logger.debug("🥷 Stealth mode enabled")
 
-        request = MarkdownifyRequest(website_url=website_url, headers=headers, mock=mock)
+        request = MarkdownifyRequest(website_url=website_url, headers=headers, mock=mock, stealth=stealth)
         logger.debug("✅ Request validation passed")
 
         result = self._make_request(
@@ -485,24 +487,29 @@ class Client:
         render_heavy_js: bool = False,
         headers: Optional[dict[str, str]] = None,
         mock:bool=False,
+        stealth:bool=False,
     ):
         """Send a scrape request to get HTML content from a website
-        
+
         Args:
             website_url: The URL of the website to get HTML from
             render_heavy_js: Whether to render heavy JavaScript (defaults to False)
             headers: Optional headers to send with the request
+            stealth: Enable stealth mode to avoid bot detection
         """
         logger.info(f"🔍 Starting scrape request for {website_url}")
         logger.debug(f"🔧 Render heavy JS: {render_heavy_js}")
         if headers:
             logger.debug("🔧 Using custom headers")
+        if stealth:
+            logger.debug("🥷 Stealth mode enabled")
 
         request = ScrapeRequest(
             website_url=website_url,
             render_heavy_js=render_heavy_js,
             headers=headers,
-            mock=mock
+            mock=mock,
+            stealth=stealth
         )
         logger.debug("✅ Request validation passed")
 
@@ -578,7 +585,8 @@ class Client:
         number_of_scrolls: Optional[int] = None,
         total_pages: Optional[int] = None,
         mock:bool=False,
-        plain_text:bool=False
+        plain_text:bool=False,
+        stealth:bool=False
     ):
         """Send a smartscraper request with optional pagination support and cookies"""
         logger.info("🔍 Starting smartscraper request")
@@ -594,6 +602,8 @@ class Client:
             logger.debug(f"🔄 Number of scrolls: {number_of_scrolls}")
         if total_pages is not None:
             logger.debug(f"📄 Total pages to scrape: {total_pages}")
+        if stealth:
+            logger.debug("🥷 Stealth mode enabled")
         logger.debug(f"📝 Prompt: {user_prompt}")
 
         request = SmartScraperRequest(
@@ -607,6 +617,7 @@ class Client:
             total_pages=total_pages,
             mock=mock,
             plain_text=plain_text,
+            stealth=stealth,
         )
         logger.debug("✅ Request validation passed")
 
@@ -667,7 +678,8 @@ class Client:
         headers: Optional[dict[str, str]] = None,
         output_schema: Optional[BaseModel] = None,
         extraction_mode: bool = True,
-        mock: bool=False
+        mock: bool=False,
+        stealth: bool=False
     ):
         """Send a searchscraper request
 
@@ -681,6 +693,7 @@ class Client:
             output_schema: Optional schema to structure the output
             extraction_mode: Whether to use AI extraction (True) or markdown conversion (False).
                            AI extraction costs 10 credits per page, markdown conversion costs 2 credits per page.
+            stealth: Enable stealth mode to avoid bot detection
         """
         logger.info("🔍 Starting searchscraper request")
         logger.debug(f"📝 Prompt: {user_prompt}")
@@ -688,6 +701,8 @@ class Client:
         logger.debug(f"🤖 Extraction mode: {'AI extraction' if extraction_mode else 'Markdown conversion'}")
         if headers:
             logger.debug("🔧 Using custom headers")
+        if stealth:
+            logger.debug("🥷 Stealth mode enabled")
 
         request = SearchScraperRequest(
             user_prompt=user_prompt,
@@ -695,7 +710,8 @@ class Client:
             headers=headers,
             output_schema=output_schema,
             extraction_mode=extraction_mode,
-            mock=mock
+            mock=mock,
+            stealth=stealth
         )
         logger.debug("✅ Request validation passed")
 
@@ -729,6 +745,7 @@ class Client:
         same_domain_only: bool = True,
         batch_size: Optional[int] = None,
         sitemap: bool = False,
+        stealth: bool = False,
     ):
         """Send a crawl request with support for both AI extraction and
         markdown conversion modes"""
@@ -749,6 +766,8 @@ class Client:
         logger.debug(f"📄 Max pages: {max_pages}")
         logger.debug(f"🏠 Same domain only: {same_domain_only}")
         logger.debug(f"🗺️ Use sitemap: {sitemap}")
+        if stealth:
+            logger.debug("🥷 Stealth mode enabled")
         if batch_size is not None:
             logger.debug(f"📦 Batch size: {batch_size}")
 
@@ -761,6 +780,7 @@ class Client:
             "max_pages": max_pages,
             "same_domain_only": same_domain_only,
             "sitemap": sitemap,
+            "stealth": stealth,
         }
 
         # Add optional parameters only if provided
@@ -801,9 +821,10 @@ class Client:
         output_schema: Optional[Dict[str, Any]] = None,
         ai_extraction: bool = False,
         mock: bool=False,
+        stealth: bool=False,
     ):
         """Send an agentic scraper request to perform automated actions on a webpage
-        
+
         Args:
             url: The URL to scrape
             steps: List of steps to perform on the webpage
@@ -811,6 +832,7 @@ class Client:
             user_prompt: Prompt for AI extraction (required when ai_extraction=True)
             output_schema: Schema for structured data extraction (optional, used with ai_extraction=True)
             ai_extraction: Whether to use AI for data extraction from the scraped content (default: False)
+            stealth: Enable stealth mode to avoid bot detection
         """
         logger.info(f"🤖 Starting agentic scraper request for {url}")
         logger.debug(f"🔧 Use session: {use_session}")
@@ -819,6 +841,8 @@ class Client:
         if ai_extraction:
             logger.debug(f"💭 User prompt: {user_prompt}")
             logger.debug(f"📋 Output schema provided: {output_schema is not None}")
+        if stealth:
+            logger.debug("🥷 Stealth mode enabled")
 
         request = AgenticScraperRequest(
             url=url,
@@ -827,7 +851,8 @@ class Client:
             user_prompt=user_prompt,
             output_schema=output_schema,
             ai_extraction=ai_extraction,
-            mock=mock
+            mock=mock,
+            stealth=stealth
         )
         logger.debug("✅ Request validation passed")
 

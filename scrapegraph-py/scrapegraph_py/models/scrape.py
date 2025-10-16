@@ -50,6 +50,7 @@ class ScrapeRequest(BaseModel):
         "and user agent",
     ),
     mock: bool = Field(default=False, description="Whether to use mock mode for the request")
+    stealth: bool = Field(default=False, description="Enable stealth mode to avoid bot detection")
 
     @model_validator(mode="after")
     def validate_url(self) -> "ScrapeRequest":
