@@ -1,3 +1,10 @@
+## [1.38.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.37.0...v1.38.0) (2025-10-23)
+
+
+### Features
+
+* update js rendering ([07a898c](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/07a898c69e78d8b7af0242d995b42bd74928b94d))
+
 ## [1.37.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.36.0...v1.37.0) (2025-10-23)
 
 
