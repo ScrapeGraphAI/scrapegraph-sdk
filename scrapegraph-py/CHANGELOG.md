@@ -1,3 +1,10 @@
+## [1.37.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.36.0...v1.37.0) (2025-10-23)
+
+
+### Features
+
+* update render_heavy_js ([2a02cb9](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/2a02cb988fc860352bc679fc7cbc6a0c2dc85b4b))
+
 ## [1.36.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.35.0...v1.36.0) (2025-10-16)
 
 
