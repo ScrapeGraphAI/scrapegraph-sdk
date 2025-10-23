@@ -452,15 +452,17 @@ class Client:
         # Generic fallback
         return {"status": "mock", "url": url, "method": method, "kwargs": kwargs}
 
-    def markdownify(self, website_url: str, headers: Optional[dict[str, str]] = None, mock:bool=False, stealth:bool=False):
+    def markdownify(self, website_url: str, headers: Optional[dict[str, str]] = None, mock: bool = False, render_heavy_js: bool = False, stealth: bool = False):
         """Send a markdownify request"""
         logger.info(f"🔍 Starting markdownify request for {website_url}")
         if headers:
             logger.debug("🔧 Using custom headers")
         if stealth:
             logger.debug("🥷 Stealth mode enabled")
+        if render_heavy_js:
+            logger.debug("⚡ Heavy JavaScript rendering enabled")
 
-        request = MarkdownifyRequest(website_url=website_url, headers=headers, mock=mock, stealth=stealth)
+        request = MarkdownifyRequest(website_url=website_url, headers=headers, mock=mock, render_heavy_js=render_heavy_js, stealth=stealth)
         logger.debug("✅ Request validation passed")
 
         result = self._make_request(
@@ -749,6 +751,8 @@ class Client:
         same_domain_only: bool = True,
         batch_size: Optional[int] = None,
         sitemap: bool = False,
+        headers: Optional[dict[str, str]] = None,
+        render_heavy_js: bool = False,
         stealth: bool = False,
     ):
         """Send a crawl request with support for both AI extraction and
@@ -772,6 +776,8 @@ class Client:
         logger.debug(f"🗺️ Use sitemap: {sitemap}")
         if stealth:
             logger.debug("🥷 Stealth mode enabled")
+        if render_heavy_js:
+            logger.debug("⚡ Heavy JavaScript rendering enabled")
         if batch_size is not None:
             logger.debug(f"📦 Batch size: {batch_size}")
 
@@ -784,6 +790,7 @@ class Client:
             "max_pages": max_pages,
             "same_domain_only": same_domain_only,
             "sitemap": sitemap,
+            "render_heavy_js": render_heavy_js,
             "stealth": stealth,
         }
 
@@ -794,6 +801,8 @@ class Client:
             request_data["data_schema"] = data_schema
         if batch_size is not None:
             request_data["batch_size"] = batch_size
+        if headers is not None:
+            request_data["headers"] = headers
 
         request = CrawlRequest(**request_data)
         logger.debug("✅ Request validation passed")

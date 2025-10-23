@@ -439,7 +439,7 @@ class AsyncClient:
         return {"status": "mock", "url": url, "method": method, "kwargs": kwargs}
 
     async def markdownify(
-        self, website_url: str, headers: Optional[dict[str, str]] = None, stealth: bool = False
+        self, website_url: str, headers: Optional[dict[str, str]] = None, mock: bool = False, render_heavy_js: bool = False, stealth: bool = False
     ):
         """Send a markdownify request"""
         logger.info(f"🔍 Starting markdownify request for {website_url}")
@@ -447,8 +447,10 @@ class AsyncClient:
             logger.debug("🔧 Using custom headers")
         if stealth:
             logger.debug("🥷 Stealth mode enabled")
+        if render_heavy_js:
+            logger.debug("⚡ Heavy JavaScript rendering enabled")
 
-        request = MarkdownifyRequest(website_url=website_url, headers=headers, stealth=stealth)
+        request = MarkdownifyRequest(website_url=website_url, headers=headers, mock=mock, render_heavy_js=render_heavy_js, stealth=stealth)
         logger.debug("✅ Request validation passed")
 
         result = await self._make_request(
@@ -741,6 +743,8 @@ class AsyncClient:
         same_domain_only: bool = True,
         batch_size: Optional[int] = None,
         sitemap: bool = False,
+        headers: Optional[dict[str, str]] = None,
+        render_heavy_js: bool = False,
         stealth: bool = False,
     ):
         """Send a crawl request with support for both AI extraction and
@@ -764,6 +768,8 @@ class AsyncClient:
         logger.debug(f"🗺️ Use sitemap: {sitemap}")
         if stealth:
             logger.debug("🥷 Stealth mode enabled")
+        if render_heavy_js:
+            logger.debug("⚡ Heavy JavaScript rendering enabled")
         if batch_size is not None:
             logger.debug(f"📦 Batch size: {batch_size}")
 
@@ -776,6 +782,7 @@ class AsyncClient:
             "max_pages": max_pages,
             "same_domain_only": same_domain_only,
             "sitemap": sitemap,
+            "render_heavy_js": render_heavy_js,
             "stealth": stealth,
         }
 
@@ -786,6 +793,8 @@ class AsyncClient:
             request_data["data_schema"] = data_schema
         if batch_size is not None:
             request_data["batch_size"] = batch_size
+        if headers is not None:
+            request_data["headers"] = headers
 
         request = CrawlRequest(**request_data)
         logger.debug("✅ Request validation passed")

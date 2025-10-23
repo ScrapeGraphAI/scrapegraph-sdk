@@ -27,6 +27,8 @@ class MarkdownifyRequest(BaseModel):
         website_url: URL of the website to convert to markdown
         headers: Optional HTTP headers including cookies
         mock: Whether to use mock mode for testing
+        render_heavy_js: Whether to render heavy JavaScript on the page
+        stealth: Enable stealth mode to avoid bot detection
 
     Example:
         >>> request = MarkdownifyRequest(website_url="https://example.com")
@@ -42,6 +44,7 @@ class MarkdownifyRequest(BaseModel):
         "and user agent",
     )
     mock: bool = Field(default=False, description="Whether to use mock mode for the request")
+    render_heavy_js: bool = Field(default=False, description="Whether to render heavy JavaScript on the page")
     stealth: bool = Field(default=False, description="Enable stealth mode to avoid bot detection")
 
     @model_validator(mode="after")
