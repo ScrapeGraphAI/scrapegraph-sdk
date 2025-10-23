@@ -584,9 +584,10 @@ class Client:
         output_schema: Optional[BaseModel] = None,
         number_of_scrolls: Optional[int] = None,
         total_pages: Optional[int] = None,
-        mock:bool=False,
-        plain_text:bool=False,
-        stealth:bool=False
+        mock: bool = False,
+        plain_text: bool = False,
+        render_heavy_js: bool = False,
+        stealth: bool = False
     ):
         """Send a smartscraper request with optional pagination support and cookies"""
         logger.info("🔍 Starting smartscraper request")
@@ -604,6 +605,8 @@ class Client:
             logger.debug(f"📄 Total pages to scrape: {total_pages}")
         if stealth:
             logger.debug("🥷 Stealth mode enabled")
+        if render_heavy_js:
+            logger.debug("⚡ Heavy JavaScript rendering enabled")
         logger.debug(f"📝 Prompt: {user_prompt}")
 
         request = SmartScraperRequest(
@@ -617,6 +620,7 @@ class Client:
             total_pages=total_pages,
             mock=mock,
             plain_text=plain_text,
+            render_heavy_js=render_heavy_js,
             stealth=stealth,
         )
         logger.debug("✅ Request validation passed")
