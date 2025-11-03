@@ -1,3 +1,10 @@
+## [1.39.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.38.0...v1.39.0) (2025-11-03)
+
+
+### Features
+
+* refactoring local scraping ([76f446f](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/76f446f1cea174ed5342afe5fb39c6ceee2dec98))
+
 ## [1.38.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.37.0...v1.38.0) (2025-10-23)
 
 
