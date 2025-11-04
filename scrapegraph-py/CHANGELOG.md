@@ -1,3 +1,10 @@
+## [1.40.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.39.0...v1.40.0) (2025-11-04)
+
+
+### Features
+
+* add markdown for smartscraper ([9d868b5](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/9d868b52b2f72cac3fdb13ad0b711e76b1eb3367))
+
 ## [1.39.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.38.0...v1.39.0) (2025-11-03)
 
 
