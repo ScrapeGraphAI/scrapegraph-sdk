@@ -9,7 +9,7 @@ The SmartScraper can:
 - Handle infinite scroll scenarios
 - Support pagination across multiple pages
 - Accept custom output schemas for structured extraction
-- Process either URLs or raw HTML content
+- Process URLs, raw HTML content, or Markdown content
 """
 
 from typing import Dict, Optional, Type
@@ -24,12 +24,13 @@ class SmartScraperRequest(BaseModel):
     Request model for the SmartScraper endpoint.
 
     This model validates and structures requests for AI-powered web scraping.
-    You must provide either website_url or website_html (but not both).
+    You must provide exactly one of: website_url, website_html, or website_markdown.
 
     Attributes:
         user_prompt: Natural language prompt describing what to extract
         website_url: URL of the website to scrape (optional)
         website_html: Raw HTML content to scrape (optional, max 2MB)
+        website_markdown: Markdown content to process (optional, max 2MB)
         headers: Optional HTTP headers including cookies
         cookies: Optional cookies for authentication/session management
         output_schema: Optional Pydantic model defining the output structure
@@ -56,6 +57,11 @@ class SmartScraperRequest(BaseModel):
         default=None,
         example="<html><body><h1>Title</h1><p>Content</p></body></html>",
         description="HTML content, maximum size 2MB",
+    )
+    website_markdown: Optional[str] = Field(
+        default=None,
+        example="# Title\n\nContent goes here",
+        description="Markdown content, maximum size 2MB",
     )
     headers: Optional[dict[str, str]] = Field(
         None,
@@ -100,6 +106,19 @@ class SmartScraperRequest(BaseModel):
 
     @model_validator(mode="after")
     def validate_url_and_html(self) -> "SmartScraperRequest":
+        # Count how many input sources are provided
+        inputs_provided = sum([
+            self.website_url is not None,
+            self.website_html is not None,
+            self.website_markdown is not None
+        ])
+
+        if inputs_provided == 0:
+            raise ValueError("Exactly one of website_url, website_html, or website_markdown must be provided")
+        elif inputs_provided > 1:
+            raise ValueError("Only one of website_url, website_html, or website_markdown can be provided")
+
+        # Validate HTML content
         if self.website_html is not None:
             if len(self.website_html.encode("utf-8")) > 2 * 1024 * 1024:
                 raise ValueError("Website HTML content exceeds maximum size of 2MB")
@@ -109,6 +128,8 @@ class SmartScraperRequest(BaseModel):
                     raise ValueError("Invalid HTML - no parseable content found")
             except Exception as e:
                 raise ValueError(f"Invalid HTML structure: {str(e)}")
+
+        # Validate URL
         elif self.website_url is not None:
             if not self.website_url.strip():
                 raise ValueError("Website URL cannot be empty")
@@ -117,8 +138,14 @@ class SmartScraperRequest(BaseModel):
                 or self.website_url.startswith("https://")
             ):
                 raise ValueError("Invalid URL")
-        else:
-            raise ValueError("Either website_url or website_html must be provided")
+
+        # Validate Markdown content
+        elif self.website_markdown is not None:
+            if not self.website_markdown.strip():
+                raise ValueError("Website markdown cannot be empty")
+            if len(self.website_markdown.encode("utf-8")) > 2 * 1024 * 1024:
+                raise ValueError("Website markdown content exceeds maximum size of 2MB")
+
         return self
 
     def model_dump(self, *args, **kwargs) -> dict:

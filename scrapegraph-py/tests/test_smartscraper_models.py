@@ -185,6 +185,84 @@ class TestSmartScraperRequest:
             )
             assert request.website_url == url
 
+    def test_valid_smartscraper_request_with_markdown(self):
+        """Test valid smartscraper request with Markdown"""
+        markdown_content = "# Title\n\nThis is some markdown content.\n\n- Item 1\n- Item 2"
+        request = SmartScraperRequest(
+            user_prompt="Extract the title and list items",
+            website_markdown=markdown_content,
+        )
+        assert request.user_prompt == "Extract the title and list items"
+        assert request.website_markdown == markdown_content
+        assert request.website_url is None
+        assert request.website_html is None
+
+    def test_invalid_markdown_too_large(self):
+        """Test smartscraper request with Markdown content too large"""
+        large_markdown = "# Title\n\n" + "x" * (2 * 1024 * 1024 + 1)
+        with pytest.raises(ValidationError):
+            SmartScraperRequest(
+                user_prompt="Extract data",
+                website_markdown=large_markdown,
+            )
+
+    def test_invalid_empty_markdown(self):
+        """Test smartscraper request with empty Markdown"""
+        with pytest.raises(ValidationError):
+            SmartScraperRequest(
+                user_prompt="Extract data",
+                website_markdown="",
+            )
+
+    def test_invalid_whitespace_markdown(self):
+        """Test smartscraper request with whitespace-only Markdown"""
+        with pytest.raises(ValidationError):
+            SmartScraperRequest(
+                user_prompt="Extract data",
+                website_markdown="   \n\n   ",
+            )
+
+    def test_invalid_both_url_and_markdown(self):
+        """Test smartscraper request with both URL and Markdown (should fail)"""
+        with pytest.raises(ValidationError):
+            SmartScraperRequest(
+                user_prompt="Extract data",
+                website_url="https://example.com",
+                website_markdown="# Title\n\nContent",
+            )
+
+    def test_invalid_both_html_and_markdown(self):
+        """Test smartscraper request with both HTML and Markdown (should fail)"""
+        with pytest.raises(ValidationError):
+            SmartScraperRequest(
+                user_prompt="Extract data",
+                website_html="<html><body><h1>Title</h1></body></html>",
+                website_markdown="# Title\n\nContent",
+            )
+
+    def test_invalid_all_three_inputs(self):
+        """Test smartscraper request with URL, HTML, and Markdown (should fail)"""
+        with pytest.raises(ValidationError):
+            SmartScraperRequest(
+                user_prompt="Extract data",
+                website_url="https://example.com",
+                website_html="<html><body><h1>Title</h1></body></html>",
+                website_markdown="# Title\n\nContent",
+            )
+
+    def test_serialization_with_markdown(self):
+        """Test smartscraper request serialization with Markdown"""
+        markdown_content = "# Title\n\nContent"
+        request = SmartScraperRequest(
+            user_prompt="Extract data",
+            website_markdown=markdown_content,
+        )
+        data = request.model_dump()
+        assert data["website_markdown"] == markdown_content
+        assert data["user_prompt"] == "Extract data"
+        assert "website_url" not in data
+        assert "website_html" not in data
+
 
 class TestGetSmartScraperRequest:
     """Test GetSmartScraperRequest model"""

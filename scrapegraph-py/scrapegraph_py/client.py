@@ -581,6 +581,7 @@ class Client:
         user_prompt: str,
         website_url: Optional[str] = None,
         website_html: Optional[str] = None,
+        website_markdown: Optional[str] = None,
         headers: Optional[dict[str, str]] = None,
         cookies: Optional[Dict[str, str]] = None,
         output_schema: Optional[BaseModel] = None,
@@ -591,12 +592,43 @@ class Client:
         render_heavy_js: bool = False,
         stealth: bool = False
     ):
-        """Send a smartscraper request with optional pagination support and cookies"""
+        """
+        Send a smartscraper request with optional pagination support and cookies.
+
+        Supports three types of input (must provide exactly one):
+        - website_url: Scrape from a URL
+        - website_html: Process local HTML content
+        - website_markdown: Process local Markdown content
+
+        Args:
+            user_prompt: Natural language prompt describing what to extract
+            website_url: URL to scrape (optional)
+            website_html: Raw HTML content to process (optional, max 2MB)
+            website_markdown: Markdown content to process (optional, max 2MB)
+            headers: Optional HTTP headers
+            cookies: Optional cookies for authentication
+            output_schema: Optional Pydantic model for structured output
+            number_of_scrolls: Number of times to scroll (0-100)
+            total_pages: Number of pages to scrape (1-10)
+            mock: Enable mock mode for testing
+            plain_text: Return plain text instead of structured data
+            render_heavy_js: Enable heavy JavaScript rendering
+            stealth: Enable stealth mode to avoid bot detection
+
+        Returns:
+            Dictionary containing the scraping results
+
+        Raises:
+            ValueError: If validation fails or invalid parameters provided
+            APIError: If the API request fails
+        """
         logger.info("🔍 Starting smartscraper request")
         if website_url:
             logger.debug(f"🌐 URL: {website_url}")
         if website_html:
             logger.debug("📄 Using provided HTML content")
+        if website_markdown:
+            logger.debug("📝 Using provided Markdown content")
         if headers:
             logger.debug("🔧 Using custom headers")
         if cookies:
@@ -614,6 +646,7 @@ class Client:
         request = SmartScraperRequest(
             website_url=website_url,
             website_html=website_html,
+            website_markdown=website_markdown,
             headers=headers,
             cookies=cookies,
             user_prompt=user_prompt,
