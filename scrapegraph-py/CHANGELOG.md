@@ -1,3 +1,11 @@
+## [1.41.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.40.0...v1.41.0) (2025-11-04)
+
+
+### Features
+
+* add health endpoint ([6edfe67](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/6edfe67000627f9b3d435e8d9f7b660e467e54b6))
+* update health endpoint ([3e993b3](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/3e993b3de38bd6358bc4c01252df444895ec5bf6))
+
 ## [1.40.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.39.0...v1.40.0) (2025-11-04)
 
 
