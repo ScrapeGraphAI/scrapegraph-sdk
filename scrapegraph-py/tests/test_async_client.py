@@ -799,3 +799,39 @@ async def test_async_scrape_concurrent_requests(mock_api_key):
             for i, response in enumerate(responses):
                 assert response["status"] == "completed"
                 assert f"Page {i+1}" in response["html"]
+
+
+@pytest.mark.asyncio
+async def test_healthz(mock_api_key):
+    """Test health check endpoint"""
+    with aioresponses() as mocked:
+        mocked.get(
+            "https://api.scrapegraphai.com/v1/healthz",
+            payload={
+                "status": "healthy",
+                "message": "Service is operational"
+            },
+        )
+
+        async with AsyncClient(api_key=mock_api_key) as client:
+            response = await client.healthz()
+            assert response["status"] == "healthy"
+            assert "message" in response
+
+
+@pytest.mark.asyncio
+async def test_healthz_unhealthy(mock_api_key):
+    """Test health check endpoint when service is unhealthy"""
+    with aioresponses() as mocked:
+        mocked.get(
+            "https://api.scrapegraphai.com/v1/healthz",
+            payload={
+                "status": "unhealthy",
+                "message": "Service is experiencing issues"
+            },
+        )
+
+        async with AsyncClient(api_key=mock_api_key) as client:
+            response = await client.healthz()
+            assert response["status"] == "unhealthy"
+            assert "message" in response

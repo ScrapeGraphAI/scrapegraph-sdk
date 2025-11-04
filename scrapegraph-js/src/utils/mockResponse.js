@@ -52,6 +52,14 @@ export function getMockResponse(method, url, customResponses = {}, customHandler
     };
   }
 
+  // Health check endpoint
+  if (path.endsWith('/healthz') && upperMethod === 'GET') {
+    return {
+      status: 'healthy',
+      message: 'Service is operational'
+    };
+  }
+
   // Feedback endpoint
   if (path.endsWith('/feedback') && upperMethod === 'POST') {
     return {

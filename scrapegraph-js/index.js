@@ -4,6 +4,7 @@ export { markdownify, getMarkdownifyRequest } from './src/markdownify.js';
 export { scrape, getScrapeRequest } from './src/scrape.js';
 export { searchScraper, getSearchScraperRequest } from './src/searchScraper.js';
 export { getCredits } from './src/credits.js';
+export { healthz } from './src/healthz.js';
 export { sendFeedback } from './src/feedback.js';
 export { crawl, getCrawlRequest } from './src/crawl.js';
 export { generateSchema, getSchemaStatus, pollSchemaGeneration } from './src/schema.js';

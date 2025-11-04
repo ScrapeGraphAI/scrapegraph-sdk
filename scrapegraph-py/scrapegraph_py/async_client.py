@@ -301,6 +301,10 @@ class AsyncClient:
         if path.endswith("/credits") and upper_method == "GET":
             return {"remaining_credits": 1000, "total_credits_used": 0}
 
+        # Health check endpoint
+        if path.endswith("/healthz") and upper_method == "GET":
+            return {"status": "healthy", "message": "Service is operational"}
+
         # Feedback acknowledge
         if path.endswith("/feedback") and upper_method == "POST":
             return {"status": "success"}
@@ -700,6 +704,29 @@ class AsyncClient:
             f"✨ Credits info retrieved: "
             f"{result.get('remaining_credits')} credits remaining"
         )
+        return result
+
+    async def healthz(self):
+        """Check the health status of the service
+        
+        This endpoint is useful for monitoring and ensuring the service is operational.
+        It returns a JSON response indicating the service's health status.
+        
+        Returns:
+            dict: Health status information
+            
+        Example:
+            >>> async with AsyncClient.from_env() as client:
+            ...     health = await client.healthz()
+            ...     print(health)
+        """
+        logger.info("🏥 Checking service health")
+
+        result = await self._make_request(
+            "GET",
+            f"{API_BASE_URL}/healthz",
+        )
+        logger.info("✨ Health check completed successfully")
         return result
 
     async def searchscraper(

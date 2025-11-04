@@ -773,3 +773,39 @@ def test_scrape_complex_html_response(mock_api_key):
         assert "<title>Complex Page</title>" in response["html"]
         assert "<script>" in response["html"]
         assert "<style>" in response["html"]
+
+
+@responses.activate
+def test_healthz(mock_api_key):
+    """Test health check endpoint"""
+    responses.add(
+        responses.GET,
+        "https://api.scrapegraphai.com/v1/healthz",
+        json={
+            "status": "healthy",
+            "message": "Service is operational"
+        },
+    )
+
+    with Client(api_key=mock_api_key) as client:
+        response = client.healthz()
+        assert response["status"] == "healthy"
+        assert "message" in response
+
+
+@responses.activate
+def test_healthz_unhealthy(mock_api_key):
+    """Test health check endpoint when service is unhealthy"""
+    responses.add(
+        responses.GET,
+        "https://api.scrapegraphai.com/v1/healthz",
+        json={
+            "status": "unhealthy",
+            "message": "Service is experiencing issues"
+        },
+    )
+
+    with Client(api_key=mock_api_key) as client:
+        response = client.healthz()
+        assert response["status"] == "unhealthy"
+        assert "message" in response
