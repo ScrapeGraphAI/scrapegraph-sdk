@@ -15,8 +15,9 @@ from scrapegraph_py import AsyncClient
 async def main():
     """Demonstrate TOON format with different async scraping methods."""
     
-    # Set the API key
-    os.environ['SGAI_API_KEY'] = 'sgai-e32215fb-5940-400f-91ea-30af5f35e0c9'
+    # Set your API key as an environment variable
+    # export SGAI_API_KEY="your-api-key-here"
+    # or set it in your .env file
     
     # Initialize the async client
     async with AsyncClient.from_env() as client:

@@ -10,8 +10,9 @@ This example shows how to use the `return_toon` parameter with various scraping 
 import os
 from scrapegraph_py import Client
 
-# Set the API key
-os.environ['SGAI_API_KEY'] = 'sgai-e32215fb-5940-400f-91ea-30af5f35e0c9'
+# Set your API key as an environment variable
+# export SGAI_API_KEY="your-api-key-here"
+# or set it in your .env file
 
 
 def main():
