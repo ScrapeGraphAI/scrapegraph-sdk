@@ -4,5 +4,3 @@
 **/.DS_Store
 *.csv
 venv/
-
-__pycache__/
