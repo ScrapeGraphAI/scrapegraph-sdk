@@ -9,6 +9,7 @@ export { sendFeedback } from './src/feedback.js';
 export { crawl, getCrawlRequest } from './src/crawl.js';
 export { generateSchema, getSchemaStatus, pollSchemaGeneration } from './src/schema.js';
 export { sitemap } from './src/sitemap.js';
+export { toonify } from './src/toonify.js';
 export {
   createScheduledJob,
   getScheduledJobs,
