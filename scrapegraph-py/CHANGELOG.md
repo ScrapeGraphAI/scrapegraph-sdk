@@ -1,3 +1,15 @@
+## [1.41.1](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.41.0...v1.41.1) (2025-11-14)
+
+
+### chore
+
+* **security:** sanitize example cookies and test literals to avoid secret detection ([6727e95](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/6727e958cdd487836bf59f8738f43dd0b2353522))
+
+
+### Refactor
+
+* update console log formatting in advanced and complete agentic scraper examples to use repeat method ([997ae16](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/997ae16f92e2e69b0807a04d87aa7d2edf0342ea))
+
 ## [1.41.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.40.0...v1.41.0) (2025-11-04)
 
 
