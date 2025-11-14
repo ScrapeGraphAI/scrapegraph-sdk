@@ -9,7 +9,7 @@ const apiKey = process.env.SGAI_APIKEY;
  */
 async function completeAgenticScrapingExample() {
   console.log('🤖 Starting Complete Agentic Scraping Example');
-  console.log('=' * 50);
+  console.log('='.repeat(50));
   
   // Configuration
   const url = 'https://dashboard.scrapegraphai.com/';
@@ -78,7 +78,7 @@ async function completeAgenticScrapingExample() {
  */
 async function ecommerceAutomationExample() {
   console.log('\n🛒 E-commerce Automation Example');
-  console.log('=' * 40);
+  console.log('='.repeat(40));
   
   const url = 'https://example-shop.com';
   const steps = [

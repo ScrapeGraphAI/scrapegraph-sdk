@@ -8,7 +8,7 @@ const apiKey = process.env.SGAI_APIKEY;
  */
 async function advancedAgenticScrapingExample() {
   console.log('🚀 Advanced Agentic Scraping Example');
-  console.log('=' * 45);
+  console.log('='.repeat(45));
   
   // Example configurations for different scenarios
   const scenarios = [
@@ -247,7 +247,7 @@ async function monitorRequest(requestId, timeoutSeconds = 120) {
  */
 async function errorHandlingExamples() {
   console.log('\n🛡️  Error Handling Examples');
-  console.log('=' * 30);
+  console.log('='.repeat(30));
   
   const errorScenarios = [
     {
