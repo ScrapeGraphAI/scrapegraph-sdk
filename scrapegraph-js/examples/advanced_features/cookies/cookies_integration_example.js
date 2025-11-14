@@ -58,11 +58,11 @@ async function scrapeEcommerceWithAuth() {
 
   // Example cookies for an e-commerce site
   const cookies = {
-    session_id: 'abc123def456',
-    user_id: 'user789',
-    cart_id: 'cart101112',
-    preferences: 'dark_mode,usd',
-    auth_token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+    session_id: '<SESSION_ID>',
+    user_id: '<USER_ID>',
+    cart_id: '<CART_ID>',
+    preferences: '<PREFERENCES>',
+    auth_token: '<JWT_TOKEN>'
   };
 
   const websiteUrl = 'https://example-ecommerce.com/products';
@@ -94,11 +94,11 @@ async function scrapeSocialMediaWithSession() {
 
   // Example cookies for a social media site
   const cookies = {
-    session_token: 'xyz789abc123',
-    user_session: 'def456ghi789',
-    csrf_token: 'jkl012mno345',
-    remember_me: 'true',
-    language: 'en_US'
+    session_token: '<SESSION_TOKEN>',
+    user_session: '<USER_SESSION>',
+    csrf_token: '<CSRF_TOKEN>',
+    remember_me: '<REMEMBER_ME>',
+    language: '<LANGUAGE>'
   };
 
   const websiteUrl = 'https://example-social.com/feed';
@@ -166,11 +166,11 @@ async function scrapeBankingWithSecureCookies() {
 
   // Example secure cookies for a banking site
   const cookies = {
-    secure_session: 'pqr678stu901',
-    auth_token: 'vwx234yz567',
-    mfa_verified: 'true',
-    device_id: 'device_abc123',
-    last_activity: '2024-01-15T10:30:00Z'
+    secure_session: '<SECURE_SESSION>',
+    auth_token: '<AUTH_TOKEN>',
+    mfa_verified: '<MFA_VERIFIED>',
+    device_id: '<DEVICE_ID>',
+    last_activity: '<LAST_ACTIVITY_ISO8601>'
   };
 
   const websiteUrl = 'https://example-bank.com/transactions';
@@ -202,11 +202,11 @@ async function scrapeApiWithAuthTokens() {
 
   // Example API authentication cookies
   const cookies = {
-    api_token: 'api_abc123def456',
-    client_id: 'client_789',
-    access_token: 'access_xyz789',
-    refresh_token: 'refresh_abc123',
-    scope: 'read:all'
+    api_token: '<API_TOKEN>',
+    client_id: '<CLIENT_ID>',
+    access_token: '<ACCESS_TOKEN>',
+    refresh_token: '<REFRESH_TOKEN>',
+    scope: '<SCOPE>'
   };
 
   const websiteUrl = 'https://api.example.com/data';

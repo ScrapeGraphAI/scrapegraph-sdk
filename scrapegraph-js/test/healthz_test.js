@@ -141,7 +141,7 @@ function testInputValidation() {
   const testCases = [
     {
       name: 'Valid API key',
-      apiKey: 'sgai-valid-key-123',
+      apiKey: 'dummy-api-key',
       expected: true,
       description: 'Should accept valid API key'
     },

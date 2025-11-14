@@ -11,9 +11,9 @@ const apiKey = process.env.SGAI_APIKEY;
 
 // Example cookies for authentication
 const cookies = {
-  session_id: 'abc123def456',
-  auth_token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
-  user_preferences: 'dark_mode,usd'
+  session_id: '<SESSION_ID>',
+  auth_token: '<JWT_TOKEN>',
+  user_preferences: '<USER_PREFERENCES>'
 };
 
 async function scrapeWithCookies() {
