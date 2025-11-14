@@ -1,0 +1,49 @@
+{
+  "name": "scrapegraph-js",
+  "author": "ScrapeGraphAI",
+  "version": "0.2.2",
+  "description": "Scrape and extract structured data from a webpage using ScrapeGraphAI's APIs. Supports cookies for authentication, infinite scrolling, and pagination.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ScrapeGraphAI/scrapegraph-sdk",
+    "directory": "scrapegraph-js"
+  },
+  "scripts": {
+    "format": "prettier --write --cache --cache-strategy metadata . !dist",
+    "lint": "eslint .",
+    "test": "node test/smartScraper_pagination_test.js"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/ScrapeGraphAI/scrapegraph-sdk/tree/main/scrapegraph-js",
+  "keywords": [
+    "scraping",
+    "webscraping",
+    "automated-scraper",
+    "gpt-3",
+    "gpt-4",
+    "llm",
+    "ai",
+    "cookies",
+    "authentication",
+    "session-management",
+    "infinite-scroll",
+    "pagination"
+  ],
+  "main": "index.js",
+  "module": "index.js",
+  "type": "module",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "zod": "^3.23.8",
+    "zod-to-json-schema": "^3.23.5"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.16.0",
+    "dotenv": "^16.4.5",
+    "eslint": "^9.16.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "globals": "^15.12.0",
+    "prettier": "3.4.1"
+  }
+}
