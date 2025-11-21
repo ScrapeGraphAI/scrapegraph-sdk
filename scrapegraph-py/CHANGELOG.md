@@ -1,3 +1,10 @@
+## [1.42.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.41.1...v1.42.0) (2025-11-21)
+
+
+### Features
+
+* refactoring of the dependencies ([114372d](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/114372d990d930f58acf76fe65afd1de4ba07b53))
+
 ## [1.41.1](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.41.0...v1.41.1) (2025-11-14)
 
 
