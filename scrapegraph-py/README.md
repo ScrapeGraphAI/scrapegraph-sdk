@@ -14,8 +14,31 @@ Official [Python SDK ](https://scrapegraphai.com) for the ScrapeGraph API - Smar
 
 ## 📦 Installation
 
+### Basic Installation
+
 ```bash
 pip install scrapegraph-py
+```
+
+This installs the core SDK with minimal dependencies. The SDK is fully functional with just the core dependencies.
+
+### Optional Dependencies
+
+For specific use cases, you can install optional extras:
+
+**HTML Validation** (required when using `website_html` parameter):
+```bash
+pip install scrapegraph-py[html]
+```
+
+**Langchain Integration** (for using with Langchain/Langgraph):
+```bash
+pip install scrapegraph-py[langchain]
+```
+
+**All Optional Dependencies**:
+```bash
+pip install scrapegraph-py[html,langchain]
 ```
 
 ## 🚀 Features
@@ -58,6 +81,7 @@ response = client.smartscraper(
 )
 
 # Or using HTML content
+# Note: Using website_html requires the [html] extra: pip install scrapegraph-py[html]
 html_content = """
 <html>
     <body>

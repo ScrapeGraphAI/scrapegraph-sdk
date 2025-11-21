@@ -85,7 +85,14 @@ scrapegraph-sdk/
 - **aiohttp** 3.10+ - Async HTTP client
 - **pydantic** 2.10.2+ - Data validation and modeling
 - **python-dotenv** 1.0.1+ - Environment variable management
-- **beautifulsoup4** 4.12.3+ - HTML parsing (for pagination)
+
+**Optional Dependencies:**
+- **beautifulsoup4** 4.12.3+ - HTML parsing (for HTML validation when using `website_html`)
+  - Install with: `pip install scrapegraph-py[html]`
+- **langchain** 0.3.0+ - Langchain integration for AI workflows
+- **langchain-community** 0.2.11+ - Community integrations for Langchain
+- **langchain-scrapegraph** 0.1.0+ - ScrapeGraph integration for Langchain
+  - Install with: `pip install scrapegraph-py[langchain]`
 
 **Development Tools:**
 - **pytest** 7.4.0+ - Testing framework
@@ -879,12 +886,17 @@ npm publish
 
 ### Python SDK Dependencies
 
-**Runtime:**
+**Core Runtime:**
 - **requests**: Sync HTTP client
 - **aiohttp**: Async HTTP client
 - **pydantic**: Data validation
 - **python-dotenv**: Environment variables
-- **beautifulsoup4**: HTML parsing
+
+**Optional Runtime (install with extras):**
+- **beautifulsoup4**: HTML parsing (required when using `website_html`)
+  - Install with: `pip install scrapegraph-py[html]`
+- **langchain, langchain-community, langchain-scrapegraph**: Langchain integration
+  - Install with: `pip install scrapegraph-py[langchain]`
 
 **Development:**
 - **pytest & plugins**: Testing framework
@@ -918,7 +930,7 @@ Both SDKs depend on the ScrapeGraph AI API:
 | **Architecture** | Class-based (Client, AsyncClient) | Function-based |
 | **Async Support** | ✅ Separate AsyncClient | ✅ All functions async |
 | **Type Safety** | ✅ Pydantic models, mypy | ⚠️ JSDoc comments |
-| **Dependencies** | 5 runtime deps | 0 runtime deps |
+| **Dependencies** | 4 core + 2 optional extras | 0 runtime deps |
 | **Testing** | pytest with mocking | Manual tests |
 | **Documentation** | MkDocs auto-generated | README examples |
 | **Package Size** | ~50KB | ~20KB |

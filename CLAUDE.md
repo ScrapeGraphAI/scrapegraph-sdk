@@ -44,7 +44,10 @@ scrapegraph-sdk/
 ### Python SDK
 - **Language**: Python 3.10+
 - **Package Manager**: uv (recommended) or pip
-- **Dependencies**: requests, pydantic, python-dotenv, aiohttp, beautifulsoup4
+- **Core Dependencies**: requests, pydantic, python-dotenv, aiohttp
+- **Optional Dependencies**:
+  - `html`: beautifulsoup4 (for HTML validation when using `website_html`)
+  - `langchain`: langchain, langchain-community, langchain-scrapegraph (for Langchain integrations)
 - **Testing**: pytest, pytest-asyncio, pytest-mock, aioresponses
 - **Code Quality**: black, isort, ruff, mypy, pre-commit
 - **Documentation**: mkdocs, mkdocs-material

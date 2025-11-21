@@ -15,7 +15,12 @@ The SmartScraper can:
 from typing import Dict, Optional, Type
 from uuid import UUID
 
-from bs4 import BeautifulSoup
+try:
+    from bs4 import BeautifulSoup
+    HAS_BS4 = True
+except ImportError:
+    HAS_BS4 = False
+
 from pydantic import BaseModel, Field, conint, model_validator
 
 
@@ -122,11 +127,18 @@ class SmartScraperRequest(BaseModel):
         if self.website_html is not None:
             if len(self.website_html.encode("utf-8")) > 2 * 1024 * 1024:
                 raise ValueError("Website HTML content exceeds maximum size of 2MB")
+            if not HAS_BS4:
+                raise ImportError(
+                    "beautifulsoup4 is required for HTML validation. "
+                    "Install it with: pip install scrapegraph-py[html] or pip install beautifulsoup4"
+                )
             try:
                 soup = BeautifulSoup(self.website_html, "html.parser")
                 if not soup.find():
                     raise ValueError("Invalid HTML - no parseable content found")
             except Exception as e:
+                if isinstance(e, ImportError):
+                    raise
                 raise ValueError(f"Invalid HTML structure: {str(e)}")
 
         # Validate URL
