@@ -1,3 +1,10 @@
+## [1.43.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.42.0...v1.43.0) (2025-11-26)
+
+
+### Features
+
+* add rendering to the sdk ([3c9770a](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/3c9770a76f3d4eb60761196455b1a026747e80fb))
+
 ## [1.42.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.41.1...v1.42.0) (2025-11-21)
 
 
