@@ -5,15 +5,17 @@ This example shows:
 1. How to make async scrape requests
 2. How to process multiple URLs concurrently
 3. How to use render_heavy_js for JavaScript-heavy websites
-4. How to add custom headers in async mode
+4. How to use branding parameter
+5. How to add custom headers in async mode
 
 Equivalent curl command:
 curl -X POST https://api.scrapegraphai.com/v1/scrape \
   -H "Content-Type: application/json" \
   -H "SGAI-APIKEY: your-api-key-here" \
   -d '{
-    "website_url": "https://example.com",
-    "render_heavy_js": false
+    "website_url": "https://www.cubic.dev/",
+    "render_heavy_js": false,
+    "branding": true
   }'
 
 Requirements:
@@ -165,6 +167,31 @@ async def concurrent_scraping_example():
         return results
 
 
+async def async_scrape_with_branding():
+    """Demonstrate async scraping with branding enabled."""
+    print("\n🏷️ Async Branding Example")
+    print("=" * 30)
+    
+    async with AsyncClient.from_env() as client:
+        try:
+            print("Making async scrape request with branding enabled...")
+            result = await client.scrape(
+                website_url="https://www.cubic.dev/",
+                render_heavy_js=False,
+                branding=True
+            )
+            
+            html_content = result.get("html", "")
+            print(f"✅ Success! Received {len(html_content):,} characters of HTML")
+            print(f"Request ID: {result.get('request_id', 'N/A')}")
+            
+            return result
+            
+        except Exception as e:
+            print(f"❌ Error: {str(e)}")
+            return None
+
+
 async def async_scrape_with_custom_headers():
     """Demonstrate async scraping with custom headers."""
     print("\n🔧 Async Custom Headers Example")
@@ -228,7 +255,17 @@ def demonstrate_curl_equivalent():
     print("    \"render_heavy_js\": false")
     print("  }'")
     
-    print("\n2. Multiple concurrent requests:")
+    print("\n2. With branding enabled:")
+    print("curl -X POST https://api.scrapegraphai.com/v1/scrape \\")
+    print("  -H \"Content-Type: application/json\" \\")
+    print("  -H \"SGAI-APIKEY: your-api-key-here\" \\")
+    print("  -d '{")
+    print("    \"website_url\": \"https://www.cubic.dev/\",")
+    print("    \"render_heavy_js\": false,")
+    print("    \"branding\": true")
+    print("  }'")
+    
+    print("\n3. Multiple concurrent requests:")
     print("# Run multiple curl commands in parallel:")
     print("curl -X POST https://api.scrapegraphai.com/v1/scrape \\")
     print("  -H \"Content-Type: application/json\" \\")
@@ -253,7 +290,8 @@ async def main():
         # Run async examples
         result1 = await basic_async_scrape()
         result2 = await async_scrape_with_heavy_js()
-        result3 = await async_scrape_with_custom_headers()
+        result3 = await async_scrape_with_branding()
+        result4 = await async_scrape_with_custom_headers()
         concurrent_results = await concurrent_scraping_example()
         
         # Save results if successful
@@ -265,12 +303,18 @@ async def main():
         if result3:
             html3 = result3.get("html", "")
             if html3:
-                await save_html_to_file_async(html3, "custom_headers_async_scrape")
+                await save_html_to_file_async(html3, "branding_async_scrape")
+        
+        if result4:
+            html4 = result4.get("html", "")
+            if html4:
+                await save_html_to_file_async(html4, "custom_headers_async_scrape")
         
         print("\n🎯 Summary:")
         print(f"✅ Basic async scrape: {'Success' if result1 else 'Failed'}")
         print(f"✅ Heavy JS async scrape: {'Success' if result2 else 'Failed'}")
-        print(f"✅ Custom headers async scrape: {'Success' if result3 else 'Failed'}")
+        print(f"✅ Branding async scrape: {'Success' if result3 else 'Failed'}")
+        print(f"✅ Custom headers async scrape: {'Success' if result4 else 'Failed'}")
         print(f"✅ Concurrent scraping: {'Success' if concurrent_results else 'Failed'}")
         
     except Exception as e:

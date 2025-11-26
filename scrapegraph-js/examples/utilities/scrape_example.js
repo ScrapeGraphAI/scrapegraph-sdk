@@ -33,17 +33,19 @@ const OUTPUT_DIR = 'scrape_output';
  * @returns {Object} The API response containing HTML content and metadata
  */
 async function scrapeWebsite(websiteUrl, options = {}) {
-  const { renderHeavyJs = false, headers = {} } = options;
+  const { renderHeavyJs = false, branding = false, headers = {} } = options;
   
   const jsMode = renderHeavyJs ? 'with heavy JS rendering' : 'without JS rendering';
+  const brandingMode = branding ? 'with branding' : 'without branding';
   console.log(`Getting HTML content from: ${websiteUrl}`);
-  console.log(`Mode: ${jsMode}`);
+  console.log(`Mode: ${jsMode}, ${brandingMode}`);
 
   const startTime = Date.now();
   
   try {
     const result = await scrape(API_KEY, websiteUrl, {
       renderHeavyJs,
+      branding,
       headers
     });
     
@@ -118,12 +120,21 @@ async function main() {
       url: 'https://example.com',
       name: 'example',
       renderHeavyJs: false,
+      branding: false,
       description: 'Simple static website',
+    },
+    {
+      url: 'https://www.cubic.dev/',
+      name: 'cubic_dev',
+      renderHeavyJs: false,
+      branding: true,
+      description: 'Website with branding enabled',
     },
     {
       url: 'https://httpbin.org/html',
       name: 'httpbin_html',
       renderHeavyJs: false,
+      branding: false,
       description: 'HTTP testing service',
     },
   ];
@@ -147,7 +158,8 @@ async function main() {
     try {
       // Get HTML content
       const result = await scrapeWebsite(website.url, {
-        renderHeavyJs: website.renderHeavyJs
+        renderHeavyJs: website.renderHeavyJs,
+        branding: website.branding
       });
 
       // Display response metadata
@@ -174,7 +186,8 @@ async function main() {
         console.log(`  Link tags: ${stats.linkTags}`);
 
         // Save HTML content
-        const filename = `${website.name}_${website.renderHeavyJs ? 'js' : 'nojs'}`;
+        const brandingSuffix = website.branding ? '_branding' : '';
+        const filename = `${website.name}_${website.renderHeavyJs ? 'js' : 'nojs'}${brandingSuffix}`;
         await saveHtmlContent(htmlContent, filename);
 
         // Show first 500 characters as preview

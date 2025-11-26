@@ -26,19 +26,25 @@ class ScrapeRequest(BaseModel):
     Attributes:
         website_url: URL of the website to scrape
         render_heavy_js: Whether to render heavy JavaScript (default: False)
+        branding: Whether to include branding in the response (default: False)
         headers: Optional HTTP headers including cookies
         mock: Whether to use mock mode for testing
 
     Example:
         >>> request = ScrapeRequest(
         ...     website_url="https://example.com",
-        ...     render_heavy_js=True
+        ...     render_heavy_js=True,
+        ...     branding=True
         ... )
     """
     website_url: str = Field(..., example="https://scrapegraphai.com/")
     render_heavy_js: bool = Field(
         False,
         description="Whether to render heavy JavaScript (defaults to False)",
+    )
+    branding: bool = Field(
+        False,
+        description="Whether to include branding in the response (defaults to False)",
     )
     headers: Optional[dict[str, str]] = Field(
         None,

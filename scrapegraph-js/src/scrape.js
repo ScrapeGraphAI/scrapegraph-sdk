@@ -10,6 +10,7 @@ import { getMockResponse, createMockAxiosResponse } from './utils/mockResponse.j
  * @param {string} url - The URL of the webpage to be converted.
  * @param {Object} options - Optional configuration options.
  * @param {boolean} options.renderHeavyJs - Whether to render heavy JavaScript (defaults to false).
+ * @param {boolean} [options.branding=false] - Whether to include branding in the response (defaults to false).
  * @param {Object} options.headers - Optional custom headers to send with the request.
  * @param {boolean} [options.stealth=false] - Enable stealth mode to avoid bot detection
  * @returns {Promise<Object>} A promise that resolves to the HTML content and metadata.
@@ -35,6 +36,12 @@ import { getMockResponse, createMockAxiosResponse } from './utils/mockResponse.j
  * });
  *
  * @example
+ * // With branding enabled:
+ * const result = await scrape(apiKey, url, {
+ *   branding: true
+ * });
+ *
+ * @example
  * // With custom headers:
  * const result = await scrape(apiKey, url, {
  *   renderHeavyJs: false,
@@ -47,6 +54,7 @@ import { getMockResponse, createMockAxiosResponse } from './utils/mockResponse.j
 export async function scrape(apiKey, url, options = {}) {
   const {
     renderHeavyJs = false,
+    branding = false,
     headers: customHeaders = {},
     mock = null,
     stealth = false
@@ -74,6 +82,10 @@ export async function scrape(apiKey, url, options = {}) {
     website_url: url,
     render_heavy_js: renderHeavyJs,
   };
+
+  if (branding) {
+    payload.branding = branding;
+  }
 
   if (stealth) {
     payload.stealth = stealth;

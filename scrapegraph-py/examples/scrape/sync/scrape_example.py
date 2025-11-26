@@ -4,8 +4,9 @@ Basic synchronous example demonstrating how to use the Scrape API.
 This example shows:
 1. How to make a basic scrape request
 2. How to use render_heavy_js for JavaScript-heavy websites
-3. How to add custom headers
-4. How to handle the response
+3. How to use branding parameter
+4. How to add custom headers
+5. How to handle the response
 
 Equivalent curl command:
 curl -X POST https://api.scrapegraphai.com/v1/scrape \
@@ -13,7 +14,8 @@ curl -X POST https://api.scrapegraphai.com/v1/scrape \
   -H "SGAI-APIKEY: your-api-key-here" \
   -d '{
     "website_url": "https://example.com",
-    "render_heavy_js": false
+    "render_heavy_js": false,
+    "branding": true
   }'
 
 Requirements:
@@ -88,6 +90,38 @@ def scrape_with_heavy_js():
         print(f"✅ Success! Received {len(html_content):,} characters of HTML")
         print(f"⏱️ Execution time: {execution_time:.2f} seconds")
         print(f"Request ID: {result.get('request_id', 'N/A')}")
+        
+        return result
+        
+    except Exception as e:
+        print(f"❌ Error: {str(e)}")
+        return None
+    finally:
+        client.close()
+
+
+def scrape_with_branding():
+    """Demonstrate scraping with branding enabled."""
+    print("\n🏷️ Branding Example")
+    print("=" * 30)
+    
+    client = Client.from_env()
+    
+    try:
+        print("Making scrape request with branding enabled...")
+        result = client.scrape(
+            website_url="https://www.cubic.dev/",
+            render_heavy_js=False,
+            branding=True
+        )
+        
+        html_content = result.get("html", "")
+        print(f"✅ Success! Received {len(html_content):,} characters of HTML")
+        print(f"Request ID: {result.get('request_id', 'N/A')}")
+        
+        # Show a preview of the HTML
+        preview = html_content[:200].replace('\n', ' ').strip()
+        print(f"HTML Preview: {preview}...")
         
         return result
         
@@ -175,6 +209,16 @@ def demonstrate_curl_equivalent():
     print("    \"website_url\": \"https://example.com\",")
     print("    \"render_heavy_js\": true")
     print("  }'")
+    
+    print("\n3. With branding enabled:")
+    print("curl -X POST https://api.scrapegraphai.com/v1/scrape \\")
+    print("  -H \"Content-Type: application/json\" \\")
+    print("  -H \"SGAI-APIKEY: your-api-key-here\" \\")
+    print("  -d '{")
+    print("    \"website_url\": \"https://www.cubic.dev/\",")
+    print("    \"render_heavy_js\": false,")
+    print("    \"branding\": true")
+    print("  }'")
 
 
 def main():
@@ -189,7 +233,8 @@ def main():
         # Run examples
         result1 = basic_scrape_example()
         result2 = scrape_with_heavy_js()
-        result3 = scrape_with_custom_headers()
+        result3 = scrape_with_branding()
+        result4 = scrape_with_custom_headers()
         
         # Save results if successful
         if result1:
@@ -200,12 +245,18 @@ def main():
         if result3:
             html3 = result3.get("html", "")
             if html3:
-                save_html_to_file(html3, "custom_headers_scrape")
+                save_html_to_file(html3, "branding_scrape")
+        
+        if result4:
+            html4 = result4.get("html", "")
+            if html4:
+                save_html_to_file(html4, "custom_headers_scrape")
         
         print("\n🎯 Summary:")
         print(f"✅ Basic scrape: {'Success' if result1 else 'Failed'}")
         print(f"✅ Heavy JS scrape: {'Success' if result2 else 'Failed'}")
-        print(f"✅ Custom headers scrape: {'Success' if result3 else 'Failed'}")
+        print(f"✅ Branding scrape: {'Success' if result3 else 'Failed'}")
+        print(f"✅ Custom headers scrape: {'Success' if result4 else 'Failed'}")
         
     except Exception as e:
         print(f"❌ Unexpected error: {str(e)}")
