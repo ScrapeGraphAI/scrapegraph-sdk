@@ -1,3 +1,29 @@
+## [1.43.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.42.0...v1.43.0) (2025-11-26)
+
+
+### Features
+
+* add rendering to the sdk ([3c9770a](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/3c9770a76f3d4eb60761196455b1a026747e80fb))
+
+## [1.42.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.41.1...v1.42.0) (2025-11-21)
+
+
+### Features
+
+* refactoring of the dependencies ([114372d](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/114372d990d930f58acf76fe65afd1de4ba07b53))
+
+## [1.41.1](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.41.0...v1.41.1) (2025-11-14)
+
+
+### chore
+
+* **security:** sanitize example cookies and test literals to avoid secret detection ([6727e95](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/6727e958cdd487836bf59f8738f43dd0b2353522))
+
+
+### Refactor
+
+* update console log formatting in advanced and complete agentic scraper examples to use repeat method ([997ae16](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/997ae16f92e2e69b0807a04d87aa7d2edf0342ea))
+
 ## [1.41.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.40.0...v1.41.0) (2025-11-04)
 
 

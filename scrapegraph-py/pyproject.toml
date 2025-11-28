@@ -3,8 +3,8 @@ name = "scrapegraph_py"
 version = "1.12.2"
 description = "ScrapeGraph Python SDK for API"
 authors = [
-    { name = "Marco Vinciguerra", email = "mvincig11@gmail.com" },
-    { name = "Lorenzo Padoan", email = "lorenzo.padoan977@gmail.com" }
+    { name = "Marco Vinciguerra", email = "marco@scrapegraphai.com" },
+    { name = "Lorenzo Padoan", email = "lorenzo@scrapegraphai.com" }
 ]
 
 
@@ -47,6 +47,12 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+html = ["beautifulsoup4>=4.12.3"]
+langchain = [
+    "langchain>=0.3.0",
+    "langchain-community>=0.2.11",
+    "langchain-scrapegraph>=0.1.0",
+]
 docs = ["sphinx==6.0", "furo==2024.5.6"]
 
 [tool.uv]

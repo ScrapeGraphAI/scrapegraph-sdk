@@ -39,8 +39,10 @@ Install test dependencies:
 ```bash
 cd scrapegraph-py
 pip install -r requirements-test.txt
-pip install -e .
+pip install -e ".[html]"
 ```
+
+**Note**: Tests require the `html` extra to be installed because they test HTML validation features. The `[html]` extra includes `beautifulsoup4` which is used for HTML validation in `SmartScraperRequest`.
 
 ### Basic Test Execution
 
@@ -255,7 +257,7 @@ The `pytest.ini` file configures:
 
 1. **Import Errors**
    ```bash
-   pip install -e .
+   pip install -e ".[html]"
    ```
 
 2. **Missing Dependencies**

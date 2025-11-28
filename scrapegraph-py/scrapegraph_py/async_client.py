@@ -500,6 +500,7 @@ class AsyncClient:
         self,
         website_url: str,
         render_heavy_js: bool = False,
+        branding: bool = False,
         headers: Optional[dict[str, str]] = None,
         stealth: bool = False,
         return_toon: bool = False,
@@ -509,12 +510,14 @@ class AsyncClient:
         Args:
             website_url: The URL of the website to get HTML from
             render_heavy_js: Whether to render heavy JavaScript (defaults to False)
+            branding: Whether to include branding in the response (defaults to False)
             headers: Optional headers to send with the request
             stealth: Enable stealth mode to avoid bot detection
             return_toon: If True, return response in TOON format (reduces token usage by 30-60%)
         """
         logger.info(f"🔍 Starting scrape request for {website_url}")
         logger.debug(f"🔧 Render heavy JS: {render_heavy_js}")
+        logger.debug(f"🔧 Branding: {branding}")
         if headers:
             logger.debug("🔧 Using custom headers")
         if stealth:
@@ -525,6 +528,7 @@ class AsyncClient:
         request = ScrapeRequest(
             website_url=website_url,
             render_heavy_js=render_heavy_js,
+            branding=branding,
             headers=headers,
             stealth=stealth,
         )
