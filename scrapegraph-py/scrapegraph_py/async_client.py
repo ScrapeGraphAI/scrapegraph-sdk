@@ -77,6 +77,7 @@ from scrapegraph_py.models.scheduled_jobs import (
     TriggerJobRequest,
 )
 from scrapegraph_py.utils.helpers import handle_async_response, validate_api_key
+from scrapegraph_py.utils.toon_converter import process_response_with_toon
 
 
 class AsyncClient:
@@ -443,9 +444,18 @@ class AsyncClient:
         return {"status": "mock", "url": url, "method": method, "kwargs": kwargs}
 
     async def markdownify(
-        self, website_url: str, headers: Optional[dict[str, str]] = None, mock: bool = False, render_heavy_js: bool = False, stealth: bool = False
+        self, website_url: str, headers: Optional[dict[str, str]] = None, mock: bool = False, render_heavy_js: bool = False, stealth: bool = False, return_toon: bool = False
     ):
-        """Send a markdownify request"""
+        """Send a markdownify request
+        
+        Args:
+            website_url: The URL to convert to markdown
+            headers: Optional HTTP headers
+            mock: Enable mock mode for testing
+            render_heavy_js: Enable heavy JavaScript rendering
+            stealth: Enable stealth mode to avoid bot detection
+            return_toon: If True, return response in TOON format (reduces token usage by 30-60%)
+        """
         logger.info(f"🔍 Starting markdownify request for {website_url}")
         if headers:
             logger.debug("🔧 Using custom headers")
@@ -453,6 +463,8 @@ class AsyncClient:
             logger.debug("🥷 Stealth mode enabled")
         if render_heavy_js:
             logger.debug("⚡ Heavy JavaScript rendering enabled")
+        if return_toon:
+            logger.debug("🎨 TOON format output enabled")
 
         request = MarkdownifyRequest(website_url=website_url, headers=headers, mock=mock, render_heavy_js=render_heavy_js, stealth=stealth)
         logger.debug("✅ Request validation passed")
@@ -461,11 +473,18 @@ class AsyncClient:
             "POST", f"{API_BASE_URL}/markdownify", json=request.model_dump()
         )
         logger.info("✨ Markdownify request completed successfully")
-        return result
+        return process_response_with_toon(result, return_toon)
 
-    async def get_markdownify(self, request_id: str):
-        """Get the result of a previous markdownify request"""
+    async def get_markdownify(self, request_id: str, return_toon: bool = False):
+        """Get the result of a previous markdownify request
+        
+        Args:
+            request_id: The request ID to fetch
+            return_toon: If True, return response in TOON format (reduces token usage by 30-60%)
+        """
         logger.info(f"🔍 Fetching markdownify result for request {request_id}")
+        if return_toon:
+            logger.debug("🎨 TOON format output enabled")
 
         # Validate input using Pydantic model
         GetMarkdownifyRequest(request_id=request_id)
@@ -475,7 +494,7 @@ class AsyncClient:
             "GET", f"{API_BASE_URL}/markdownify/{request_id}"
         )
         logger.info(f"✨ Successfully retrieved result for request {request_id}")
-        return result
+        return process_response_with_toon(result, return_toon)
 
     async def scrape(
         self,
@@ -484,6 +503,7 @@ class AsyncClient:
         branding: bool = False,
         headers: Optional[dict[str, str]] = None,
         stealth: bool = False,
+        return_toon: bool = False,
     ):
         """Send a scrape request to get HTML content from a website
 
@@ -493,6 +513,7 @@ class AsyncClient:
             branding: Whether to include branding in the response (defaults to False)
             headers: Optional headers to send with the request
             stealth: Enable stealth mode to avoid bot detection
+            return_toon: If True, return response in TOON format (reduces token usage by 30-60%)
         """
         logger.info(f"🔍 Starting scrape request for {website_url}")
         logger.debug(f"🔧 Render heavy JS: {render_heavy_js}")
@@ -501,6 +522,8 @@ class AsyncClient:
             logger.debug("🔧 Using custom headers")
         if stealth:
             logger.debug("🥷 Stealth mode enabled")
+        if return_toon:
+            logger.debug("🎨 TOON format output enabled")
 
         request = ScrapeRequest(
             website_url=website_url,
@@ -515,11 +538,18 @@ class AsyncClient:
             "POST", f"{API_BASE_URL}/scrape", json=request.model_dump()
         )
         logger.info("✨ Scrape request completed successfully")
-        return result
+        return process_response_with_toon(result, return_toon)
 
-    async def get_scrape(self, request_id: str):
-        """Get the result of a previous scrape request"""
+    async def get_scrape(self, request_id: str, return_toon: bool = False):
+        """Get the result of a previous scrape request
+        
+        Args:
+            request_id: The request ID to fetch
+            return_toon: If True, return response in TOON format (reduces token usage by 30-60%)
+        """
         logger.info(f"🔍 Fetching scrape result for request {request_id}")
+        if return_toon:
+            logger.debug("🎨 TOON format output enabled")
 
         # Validate input using Pydantic model
         GetScrapeRequest(request_id=request_id)
@@ -528,7 +558,7 @@ class AsyncClient:
         result = await self._make_request(
             "GET", f"{API_BASE_URL}/scrape/{request_id}")
         logger.info(f"✨ Successfully retrieved result for request {request_id}")
-        return result
+        return process_response_with_toon(result, return_toon)
 
     async def sitemap(
         self,
@@ -588,6 +618,7 @@ class AsyncClient:
         plain_text: bool = False,
         render_heavy_js: bool = False,
         stealth: bool = False,
+        return_toon: bool = False,
     ):
         """
         Send a smartscraper request with optional pagination support and cookies.
@@ -611,9 +642,10 @@ class AsyncClient:
             plain_text: Return plain text instead of structured data
             render_heavy_js: Enable heavy JavaScript rendering
             stealth: Enable stealth mode to avoid bot detection
+            return_toon: If True, return response in TOON format (reduces token usage by 30-60%)
 
         Returns:
-            Dictionary containing the scraping results
+            Dictionary containing the scraping results, or TOON formatted string if return_toon=True
 
         Raises:
             ValueError: If validation fails or invalid parameters provided
@@ -638,6 +670,8 @@ class AsyncClient:
             logger.debug("🥷 Stealth mode enabled")
         if render_heavy_js:
             logger.debug("⚡ Heavy JavaScript rendering enabled")
+        if return_toon:
+            logger.debug("🎨 TOON format output enabled")
         logger.debug(f"📝 Prompt: {user_prompt}")
 
         request = SmartScraperRequest(
@@ -662,11 +696,18 @@ class AsyncClient:
             "POST", f"{API_BASE_URL}/smartscraper", json=request.model_dump()
         )
         logger.info("✨ Smartscraper request completed successfully")
-        return result
+        return process_response_with_toon(result, return_toon)
 
-    async def get_smartscraper(self, request_id: str):
-        """Get the result of a previous smartscraper request"""
+    async def get_smartscraper(self, request_id: str, return_toon: bool = False):
+        """Get the result of a previous smartscraper request
+        
+        Args:
+            request_id: The request ID to fetch
+            return_toon: If True, return response in TOON format (reduces token usage by 30-60%)
+        """
         logger.info(f"🔍 Fetching smartscraper result for request {request_id}")
+        if return_toon:
+            logger.debug("🎨 TOON format output enabled")
 
         # Validate input using Pydantic model
         GetSmartScraperRequest(request_id=request_id)
@@ -676,7 +717,7 @@ class AsyncClient:
             "GET", f"{API_BASE_URL}/smartscraper/{request_id}"
         )
         logger.info(f"✨ Successfully retrieved result for request {request_id}")
-        return result
+        return process_response_with_toon(result, return_toon)
 
     async def submit_feedback(
         self, request_id: str, rating: int, feedback_text: Optional[str] = None
@@ -741,6 +782,7 @@ class AsyncClient:
         output_schema: Optional[BaseModel] = None,
         extraction_mode: bool = True,
         stealth: bool = False,
+        return_toon: bool = False,
     ):
         """Send a searchscraper request
 
@@ -755,6 +797,7 @@ class AsyncClient:
             extraction_mode: Whether to use AI extraction (True) or markdown conversion (False).
                            AI extraction costs 10 credits per page, markdown conversion costs 2 credits per page.
             stealth: Enable stealth mode to avoid bot detection
+            return_toon: If True, return response in TOON format (reduces token usage by 30-60%)
         """
         logger.info("🔍 Starting searchscraper request")
         logger.debug(f"📝 Prompt: {user_prompt}")
@@ -764,6 +807,8 @@ class AsyncClient:
             logger.debug("🔧 Using custom headers")
         if stealth:
             logger.debug("🥷 Stealth mode enabled")
+        if return_toon:
+            logger.debug("🎨 TOON format output enabled")
 
         request = SearchScraperRequest(
             user_prompt=user_prompt,
@@ -779,11 +824,18 @@ class AsyncClient:
             "POST", f"{API_BASE_URL}/searchscraper", json=request.model_dump()
         )
         logger.info("✨ Searchscraper request completed successfully")
-        return result
+        return process_response_with_toon(result, return_toon)
 
-    async def get_searchscraper(self, request_id: str):
-        """Get the result of a previous searchscraper request"""
+    async def get_searchscraper(self, request_id: str, return_toon: bool = False):
+        """Get the result of a previous searchscraper request
+        
+        Args:
+            request_id: The request ID to fetch
+            return_toon: If True, return response in TOON format (reduces token usage by 30-60%)
+        """
         logger.info(f"🔍 Fetching searchscraper result for request {request_id}")
+        if return_toon:
+            logger.debug("🎨 TOON format output enabled")
 
         # Validate input using Pydantic model
         GetSearchScraperRequest(request_id=request_id)
@@ -793,7 +845,7 @@ class AsyncClient:
             "GET", f"{API_BASE_URL}/searchscraper/{request_id}"
         )
         logger.info(f"✨ Successfully retrieved result for request {request_id}")
-        return result
+        return process_response_with_toon(result, return_toon)
 
     async def crawl(
         self,
@@ -810,9 +862,27 @@ class AsyncClient:
         headers: Optional[dict[str, str]] = None,
         render_heavy_js: bool = False,
         stealth: bool = False,
+        return_toon: bool = False,
     ):
         """Send a crawl request with support for both AI extraction and
-        markdown conversion modes"""
+        markdown conversion modes
+        
+        Args:
+            url: The starting URL to crawl
+            prompt: AI prompt for data extraction (required for AI extraction mode)
+            data_schema: Schema for structured output
+            extraction_mode: Whether to use AI extraction (True) or markdown (False)
+            cache_website: Whether to cache the website
+            depth: Maximum depth of link traversal
+            max_pages: Maximum number of pages to crawl
+            same_domain_only: Only crawl pages within the same domain
+            batch_size: Number of pages to process in batch
+            sitemap: Use sitemap for crawling
+            headers: Optional HTTP headers
+            render_heavy_js: Enable heavy JavaScript rendering
+            stealth: Enable stealth mode to avoid bot detection
+            return_toon: If True, return response in TOON format (reduces token usage by 30-60%)
+        """
         logger.info("🔍 Starting crawl request")
         logger.debug(f"🌐 URL: {url}")
         logger.debug(
@@ -836,6 +906,8 @@ class AsyncClient:
             logger.debug("⚡ Heavy JavaScript rendering enabled")
         if batch_size is not None:
             logger.debug(f"📦 Batch size: {batch_size}")
+        if return_toon:
+            logger.debug("🎨 TOON format output enabled")
 
         # Build request data, excluding None values
         request_data = {
@@ -869,11 +941,18 @@ class AsyncClient:
             "POST", f"{API_BASE_URL}/crawl", json=request_json
         )
         logger.info("✨ Crawl request completed successfully")
-        return result
+        return process_response_with_toon(result, return_toon)
 
-    async def get_crawl(self, crawl_id: str):
-        """Get the result of a previous crawl request"""
+    async def get_crawl(self, crawl_id: str, return_toon: bool = False):
+        """Get the result of a previous crawl request
+        
+        Args:
+            crawl_id: The crawl ID to fetch
+            return_toon: If True, return response in TOON format (reduces token usage by 30-60%)
+        """
         logger.info(f"🔍 Fetching crawl result for request {crawl_id}")
+        if return_toon:
+            logger.debug("🎨 TOON format output enabled")
 
         # Validate input using Pydantic model
         GetCrawlRequest(crawl_id=crawl_id)
@@ -881,7 +960,7 @@ class AsyncClient:
 
         result = await self._make_request("GET", f"{API_BASE_URL}/crawl/{crawl_id}")
         logger.info(f"✨ Successfully retrieved result for request {crawl_id}")
-        return result
+        return process_response_with_toon(result, return_toon)
 
     async def agenticscraper(
         self,
@@ -892,6 +971,7 @@ class AsyncClient:
         output_schema: Optional[Dict[str, Any]] = None,
         ai_extraction: bool = False,
         stealth: bool = False,
+        return_toon: bool = False,
     ):
         """Send an agentic scraper request to perform automated actions on a webpage
 
@@ -903,6 +983,7 @@ class AsyncClient:
             output_schema: Schema for structured data extraction (optional, used with ai_extraction=True)
             ai_extraction: Whether to use AI for data extraction from the scraped content (default: False)
             stealth: Enable stealth mode to avoid bot detection
+            return_toon: If True, return response in TOON format (reduces token usage by 30-60%)
         """
         logger.info(f"🤖 Starting agentic scraper request for {url}")
         logger.debug(f"🔧 Use session: {use_session}")
@@ -913,6 +994,8 @@ class AsyncClient:
             logger.debug(f"📋 Output schema provided: {output_schema is not None}")
         if stealth:
             logger.debug("🥷 Stealth mode enabled")
+        if return_toon:
+            logger.debug("🎨 TOON format output enabled")
 
         request = AgenticScraperRequest(
             url=url,
@@ -929,11 +1012,18 @@ class AsyncClient:
             "POST", f"{API_BASE_URL}/agentic-scrapper", json=request.model_dump()
         )
         logger.info("✨ Agentic scraper request completed successfully")
-        return result
+        return process_response_with_toon(result, return_toon)
 
-    async def get_agenticscraper(self, request_id: str):
-        """Get the result of a previous agentic scraper request"""
+    async def get_agenticscraper(self, request_id: str, return_toon: bool = False):
+        """Get the result of a previous agentic scraper request
+        
+        Args:
+            request_id: The request ID to fetch
+            return_toon: If True, return response in TOON format (reduces token usage by 30-60%)
+        """
         logger.info(f"🔍 Fetching agentic scraper result for request {request_id}")
+        if return_toon:
+            logger.debug("🎨 TOON format output enabled")
 
         # Validate input using Pydantic model
         GetAgenticScraperRequest(request_id=request_id)
@@ -941,7 +1031,7 @@ class AsyncClient:
 
         result = await self._make_request("GET", f"{API_BASE_URL}/agentic-scrapper/{request_id}")
         logger.info(f"✨ Successfully retrieved result for request {request_id}")
-        return result
+        return process_response_with_toon(result, return_toon)
 
     async def generate_schema(
         self,

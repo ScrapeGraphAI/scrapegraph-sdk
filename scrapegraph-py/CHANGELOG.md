@@ -1,3 +1,17 @@
+## [1.44.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.43.0...v1.44.0) (2025-11-28)
+
+
+### Features
+
+* integrate Toonify library for token-efficient responses ([c094530](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/c094530afd3029717d69ecb521b8198413c14a49))
+
+## [1.43.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.42.0...v1.43.0) (2025-11-26)
+
+
+### Features
+
+* add rendering to the sdk ([3c9770a](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/3c9770a76f3d4eb60761196455b1a026747e80fb))
+
 ## [1.42.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.41.1...v1.42.0) (2025-11-21)
 
 
