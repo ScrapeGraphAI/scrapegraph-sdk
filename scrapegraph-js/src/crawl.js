@@ -23,6 +23,8 @@ import { getMockResponse } from './utils/mockResponse.js';
  * @param {boolean} [options.mock] - Override mock mode for this request
  * @param {boolean} [options.renderHeavyJs=false] - Whether to render heavy JavaScript on the page
  * @param {boolean} [options.stealth=false] - Enable stealth mode to avoid bot detection
+ * @param {Array<string>} [options.includePaths] - List of path patterns to include (e.g., ['/products/*', '/blog/**']). Supports wildcards: * matches any characters, ** matches any path segments
+ * @param {Array<string>} [options.excludePaths] - List of path patterns to exclude (e.g., ['/admin/*', '/api/*']). Supports wildcards and takes precedence over includePaths
  * @returns {Promise<Object>} The crawl job response
  * @throws {Error} Throws an error if the HTTP request fails
  */
@@ -33,7 +35,7 @@ export async function crawl(
   schema,
   options = {}
 ) {
-  const { mock = null, renderHeavyJs = false, stealth = false } = options;
+  const { mock = null, renderHeavyJs = false, stealth = false, includePaths = null, excludePaths = null } = options;
 
   // Check if mock mode is enabled
   const useMock = mock !== null ? mock : isMockEnabled();
@@ -86,6 +88,14 @@ export async function crawl(
 
   if (stealth) {
     payload.stealth = stealth;
+  }
+
+  if (includePaths) {
+    payload.include_paths = includePaths;
+  }
+
+  if (excludePaths) {
+    payload.exclude_paths = excludePaths;
   }
 
   try {

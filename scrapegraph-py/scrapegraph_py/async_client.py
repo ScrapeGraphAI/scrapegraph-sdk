@@ -862,11 +862,13 @@ class AsyncClient:
         headers: Optional[dict[str, str]] = None,
         render_heavy_js: bool = False,
         stealth: bool = False,
+        include_paths: Optional[list[str]] = None,
+        exclude_paths: Optional[list[str]] = None,
         return_toon: bool = False,
     ):
         """Send a crawl request with support for both AI extraction and
         markdown conversion modes
-        
+
         Args:
             url: The starting URL to crawl
             prompt: AI prompt for data extraction (required for AI extraction mode)
@@ -881,6 +883,10 @@ class AsyncClient:
             headers: Optional HTTP headers
             render_heavy_js: Enable heavy JavaScript rendering
             stealth: Enable stealth mode to avoid bot detection
+            include_paths: List of path patterns to include (e.g., ['/products/*', '/blog/**'])
+                          Supports wildcards: * matches any characters, ** matches any path segments
+            exclude_paths: List of path patterns to exclude (e.g., ['/admin/*', '/api/*'])
+                          Supports wildcards and takes precedence over include_paths
             return_toon: If True, return response in TOON format (reduces token usage by 30-60%)
         """
         logger.info("🔍 Starting crawl request")
@@ -906,6 +912,10 @@ class AsyncClient:
             logger.debug("⚡ Heavy JavaScript rendering enabled")
         if batch_size is not None:
             logger.debug(f"📦 Batch size: {batch_size}")
+        if include_paths:
+            logger.debug(f"✅ Include paths: {include_paths}")
+        if exclude_paths:
+            logger.debug(f"❌ Exclude paths: {exclude_paths}")
         if return_toon:
             logger.debug("🎨 TOON format output enabled")
 
@@ -931,6 +941,10 @@ class AsyncClient:
             request_data["batch_size"] = batch_size
         if headers is not None:
             request_data["headers"] = headers
+        if include_paths is not None:
+            request_data["include_paths"] = include_paths
+        if exclude_paths is not None:
+            request_data["exclude_paths"] = exclude_paths
 
         request = CrawlRequest(**request_data)
         logger.debug("✅ Request validation passed")
