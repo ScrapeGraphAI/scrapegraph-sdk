@@ -9,16 +9,22 @@ from pydantic import BaseModel, Field, conint, model_validator
 class CrawlRequest(BaseModel):
     """
     Request model for the crawl endpoint.
-    
+
     The crawl endpoint supports two modes:
     1. AI Extraction Mode (extraction_mode=True): Uses AI to extract structured data
     2. Markdown Conversion Mode (extraction_mode=False): Converts pages to markdown (80% cheaper)
-    
+
     Sitemap Support:
     - When sitemap=True, the crawler uses sitemap.xml for better page discovery
     - Recommended for structured websites (e-commerce, news sites, blogs)
     - Provides more comprehensive crawling coverage
     - Works with both AI extraction and markdown conversion modes
+
+    Path Filtering:
+    - include_paths: Specify which paths to crawl (e.g., ['/products/*', '/blog/**'])
+    - exclude_paths: Specify which paths to skip (e.g., ['/admin/*', '/api/*'])
+    - Supports wildcards: * (any characters), ** (any path segments)
+    - exclude_paths takes precedence over include_paths
     """
     url: str = Field(
         ...,
@@ -74,6 +80,20 @@ class CrawlRequest(BaseModel):
     )
     render_heavy_js: bool = Field(default=False, description="Whether to render heavy JavaScript on the page")
     stealth: bool = Field(default=False, description="Enable stealth mode to avoid bot detection")
+    include_paths: Optional[list[str]] = Field(
+        default=None,
+        description="List of path patterns to include (e.g., ['/products/*', '/blog/**']). "
+        "Supports wildcards: * matches any characters, ** matches any path segments. "
+        "If empty, all paths are included.",
+        example=["/products/*", "/blog/**"]
+    )
+    exclude_paths: Optional[list[str]] = Field(
+        default=None,
+        description="List of path patterns to exclude (e.g., ['/admin/*', '/api/*']). "
+        "Supports wildcards: * matches any characters, ** matches any path segments. "
+        "Takes precedence over include_paths.",
+        example=["/admin/*", "/api/**"]
+    )
 
     @model_validator(mode="after")
     def validate_url(self) -> "CrawlRequest":
@@ -132,6 +152,21 @@ class CrawlRequest(BaseModel):
             if self.max_pages < 5:
                 # This is just a recommendation, not an error
                 pass  # Could add logging here if needed
+        return self
+
+    @model_validator(mode="after")
+    def validate_path_patterns(self) -> "CrawlRequest":
+        """Validate path patterns start with '/'"""
+        if self.include_paths:
+            for path in self.include_paths:
+                if not path.startswith("/"):
+                    raise ValueError(f"Include path must start with '/': {path}")
+
+        if self.exclude_paths:
+            for path in self.exclude_paths:
+                if not path.startswith("/"):
+                    raise ValueError(f"Exclude path must start with '/': {path}")
+
         return self
 
 
