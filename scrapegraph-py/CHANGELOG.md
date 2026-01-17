@@ -1,3 +1,10 @@
+## [1.44.1](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.44.0...v1.44.1) (2026-01-17)
+
+
+### Bug Fixes
+
+* update readme ([11e6c2c](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/11e6c2cafa7d8afebc1a2392c4d35f382cded1d6))
+
 ## [1.44.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.43.0...v1.44.0) (2025-11-28)
 
 
