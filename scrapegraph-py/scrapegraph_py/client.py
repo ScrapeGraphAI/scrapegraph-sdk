@@ -874,6 +874,7 @@ class Client:
         stealth: bool = False,
         include_paths: Optional[list[str]] = None,
         exclude_paths: Optional[list[str]] = None,
+        webhook_url: Optional[str] = None,
         return_toon: bool = False,
     ):
         """Send a crawl request with support for both AI extraction and
@@ -897,6 +898,7 @@ class Client:
                           Supports wildcards: * matches any characters, ** matches any path segments
             exclude_paths: List of path patterns to exclude (e.g., ['/admin/*', '/api/*'])
                           Supports wildcards and takes precedence over include_paths
+            webhook_url: URL to receive webhook notifications when the crawl completes
             return_toon: If True, return response in TOON format (reduces token usage by 30-60%)
         """
         logger.info("🔍 Starting crawl request")
@@ -926,6 +928,8 @@ class Client:
             logger.debug(f"✅ Include paths: {include_paths}")
         if exclude_paths:
             logger.debug(f"❌ Exclude paths: {exclude_paths}")
+        if webhook_url:
+            logger.debug(f"🔔 Webhook URL: {webhook_url}")
         if return_toon:
             logger.debug("🎨 TOON format output enabled")
 
@@ -955,6 +959,8 @@ class Client:
             request_data["include_paths"] = include_paths
         if exclude_paths is not None:
             request_data["exclude_paths"] = exclude_paths
+        if webhook_url is not None:
+            request_data["webhook_url"] = webhook_url
 
         request = CrawlRequest(**request_data)
         logger.debug("✅ Request validation passed")
