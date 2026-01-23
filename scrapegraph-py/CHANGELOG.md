@@ -1,3 +1,10 @@
+## [1.45.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.44.1...v1.45.0) (2026-01-23)
+
+
+### Features
+
+* add webhook_url parameter to crawler endpoint ([fd55fbc](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/fd55fbcd2b4b94ef1c7840b4f81c14bf101fc2f6))
+
 ## [1.44.1](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.44.0...v1.44.1) (2026-01-17)
 
 
