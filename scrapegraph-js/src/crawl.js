@@ -25,6 +25,7 @@ import { getMockResponse } from './utils/mockResponse.js';
  * @param {boolean} [options.stealth=false] - Enable stealth mode to avoid bot detection
  * @param {Array<string>} [options.includePaths] - List of path patterns to include (e.g., ['/products/*', '/blog/**']). Supports wildcards: * matches any characters, ** matches any path segments
  * @param {Array<string>} [options.excludePaths] - List of path patterns to exclude (e.g., ['/admin/*', '/api/*']). Supports wildcards and takes precedence over includePaths
+ * @param {string} [options.webhookUrl] - URL to receive webhook notifications when the crawl job completes
  * @returns {Promise<Object>} The crawl job response
  * @throws {Error} Throws an error if the HTTP request fails
  */
@@ -35,7 +36,7 @@ export async function crawl(
   schema,
   options = {}
 ) {
-  const { mock = null, renderHeavyJs = false, stealth = false, includePaths = null, excludePaths = null } = options;
+  const { mock = null, renderHeavyJs = false, stealth = false, includePaths = null, excludePaths = null, webhookUrl = null } = options;
 
   // Check if mock mode is enabled
   const useMock = mock !== null ? mock : isMockEnabled();
@@ -96,6 +97,10 @@ export async function crawl(
 
   if (excludePaths) {
     payload.exclude_paths = excludePaths;
+  }
+
+  if (webhookUrl) {
+    payload.webhook_url = webhookUrl;
   }
 
   try {

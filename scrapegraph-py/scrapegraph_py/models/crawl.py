@@ -94,6 +94,12 @@ class CrawlRequest(BaseModel):
         "Takes precedence over include_paths.",
         example=["/admin/*", "/api/**"]
     )
+    webhook_url: Optional[str] = Field(
+        default=None,
+        description="URL to receive webhook notifications when the crawl job completes. "
+        "The webhook will receive a POST request with the crawl results.",
+        example="https://example.com/webhook"
+    )
 
     @model_validator(mode="after")
     def validate_url(self) -> "CrawlRequest":
@@ -167,6 +173,21 @@ class CrawlRequest(BaseModel):
                 if not path.startswith("/"):
                     raise ValueError(f"Exclude path must start with '/': {path}")
 
+        return self
+
+    @model_validator(mode="after")
+    def validate_webhook_url(self) -> "CrawlRequest":
+        """Validate webhook URL format if provided"""
+        if self.webhook_url is not None:
+            if not self.webhook_url.strip():
+                raise ValueError("Webhook URL cannot be empty")
+            if not (
+                self.webhook_url.startswith("http://")
+                or self.webhook_url.startswith("https://")
+            ):
+                raise ValueError(
+                    "Invalid webhook URL - must start with http:// or https://"
+                )
         return self
 
 
