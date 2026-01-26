@@ -72,25 +72,6 @@ def new_feature(
     pass
 ```
 
-### JavaScript SDK Changes
-
-**New Files:**
-- `src/newFeature.js` - Feature implementation
-- `test/test_newFeature.js` - Test file
-- `examples/newFeature.js` - Usage example
-
-**Modified Files:**
-- `index.js` - Export new functions
-- `README.md` - Update documentation
-
-**API Changes:**
-```javascript
-// New exported functions
-export async function newFeature(apiKey, param1, options = {}) {
-  // Implementation
-}
-```
-
 ---
 
 ## Implementation Plan
@@ -98,7 +79,6 @@ export async function newFeature(apiKey, param1, options = {}) {
 ### Phase 1: Foundation (Week 1)
 
 - [ ] Create Pydantic models for Python SDK
-- [ ] Create JavaScript function signatures
 - [ ] Write unit tests (TDD approach)
 - [ ] Set up CI test coverage
 
@@ -106,7 +86,6 @@ export async function newFeature(apiKey, param1, options = {}) {
 
 - [ ] Implement Python sync client methods
 - [ ] Implement Python async client methods
-- [ ] Implement JavaScript functions
 - [ ] Add error handling and validation
 
 ### Phase 3: Testing & Documentation (Week 3)
@@ -114,7 +93,7 @@ export async function newFeature(apiKey, param1, options = {}) {
 - [ ] Write integration tests
 - [ ] Create usage examples
 - [ ] Update README documentation
-- [ ] Add docstrings and JSDoc comments
+- [ ] Add docstrings
 
 ### Phase 4: Release (Week 4)
 
@@ -201,20 +180,6 @@ async def main():
 asyncio.run(main())
 ```
 
-### JavaScript
-
-```javascript
-import { newFeature } from 'scrapegraph-js';
-
-const response = await newFeature(
-    apiKey,
-    "value",
-    { param2: 123 }
-);
-
-console.log(response.result);
-```
-
 ---
 
 ## Testing Strategy
@@ -248,7 +213,7 @@ console.log(response.result);
 - [ ] Documentation complete
 - [ ] Examples functional
 - [ ] No breaking changes (or documented migration)
-- [ ] Successfully published to PyPI and npm
+- [ ] Successfully published to PyPI
 
 ---
 
@@ -258,11 +223,6 @@ console.log(response.result);
 
 No new dependencies required / OR:
 - New dependency: `package-name>=X.Y.Z`
-
-### JavaScript SDK Dependencies
-
-No new dependencies required / OR:
-- New dependency: `package-name@X.Y.Z`
 
 ### API Dependencies
 

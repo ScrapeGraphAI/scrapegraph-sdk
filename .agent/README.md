@@ -1,6 +1,6 @@
 # ScrapeGraphAI SDK Documentation
 
-Welcome to the ScrapeGraphAI SDK documentation hub. This directory contains comprehensive documentation for understanding, developing, and maintaining the official Python and JavaScript SDKs for the ScrapeGraph AI API.
+Welcome to the ScrapeGraphAI SDK documentation hub. This directory contains comprehensive documentation for understanding, developing, and maintaining the official Python SDK for the ScrapeGraph AI API.
 
 ## 📚 Available Documentation
 
@@ -8,10 +8,9 @@ Welcome to the ScrapeGraphAI SDK documentation hub. This directory contains comp
 
 #### [Project Architecture](./system/project_architecture.md)
 Complete SDK architecture documentation including:
-- **Monorepo Structure** - How Python and JavaScript SDKs are organized
+- **Repository Structure** - How the Python SDK is organized
 - **Python SDK Architecture** - Client structure, async/sync support, models
-- **JavaScript SDK Architecture** - Function-based API, async design
-- **API Endpoints Coverage** - All supported endpoints across SDKs
+- **API Endpoints Coverage** - All supported endpoints
 - **Authentication** - API key management and security
 - **Testing Strategy** - Unit tests, integration tests, CI/CD
 - **Release Process** - Semantic versioning and publishing
@@ -33,11 +32,8 @@ Complete SDK architecture documentation including:
 1. **Read First:**
    - [Main README](../README.md) - Project overview and features
    - [Python SDK README](../scrapegraph-py/README.md) - Python SDK guide
-   - [JavaScript SDK README](../scrapegraph-js/README.md) - JavaScript SDK guide
 
-2. **Choose Your SDK:**
-
-   **Python SDK:**
+2. **Setup Python SDK:**
    ```bash
    cd scrapegraph-py
 
@@ -52,35 +48,15 @@ Complete SDK architecture documentation including:
    pre-commit install
    ```
 
-   **JavaScript SDK:**
-   ```bash
-   cd scrapegraph-js
-
-   # Install dependencies
-   npm install
-
-   # Run tests
-   npm test
-   ```
-
 3. **Run Tests:**
-
-   **Python:**
    ```bash
    cd scrapegraph-py
    pytest tests/ -v
    ```
 
-   **JavaScript:**
-   ```bash
-   cd scrapegraph-js
-   npm test
-   ```
-
 4. **Explore the Codebase:**
    - **Python**: `scrapegraph_py/client.py` - Sync client, `scrapegraph_py/async_client.py` - Async client
-   - **JavaScript**: `src/` directory - Individual endpoint modules
-   - **Examples**: `scrapegraph-py/examples/` and `scrapegraph-js/examples/`
+   - **Examples**: `scrapegraph-py/examples/`
 
 ---
 
@@ -90,26 +66,21 @@ Complete SDK architecture documentation including:
 
 **...how to add a new endpoint:**
 - Read: Python SDK - `scrapegraph_py/client.py`, `scrapegraph_py/async_client.py`
-- Read: JavaScript SDK - Create new file in `src/`
 - Examples: Look at existing endpoint implementations
 
 **...how authentication works:**
 - Read: Python SDK - `scrapegraph_py/client.py` (initialization)
-- Read: JavaScript SDK - Each function accepts `apiKey` parameter
-- Both SDKs support `SGAI_API_KEY` environment variable
+- Python SDK supports `SGAI_API_KEY` environment variable
 
 **...how error handling works:**
 - Read: Python SDK - `scrapegraph_py/exceptions.py`
-- Read: JavaScript SDK - Try/catch blocks in each endpoint
 
 **...how testing works:**
 - Read: Python SDK - `tests/` directory, `pytest.ini`
-- Read: JavaScript SDK - `test/` directory
 - Run: Follow test commands in README
 
 **...how releases work:**
 - Read: Python SDK - `.releaserc.yml` (semantic-release config)
-- Read: JavaScript SDK - `.releaserc` (semantic-release config)
 - GitHub Actions: `.github/workflows/` for automated releases
 
 ---
@@ -132,16 +103,6 @@ pytest tests/test_smartscraper.py -v
 pytest --cov=scrapegraph_py --cov-report=html tests/
 ```
 
-**JavaScript SDK:**
-```bash
-cd scrapegraph-js
-
-# Run all tests
-npm test
-
-# Run specific test
-node test/test_smartscraper.js
-```
 
 ### Code Quality
 
@@ -166,16 +127,6 @@ make format
 make lint
 ```
 
-**JavaScript SDK:**
-```bash
-cd scrapegraph-js
-
-# Format code
-npm run format
-
-# Lint code
-npm run lint
-```
 
 ### Building & Publishing
 
@@ -190,35 +141,24 @@ python -m build
 twine upload dist/*
 ```
 
-**JavaScript SDK:**
-```bash
-cd scrapegraph-js
-
-# Build package (if needed)
-npm run build
-
-# Publish to npm (automated via GitHub Actions)
-npm publish
-```
 
 ---
 
 ## 📊 SDK Endpoint Reference
 
-Both SDKs support the following endpoints:
+The Python SDK supports the following endpoints:
 
-| Endpoint | Python SDK | JavaScript SDK | Purpose |
-|----------|-----------|----------------|---------|
-| SmartScraper | ✅ | ✅ | AI-powered data extraction |
-| SearchScraper | ✅ | ✅ | Multi-website search extraction |
-| Markdownify | ✅ | ✅ | HTML to Markdown conversion |
-| Sitemap | ❌ | ✅ | Sitemap URL extraction |
-| SmartCrawler | ✅ | ✅ | Sitemap generation & crawling |
-| AgenticScraper | ✅ | ✅ | Browser automation |
-| Scrape | ✅ | ✅ | Basic HTML extraction |
-| Scheduled Jobs | ✅ | ✅ | Cron-based job scheduling |
-| Credits | ✅ | ✅ | Credit balance management |
-| Feedback | ✅ | ✅ | Rating and feedback |
+| Endpoint | Python SDK | Purpose |
+|----------|-----------|---------|
+| SmartScraper | ✅ | AI-powered data extraction |
+| SearchScraper | ✅ | Multi-website search extraction |
+| Markdownify | ✅ | HTML to Markdown conversion |
+| SmartCrawler | ✅ | Sitemap generation & crawling |
+| AgenticScraper | ✅ | Browser automation |
+| Scrape | ✅ | Basic HTML extraction |
+| Scheduled Jobs | ✅ | Cron-based job scheduling |
+| Credits | ✅ | Credit balance management |
+| Feedback | ✅ | Rating and feedback |
 
 ---
 
@@ -251,30 +191,6 @@ Both SDKs support the following endpoints:
 - `Makefile` - Common development tasks
 - `.releaserc.yml` - Semantic-release configuration
 
-### JavaScript SDK
-
-**Entry Points:**
-- `index.js` - Main package entry
-- `src/` - Individual endpoint modules
-  - `smartScraper.js`
-  - `searchScraper.js`
-  - `crawl.js`
-  - `markdownify.js`
-  - `sitemap.js`
-  - `agenticScraper.js`
-  - `scrape.js`
-  - `scheduledJobs.js`
-  - `credits.js`
-  - `feedback.js`
-  - `schema.js`
-
-**Utilities:**
-- `src/utils/` - Helper functions
-
-**Configuration:**
-- `package.json` - Package metadata and scripts
-- `eslint.config.js` - ESLint configuration
-- `.prettierrc.json` - Prettier configuration
 
 ---
 
@@ -290,16 +206,6 @@ scrapegraph-py/tests/
 ├── test_searchscraper.py      # SearchScraper endpoint tests
 ├── test_crawler.py            # Crawler endpoint tests
 └── conftest.py                # Pytest fixtures
-```
-
-### JavaScript SDK Test Structure
-
-```
-scrapegraph-js/test/
-├── test_smartscraper.js
-├── test_searchscraper.js
-├── test_crawl.js
-└── test_*.js
 ```
 
 ### Writing Tests
@@ -318,24 +224,6 @@ def test_smartscraper_basic():
     assert response.request_id is not None
 ```
 
-**JavaScript Example:**
-```javascript
-import { smartScraper } from 'scrapegraph-js';
-
-(async () => {
-  try {
-    const response = await smartScraper(
-      'test-key',
-      'https://example.com',
-      'Extract title'
-    );
-    console.log('Success:', response.result);
-  } catch (error) {
-    console.error('Error:', error);
-  }
-})();
-```
-
 ---
 
 ## 🚨 Troubleshooting
@@ -352,13 +240,6 @@ import { smartScraper } from 'scrapegraph-js';
   uv sync
   ```
 
-**Issue: Module not found in JavaScript SDK**
-- **Cause:** Dependencies not installed
-- **Solution:**
-  ```bash
-  cd scrapegraph-js
-  npm install
-  ```
 
 **Issue: API key errors**
 - **Cause:** Invalid or missing API key
@@ -382,11 +263,9 @@ import { smartScraper } from 'scrapegraph-js';
 ### Official Docs
 - [ScrapeGraph AI API Documentation](https://docs.scrapegraphai.com)
 - [Python SDK Documentation](https://docs.scrapegraphai.com/sdks/python)
-- [JavaScript SDK Documentation](https://docs.scrapegraphai.com/sdks/javascript)
 
 ### Package Repositories
 - [PyPI - scrapegraph-py](https://pypi.org/project/scrapegraph-py/)
-- [npm - scrapegraph-js](https://www.npmjs.com/package/scrapegraph-js)
 
 ### Development Tools
 - [pytest Documentation](https://docs.pytest.org/)
@@ -426,11 +305,6 @@ import { smartScraper } from 'scrapegraph-js';
 - **Type hints** - Use Pydantic models and type annotations
 - **Docstrings** - Document public functions and classes
 
-**JavaScript SDK:**
-- **Prettier** - Code formatting
-- **ESLint** - Linting
-- **JSDoc** - Function documentation
-- **Async/await** - Use promises for all async operations
 
 ### Commit Message Format
 
@@ -462,7 +336,7 @@ This enables automated semantic versioning and changelog generation.
 - Changing installation instructions
 - Adding new features or use cases
 
-**Update SDK-specific READMEs when:**
+**Update Python SDK README when:**
 - Adding new endpoint methods
 - Changing API surface
 - Adding examples
@@ -505,7 +379,6 @@ Both SDKs use **semantic-release** for automated versioning and publishing:
 
 - [Main README](../README.md) - Project overview
 - [Python SDK README](../scrapegraph-py/README.md) - Python guide
-- [JavaScript SDK README](../scrapegraph-js/README.md) - JavaScript guide
 - [Cookbook](../cookbook/) - Usage examples
 - [API Documentation](https://docs.scrapegraphai.com) - Full API docs
 
