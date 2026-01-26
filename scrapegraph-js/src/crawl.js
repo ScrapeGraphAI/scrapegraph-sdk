@@ -16,6 +16,7 @@ import { getMockResponse } from './utils/mockResponse.js';
  * @param {boolean} [options.extractionMode=true] - true for AI extraction, false for markdown conversion (NO AI/LLM)
  * @param {boolean} [options.cacheWebsite=true] - Whether to cache the website content
  * @param {number} [options.depth=2] - Maximum depth of the crawl (1-10)
+ * @param {number|null} [options.breadth] - Maximum number of links to crawl per depth level. If null/undefined, unlimited (default). Controls the 'width' of exploration at each depth. Useful for limiting crawl scope on large sites. Note: maxPages always takes priority. Ignored when sitemap=true.
  * @param {number} [options.maxPages=2] - Maximum number of pages to crawl (1-100)
  * @param {boolean} [options.sameDomainOnly=true] - Whether to only crawl pages from the same domain
  * @param {boolean} [options.sitemap] - Whether to use sitemap for better page discovery
@@ -68,6 +69,7 @@ export async function crawl(
   const {
     cacheWebsite = true,
     depth = 2,
+    breadth = null,
     maxPages = 2,
     sameDomainOnly = true,
     sitemap = false,
@@ -86,6 +88,10 @@ export async function crawl(
     batch_size: batchSize,
     render_heavy_js: renderHeavyJs,
   };
+
+  if (breadth !== null && breadth !== undefined) {
+    payload.breadth = breadth;
+  }
 
   if (stealth) {
     payload.stealth = stealth;
