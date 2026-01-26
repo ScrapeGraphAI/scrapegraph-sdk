@@ -1,3 +1,10 @@
+## [1.46.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.45.0...v1.46.0) (2026-01-26)
+
+
+### Features
+
+* add breadth ([5d996c5](https://github.com/ScrapeGraphAI/scrapegraph-sdk/commit/5d996c50692f77a4330512a781f3ff70a46ddfab))
+
 ## [1.45.0](https://github.com/ScrapeGraphAI/scrapegraph-sdk/compare/v1.44.1...v1.45.0) (2026-01-23)
 
 
