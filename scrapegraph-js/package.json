@@ -1,11 +1,11 @@
 {
   "name": "scrapegraph-js",
   "author": "ScrapeGraphAI",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "Scrape and extract structured data from a webpage using ScrapeGraphAI's APIs. Supports cookies for authentication, infinite scrolling, and pagination.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ScrapeGraphAI/scrapegraph-sdk",
+    "url": "git+https://github.com/ScrapeGraphAI/scrapegraph-sdk.git",
     "directory": "scrapegraph-js"
   },
   "scripts": {
