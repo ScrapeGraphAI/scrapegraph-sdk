@@ -855,6 +855,7 @@ class AsyncClient:
         extraction_mode: bool = True,
         cache_website: bool = True,
         depth: int = 2,
+        breadth: Optional[int] = None,
         max_pages: int = 2,
         same_domain_only: bool = True,
         batch_size: Optional[int] = None,
@@ -877,6 +878,9 @@ class AsyncClient:
             extraction_mode: Whether to use AI extraction (True) or markdown (False)
             cache_website: Whether to cache the website
             depth: Maximum depth of link traversal
+            breadth: Maximum number of links to crawl per depth level. If None, unlimited (default).
+                    Controls the 'width' of exploration at each depth. Useful for limiting crawl scope
+                    on large sites. Note: max_pages always takes priority. Ignored when sitemap=True.
             max_pages: Maximum number of pages to crawl
             same_domain_only: Only crawl pages within the same domain
             batch_size: Number of pages to process in batch
@@ -905,6 +909,8 @@ class AsyncClient:
             )
         logger.debug(f"💾 Cache website: {cache_website}")
         logger.debug(f"🔍 Depth: {depth}")
+        if breadth is not None:
+            logger.debug(f"📏 Breadth: {breadth}")
         logger.debug(f"📄 Max pages: {max_pages}")
         logger.debug(f"🏠 Same domain only: {same_domain_only}")
         logger.debug(f"🗺️ Use sitemap: {sitemap}")
@@ -941,6 +947,8 @@ class AsyncClient:
             request_data["prompt"] = prompt
         if data_schema is not None:
             request_data["data_schema"] = data_schema
+        if breadth is not None:
+            request_data["breadth"] = breadth
         if batch_size is not None:
             request_data["batch_size"] = batch_size
         if headers is not None:

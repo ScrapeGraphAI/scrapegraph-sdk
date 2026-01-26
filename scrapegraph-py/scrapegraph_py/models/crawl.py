@@ -54,6 +54,14 @@ class CrawlRequest(BaseModel):
     depth: conint(ge=1, le=10) = Field(
         default=2, description="Maximum depth of the crawl (1-10)"
     )
+    breadth: Optional[conint(ge=1)] = Field(
+        default=None,
+        description="Maximum number of links to crawl per depth level. "
+        "If None, unlimited (default). Controls the 'width' of exploration at each depth. "
+        "Useful for limiting crawl scope on large sites. Note: max_pages always takes priority - "
+        "the total crawled pages will never exceed max_pages regardless of breadth setting. "
+        "Ignored when sitemap=True (sitemap mode uses sitemap URLs directly instead of link discovery).",
+    )
     max_pages: conint(ge=1, le=100) = Field(
         default=2, description="Maximum number of pages to crawl (1-100)"
     )
