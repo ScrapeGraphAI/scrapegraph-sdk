@@ -782,6 +782,7 @@ class AsyncClient:
         output_schema: Optional[BaseModel] = None,
         extraction_mode: bool = True,
         stealth: bool = False,
+        location_geo_code: Optional[str] = None,
         return_toon: bool = False,
     ):
         """Send a searchscraper request
@@ -797,6 +798,7 @@ class AsyncClient:
             extraction_mode: Whether to use AI extraction (True) or markdown conversion (False).
                            AI extraction costs 10 credits per page, markdown conversion costs 2 credits per page.
             stealth: Enable stealth mode to avoid bot detection
+            location_geo_code: Optional geo code of the location to search in (e.g., "us")
             return_toon: If True, return response in TOON format (reduces token usage by 30-60%)
         """
         logger.info("🔍 Starting searchscraper request")
@@ -807,6 +809,8 @@ class AsyncClient:
             logger.debug("🔧 Using custom headers")
         if stealth:
             logger.debug("🥷 Stealth mode enabled")
+        if location_geo_code:
+            logger.debug(f"🌍 Location geo code: {location_geo_code}")
         if return_toon:
             logger.debug("🎨 TOON format output enabled")
 
@@ -817,6 +821,7 @@ class AsyncClient:
             output_schema=output_schema,
             extraction_mode=extraction_mode,
             stealth=stealth,
+            location_geo_code=location_geo_code,
         )
         logger.debug("✅ Request validation passed")
 
