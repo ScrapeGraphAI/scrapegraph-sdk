@@ -2,16 +2,16 @@
 
 **Last Updated:** January 2025
 
-This document describes the automated and manual release process for both Python and JavaScript SDKs using semantic-release.
+This document describes the automated and manual release process for the Python SDK using semantic-release.
 
 ## Overview
 
-Both SDKs use **semantic-release** for automated versioning and publishing:
+The SDK uses **semantic-release** for automated versioning and publishing:
 - Analyzes commit messages to determine version bump
 - Updates version numbers
 - Generates changelog
 - Creates GitHub releases
-- Publishes to PyPI (Python) / npm (JavaScript)
+- Publishes to PyPI
 
 ## Semantic Versioning
 
@@ -120,7 +120,7 @@ git push origin main
 
 Once merged to `main`:
 
-**Python SDK** (`.github/workflows/python-sdk-release.yml`):
+**Python SDK** (`.github/workflows/release.yml`):
 1. semantic-release analyzes commits since last release
 2. Determines version bump (major/minor/patch)
 3. Updates `pyproject.toml` version
@@ -130,20 +130,11 @@ Once merged to `main`:
 7. Publishes to PyPI via `twine`
 8. Creates GitHub release with notes
 
-**JavaScript SDK** (`.github/workflows/js-sdk-release.yml`):
-1. semantic-release analyzes commits
-2. Updates `package.json` version
-3. Generates `CHANGELOG.md` entry
-4. Creates Git tag
-5. Publishes to npm
-6. Creates GitHub release
-
 **6. Verify Release**
 
 Check:
 - GitHub Releases page: https://github.com/ScrapeGraphAI/scrapegraph-sdk/releases
 - PyPI page: https://pypi.org/project/scrapegraph-py/
-- npm page: https://www.npmjs.com/package/scrapegraph-js
 
 ---
 
@@ -239,82 +230,6 @@ twine upload dist/*
 5. Attach: `dist/scrapegraph_py-1.13.0.tar.gz`
 6. Publish release
 
-### JavaScript SDK Manual Release
-
-**1. Update Version**
-
-**File**: `scrapegraph-js/package.json`
-
-```json
-{
-  "name": "scrapegraph-js",
-  "version": "1.5.0",
-  ...
-}
-```
-
-**2. Update Changelog**
-
-**File**: `scrapegraph-js/CHANGELOG.md`
-
-```markdown
-## [1.5.0] - 2025-01-XX
-
-### Added
-- New feature description
-
-### Fixed
-- Bug fix description
-```
-
-**3. Commit Changes**
-
-```bash
-cd scrapegraph-js
-git add package.json CHANGELOG.md
-git commit -m "chore(release): 1.5.0"
-git tag v1.5.0-js
-git push origin main --tags
-```
-
-**4. Test Package Locally**
-
-```bash
-cd scrapegraph-js
-
-# Install in test directory
-mkdir test-install
-cd test-install
-npm init -y
-npm install ..
-
-# Test import
-node -e "const { smartScraper } = require('scrapegraph-js'); console.log('Success!');"
-```
-
-**5. Publish to npm**
-
-```bash
-cd scrapegraph-js
-
-# Login to npm (if not already)
-npm login
-
-# Publish package
-npm publish
-
-# Or publish with tag
-npm publish --tag beta
-```
-
-**6. Create GitHub Release**
-
-1. Go to https://github.com/ScrapeGraphAI/scrapegraph-sdk/releases/new
-2. Tag: `v1.5.0-js`
-3. Title: `JavaScript SDK v1.5.0`
-4. Description: Copy from CHANGELOG.md
-5. Publish release
-
 ---
 
 ## Release Checklist
@@ -340,19 +255,10 @@ npm publish --tag beta
 - [ ] PyPI package published
 - [ ] Installation tested: `pip install scrapegraph-py==X.Y.Z`
 
-### JavaScript SDK Release
-
-- [ ] `package.json` version updated
-- [ ] Tests pass: `npm test`
-- [ ] Linting pass: `npm run lint`
-- [ ] GitHub release created
-- [ ] npm package published
-- [ ] Installation tested: `npm install scrapegraph-js@X.Y.Z`
-
 ### Post-Release
 
 - [ ] Verify GitHub release appears
-- [ ] Verify package on PyPI/npm
+- [ ] Verify package on PyPI
 - [ ] Test installation from registry
 - [ ] Update documentation website (if applicable)
 - [ ] Announce release (if major/minor)
@@ -406,15 +312,6 @@ If a release has critical issues:
 pip install twine
 twine upload --repository pypi --skip-existing dist/*
 # Contact PyPI admins to yank version
-```
-
-**npm:**
-```bash
-# Deprecate version
-npm deprecate scrapegraph-js@X.Y.Z "Critical bug - use X.Y.Z+1 instead"
-
-# Or unpublish (within 72 hours)
-npm unpublish scrapegraph-js@X.Y.Z
 ```
 
 ### Option 2: Publish Fix Version
@@ -502,18 +399,6 @@ Add retry logic for transient network failures.
 - Check if version already on PyPI
 - Try manual upload with `twine upload dist/*`
 
-### Issue: npm publish fails
-
-**Causes:**
-- Not logged in
-- Version already exists
-- Permission error
-
-**Solutions:**
-- Run `npm login`
-- Increment version number
-- Verify npm account has publish rights
-
 ### Issue: Tests failing in CI
 
 **Causes:**
@@ -524,7 +409,7 @@ Add retry logic for transient network failures.
 **Solutions:**
 - Run tests locally first
 - Check CI logs for specific errors
-- Verify all dependencies in `pyproject.toml` / `package.json`
+- Verify all dependencies in `pyproject.toml`
 
 ---
 
@@ -547,27 +432,6 @@ plugins:
       "assets": ["scrapegraph-py/CHANGELOG.md", "scrapegraph-py/pyproject.toml"],
       "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
     }]
-```
-
-### JavaScript SDK
-
-**File**: `scrapegraph-js/.releaserc`
-
-```json
-{
-  "branches": ["main"],
-  "plugins": [
-    "@semantic-release/commit-analyzer",
-    "@semantic-release/release-notes-generator",
-    "@semantic-release/changelog",
-    "@semantic-release/npm",
-    "@semantic-release/github",
-    ["@semantic-release/git", {
-      "assets": ["package.json", "CHANGELOG.md"],
-      "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
-    }]
-  ]
-}
 ```
 
 ---
