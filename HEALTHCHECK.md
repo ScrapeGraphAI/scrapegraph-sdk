@@ -2,7 +2,7 @@
 
 ## Overview
 
-The health check endpoint (`/healthz`) has been added to both the Python and JavaScript SDKs to facilitate production monitoring and service health checks. This endpoint provides a quick way to verify that the ScrapeGraphAI API service is operational and ready to handle requests.
+The health check endpoint (`/healthz`) has been added to the Python SDK to facilitate production monitoring and service health checks. This endpoint provides a quick way to verify that the ScrapeGraphAI API service is operational and ready to handle requests.
 
 **Related:** [GitHub Issue #62](https://github.com/ScrapeGraphAI/scrapegraph-sdk/issues/62)
 
@@ -95,15 +95,15 @@ client = Client.from_env()
 
 try:
     health = client.healthz()
-    
+
     if health.get('status') == 'healthy':
         print("✓ Service is operational")
     else:
         print(f"⚠ Service status: {health.get('status')}")
-        
+
 except Exception as e:
     print(f"✗ Health check failed: {e}")
-    
+
 finally:
     client.close()
 ```
@@ -122,7 +122,7 @@ async def health_check():
     try:
         async with AsyncClient.from_env() as client:
             health = await client.healthz()
-            
+
             if health.get('status') == 'healthy':
                 return {
                     "status": "healthy",
@@ -156,7 +156,7 @@ def main():
         client = Client.from_env()
         health = client.healthz()
         client.close()
-        
+
         if health.get('status') == 'healthy':
             sys.exit(0)
         else:
@@ -206,191 +206,6 @@ client = Client(
 health = client.healthz()
 print(health)
 # {'status': 'degraded', 'message': 'Custom mock response', 'uptime': 12345}
-```
-
-## JavaScript SDK
-
-### Installation
-
-The health check endpoint is available in the latest version of the JavaScript SDK:
-
-```bash
-npm install scrapegraph-sdk
-```
-
-### Usage
-
-```javascript
-import { healthz } from 'scrapegraph-js';
-
-const apiKey = process.env.SGAI_APIKEY;
-
-// Check health status
-const health = await healthz(apiKey);
-console.log(health);
-// { status: 'healthy', message: 'Service is operational' }
-```
-
-### API Reference
-
-#### `healthz(apiKey, options)`
-
-Check the health status of the ScrapeGraphAI API service.
-
-**Parameters:**
-- `apiKey` (string): Your ScrapeGraph AI API key
-- `options` (object, optional):
-  - `mock` (boolean): Whether to use mock mode for this request
-
-**Returns:**
-- `Promise<Object>`: Health status information with at least:
-  - `status` (string): Health status (e.g., 'healthy', 'unhealthy', 'degraded')
-  - `message` (string): Human-readable status message
-
-### Examples
-
-#### Basic Health Check
-
-```javascript
-import { healthz } from 'scrapegraph-js';
-import 'dotenv/config';
-
-const apiKey = process.env.SGAI_APIKEY;
-
-try {
-  const health = await healthz(apiKey);
-  
-  if (health.status === 'healthy') {
-    console.log('✓ Service is operational');
-    process.exit(0);
-  } else {
-    console.log(`⚠ Service status: ${health.status}`);
-    process.exit(1);
-  }
-} catch (error) {
-  console.error('✗ Health check failed:', error.message);
-  process.exit(2);
-}
-```
-
-#### Integration with Express.js
-
-```javascript
-import express from 'express';
-import { healthz } from 'scrapegraph-js';
-
-const app = express();
-const apiKey = process.env.SGAI_APIKEY;
-
-// Health check endpoint for load balancers
-app.get('/health', async (req, res) => {
-  try {
-    const health = await healthz(apiKey);
-    
-    if (health.status === 'healthy') {
-      res.status(200).json({
-        status: 'healthy',
-        timestamp: new Date().toISOString(),
-        scrapeGraphApi: 'operational'
-      });
-    } else {
-      res.status(503).json({
-        status: 'unhealthy',
-        timestamp: new Date().toISOString(),
-        scrapeGraphApi: health.status
-      });
-    }
-  } catch (error) {
-    res.status(503).json({
-      status: 'error',
-      timestamp: new Date().toISOString(),
-      error: error.message
-    });
-  }
-});
-
-app.listen(3000, () => {
-  console.log('Server running on port 3000');
-});
-```
-
-#### Health Check with Retry Logic
-
-```javascript
-import { healthz } from 'scrapegraph-js';
-
-async function healthCheckWithRetry(apiKey, maxRetries = 3, initialDelay = 1000) {
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    try {
-      console.log(`Attempt ${attempt}/${maxRetries}...`);
-      const health = await healthz(apiKey);
-      
-      if (health.status === 'healthy') {
-        console.log('✓ Service is healthy');
-        return { success: true, attempts: attempt, data: health };
-      }
-      
-      if (attempt < maxRetries) {
-        const delay = initialDelay * Math.pow(2, attempt - 1);
-        console.log(`Waiting ${delay}ms before retry...`);
-        await new Promise(resolve => setTimeout(resolve, delay));
-      }
-    } catch (error) {
-      console.log(`✗ Attempt ${attempt} failed:`, error.message);
-      
-      if (attempt < maxRetries) {
-        const delay = initialDelay * Math.pow(2, attempt - 1);
-        await new Promise(resolve => setTimeout(resolve, delay));
-      }
-    }
-  }
-  
-  return { success: false, attempts: maxRetries };
-}
-
-const apiKey = process.env.SGAI_APIKEY;
-const result = await healthCheckWithRetry(apiKey);
-console.log(result);
-```
-
-### Mock Mode Support
-
-```javascript
-import { healthz, enableMock, disableMock } from 'scrapegraph-js';
-
-// Enable mock mode
-enableMock();
-
-const health = await healthz('your-api-key', { mock: true });
-console.log(health);
-// { status: 'healthy', message: 'Service is operational' }
-
-// Disable mock mode
-disableMock();
-```
-
-**Custom Mock Responses:**
-
-```javascript
-import { healthz, initMockConfig, disableMock } from 'scrapegraph-js';
-
-// Set custom mock response
-initMockConfig({
-  enabled: true,
-  customResponses: {
-    '/v1/healthz': {
-      status: 'degraded',
-      message: 'Custom mock status',
-      uptime: 12345
-    }
-  }
-});
-
-const health = await healthz('your-api-key');
-console.log(health);
-// { status: 'degraded', message: 'Custom mock status', uptime: 12345 }
-
-disableMock();
 ```
 
 ## Response Format
@@ -471,7 +286,7 @@ spec:
             secretKeyRef:
               name: scrapegraph-secret
               key: api-key
-        
+
         # Liveness probe - restarts container if unhealthy
         livenessProbe:
           exec:
@@ -489,7 +304,7 @@ spec:
           periodSeconds: 30
           timeoutSeconds: 5
           failureThreshold: 3
-        
+
         # Readiness probe - removes from service if not ready
         readinessProbe:
           exec:
@@ -515,19 +330,12 @@ spec:
 - Basic: `scrapegraph-py/examples/utilities/healthz_example.py`
 - Async: `scrapegraph-py/examples/utilities/healthz_async_example.py`
 
-### JavaScript Examples
-- Basic: `scrapegraph-js/examples/utilities/healthz_example.js`
-- Advanced: `scrapegraph-js/examples/utilities/healthz_monitoring_example.js`
-
 ## Tests
 
 ### Python Tests
 - `scrapegraph-py/tests/test_client.py` - Synchronous tests
 - `scrapegraph-py/tests/test_async_client.py` - Asynchronous tests
 - `scrapegraph-py/tests/test_healthz_mock.py` - Mock mode tests
-
-### JavaScript Tests
-- `scrapegraph-js/test/healthz_test.js` - Comprehensive test suite
 
 ## Running Tests
 
@@ -540,14 +348,6 @@ pytest tests/test_healthz_mock.py -v
 
 # Run specific test
 pytest tests/test_healthz_mock.py::test_healthz_mock_sync -v
-```
-
-### JavaScript
-
-```bash
-# Run health check tests
-cd scrapegraph-js
-node test/healthz_test.js
 ```
 
 ## Best Practices
@@ -565,4 +365,3 @@ For issues, questions, or contributions, please visit:
 - [GitHub Repository](https://github.com/ScrapeGraphAI/scrapegraph-sdk)
 - [Issue #62](https://github.com/ScrapeGraphAI/scrapegraph-sdk/issues/62)
 - [Documentation](https://docs.scrapegraphai.com)
-

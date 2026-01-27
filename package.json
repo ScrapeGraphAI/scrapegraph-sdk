@@ -2,7 +2,7 @@
   "name": "scrapegraph-sdk",
   "version": "0.0.5",
   "private": true,
-  "description": "ScrapeGraph SDK monorepo",
+  "description": "ScrapeGraph SDK - Python SDK for ScrapeGraph AI API",
   "repository": {
     "type": "git",
     "url": "https://github.com/ScrapeGraphAI/scrapegraph-sdk.git"
@@ -16,7 +16,6 @@
     "@semantic-release/changelog": "^6.0.0",
     "@semantic-release/git": "^10.0.0",
     "@semantic-release/github": "^9.2.6",
-    "@semantic-release/npm": "^11.0.2",
     "semantic-release": "^23.0.0",
     "semantic-release-pypi": "^3.0.0"
   }

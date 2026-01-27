@@ -1,7 +1,7 @@
 # Health Check Endpoint Implementation Summary
 
 ## Overview
-Added a `/healthz` health check endpoint to both Python and JavaScript SDKs as requested in [Issue #62](https://github.com/ScrapeGraphAI/scrapegraph-sdk/issues/62).
+Added a `/healthz` health check endpoint to the Python SDK as requested in [Issue #62](https://github.com/ScrapeGraphAI/scrapegraph-sdk/issues/62).
 
 ## Changes Made
 
@@ -45,53 +45,19 @@ Added a `/healthz` health check endpoint to both Python and JavaScript SDKs as r
    - Custom mock response tests
    - Environment variable tests
 
-### JavaScript SDK (`scrapegraph-js/`)
-
-#### Core Implementation
-8. **`src/healthz.js`** (New file)
-   - Health check function implementation
-   - Mock mode support
-   - Full JSDoc documentation
-
-9. **`index.js`**
-   - Export `healthz` function
-
-10. **`src/utils/mockResponse.js`**
-    - Added mock response for `/healthz` endpoint
-
-#### Examples
-11. **`examples/utilities/healthz_example.js`** (New file)
-    - Basic health check example
-    - Exit code handling
-    - Error handling patterns
-
-12. **`examples/utilities/healthz_monitoring_example.js`** (New file)
-    - Advanced monitoring patterns
-    - Retry logic with exponential backoff
-    - Periodic health checks
-    - Express.js integration examples
-
-#### Tests
-13. **`test/healthz_test.js`** (New file)
-    - Comprehensive test suite
-    - Input validation tests
-    - Mock mode tests
-    - Custom mock response tests
-    - Monitoring pattern tests
-
 ### Documentation
-14. **`HEALTHCHECK.md`** (New file at root)
-    - Complete documentation for both SDKs
-    - API reference
-    - Usage examples
-    - Integration patterns (FastAPI, Express.js)
-    - Docker and Kubernetes examples
-    - Best practices
+8. **`HEALTHCHECK.md`** (New file at root)
+   - Complete documentation for the SDK
+   - API reference
+   - Usage examples
+   - Integration patterns (FastAPI)
+   - Docker and Kubernetes examples
+   - Best practices
 
-15. **`IMPLEMENTATION_SUMMARY.md`** (This file)
-    - Summary of all changes
-    - File structure
-    - Testing results
+9. **`IMPLEMENTATION_SUMMARY.md`** (This file)
+   - Summary of all changes
+   - File structure
+   - Testing results
 
 ## Features Implemented
 
@@ -99,7 +65,6 @@ Added a `/healthz` health check endpoint to both Python and JavaScript SDKs as r
 ✅ GET `/healthz` endpoint implementation
 ✅ Synchronous client support (Python)
 ✅ Asynchronous client support (Python)
-✅ JavaScript/Node.js support
 ✅ Proper error handling
 ✅ Logging support
 
@@ -113,12 +78,10 @@ Added a `/healthz` health check endpoint to both Python and JavaScript SDKs as r
 ✅ Unit tests for Python sync client
 ✅ Unit tests for Python async client
 ✅ Mock mode tests
-✅ JavaScript test suite
 ✅ All tests passing
 
 ### Documentation
 ✅ Inline code documentation
-✅ JSDoc comments
 ✅ Python docstrings
 ✅ Comprehensive user guide
 ✅ Integration examples
@@ -127,7 +90,7 @@ Added a `/healthz` health check endpoint to both Python and JavaScript SDKs as r
 ### Examples
 ✅ Basic usage examples
 ✅ Advanced monitoring patterns
-✅ Framework integrations (FastAPI, Express.js)
+✅ Framework integrations (FastAPI)
 ✅ Container health checks (Docker)
 ✅ Kubernetes probes
 ✅ Retry logic patterns
@@ -149,12 +112,6 @@ pytest results:
 ======================== 5 passed, 39 warnings in 0.25s ========================
 ```
 
-### JavaScript SDK
-All tests implemented and ready to run with:
-```bash
-node test/healthz_test.js
-```
-
 ## File Structure
 
 ```
@@ -162,29 +119,17 @@ scrapegraph-sdk/
 ├── HEALTHCHECK.md                    # Complete documentation
 ├── IMPLEMENTATION_SUMMARY.md         # This file
 │
-├── scrapegraph-py/
-│   ├── scrapegraph_py/
-│   │   ├── client.py                 # ✨ Added healthz() method
-│   │   └── async_client.py           # ✨ Added healthz() method
-│   ├── examples/utilities/
-│   │   ├── healthz_example.py        # 🆕 New example
-│   │   └── healthz_async_example.py  # 🆕 New example
-│   └── tests/
-│       ├── test_client.py            # ✨ Added tests
-│       ├── test_async_client.py      # ✨ Added tests
-│       └── test_healthz_mock.py      # 🆕 New test file
-│
-└── scrapegraph-js/
-    ├── src/
-    │   ├── healthz.js                # 🆕 New module
-    │   └── utils/
-    │       └── mockResponse.js       # ✨ Added healthz mock
-    ├── index.js                      # ✨ Export healthz
+└── scrapegraph-py/
+    ├── scrapegraph_py/
+    │   ├── client.py                 # ✨ Added healthz() method
+    │   └── async_client.py           # ✨ Added healthz() method
     ├── examples/utilities/
-    │   ├── healthz_example.js        # 🆕 New example
-    │   └── healthz_monitoring_example.js  # 🆕 New example
-    └── test/
-        └── healthz_test.js           # 🆕 New test file
+    │   ├── healthz_example.py        # 🆕 New example
+    │   └── healthz_async_example.py  # 🆕 New example
+    └── tests/
+        ├── test_client.py            # ✨ Added tests
+        ├── test_async_client.py      # ✨ Added tests
+        └── test_healthz_mock.py      # 🆕 New test file
 ```
 
 Legend:
@@ -200,11 +145,6 @@ client.healthz() -> dict
 
 # Asynchronous
 await client.healthz() -> dict
-```
-
-### JavaScript
-```javascript
-await healthz(apiKey, options?) -> Promise<Object>
 ```
 
 ## Response Format
@@ -236,15 +176,6 @@ async with AsyncClient.from_env() as client:
     print(health)
 ```
 
-### JavaScript
-```javascript
-import { healthz } from 'scrapegraph-js';
-
-const apiKey = process.env.SGAI_APIKEY;
-const health = await healthz(apiKey);
-console.log(health);
-```
-
 ## Integration Examples
 
 ### Kubernetes Liveness Probe
@@ -269,14 +200,6 @@ livenessProbe:
 ```dockerfile
 HEALTHCHECK --interval=30s --timeout=3s --retries=3 \
   CMD python -c "from scrapegraph_py import Client; import sys; c = Client.from_env(); h = c.healthz(); c.close(); sys.exit(0 if h.get('status') == 'healthy' else 1)"
-```
-
-### Express.js Health Endpoint
-```javascript
-app.get('/health', async (req, res) => {
-  const health = await healthz(apiKey);
-  res.status(health.status === 'healthy' ? 200 : 503).json(health);
-});
 ```
 
 ## Next Steps
@@ -305,6 +228,4 @@ app.get('/health', async (req, res) => {
 ## Compatibility
 
 - Python: 3.8+
-- JavaScript: Node.js 14+
 - Fully backward compatible with existing SDK functionality
-

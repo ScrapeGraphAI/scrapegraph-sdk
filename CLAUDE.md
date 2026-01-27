@@ -22,16 +22,13 @@ NEVER proactively create documentation files (*.md) or README files. Only create
 
 ## Project Overview
 
-**scrapegraph-sdk** is a monorepo containing official SDKs for the ScrapeGraph AI API. It provides both Python and JavaScript/TypeScript clients for intelligent web scraping powered by AI.
+**scrapegraph-sdk** is a repository containing the official Python SDK for the ScrapeGraph AI API. It provides a Python client for intelligent web scraping powered by AI.
 
 ## Repository Structure
-
-This is a **monorepo** containing two separate SDKs:
 
 ```
 scrapegraph-sdk/
 ├── scrapegraph-py/         # Python SDK
-├── scrapegraph-js/         # JavaScript/TypeScript SDK
 ├── cookbook/               # Usage examples and tutorials
 ├── .github/workflows/      # GitHub Actions for CI/CD
 ├── .agent/                 # Documentation hub (read this!)
@@ -52,14 +49,6 @@ scrapegraph-sdk/
 - **Code Quality**: black, isort, ruff, mypy, pre-commit
 - **Documentation**: mkdocs, mkdocs-material
 - **Build**: hatchling
-- **Release**: semantic-release
-
-### JavaScript SDK
-- **Language**: JavaScript (ES6+)
-- **Runtime**: Node.js
-- **Package Manager**: npm
-- **Code Quality**: ESLint, Prettier
-- **Testing**: Native Node.js test files
 - **Release**: semantic-release
 
 ## Common Development Commands
@@ -125,28 +114,6 @@ uv build
 make clean
 ```
 
-### JavaScript SDK
-
-```bash
-# Navigate to JavaScript SDK
-cd scrapegraph-js
-
-# Install dependencies
-npm install
-
-# Run tests
-npm test
-
-# Run specific test
-node test/test_smartscraper.js
-
-# Format code
-npm run format
-
-# Lint code
-npm run lint
-```
-
 ## Project Architecture
 
 ### Python SDK (`scrapegraph-py/`)
@@ -193,63 +160,26 @@ npm run lint
 - **Comprehensive Logging**: Detailed logs with configurable levels
 - **Type Safety**: Full mypy strict mode compliance
 
-### JavaScript SDK (`scrapegraph-js/`)
-
-**Core Components:**
-
-1. **Endpoint Modules** (`src/`):
-   - Each endpoint has its own module
-   - `smartScraper.js` - SmartScraper endpoint
-   - `searchScraper.js` - SearchScraper endpoint
-   - `crawl.js` - Crawler endpoint
-   - `markdownify.js` - Markdownify endpoint
-   - `agenticScraper.js` - AgenticScraper endpoint
-   - `scrape.js` - Scrape endpoint
-   - `scheduledJobs.js` - Scheduled Jobs management
-   - `credits.js` - Credits endpoint
-   - `feedback.js` - Feedback endpoint
-   - `schema.js` - Schema generation
-
-2. **Utilities** (`src/utils/`):
-   - Helper functions for HTTP requests
-   - Error handling utilities
-
-3. **Entry Point** (`index.js`):
-   - Main package entry exporting all functions
-
-4. **Testing** (`test/`):
-   - Individual test files for each endpoint
-   - Integration test examples
-
-**Key Patterns:**
-- **Function-Based API**: Each endpoint is a standalone async function
-- **Environment Variables**: Support `SGAI_APIKEY` env var
-- **Async/Await**: All functions return Promises
-- **Error Handling**: Try/catch recommended for all calls
-- **Minimal Dependencies**: Lean implementation
-
 ## API Coverage
 
-Both SDKs support all ScrapeGraph AI API endpoints:
+The SDK supports all ScrapeGraph AI API endpoints:
 
-| Endpoint | Python Method | JavaScript Function | Purpose |
-|----------|---------------|---------------------|---------|
-| SmartScraper | `client.smartscraper()` | `smartScraper()` | AI data extraction |
-| SearchScraper | `client.searchscraper()` | `searchScraper()` | Multi-URL search |
-| Markdownify | `client.markdownify()` | `markdownify()` | HTML to Markdown |
-| Crawler | `client.crawler()` | `crawl()` | Sitemap & crawling |
-| AgenticScraper | `client.agentic_scraper()` | `agenticScraper()` | Browser automation |
-| Scrape | `client.scrape()` | `scrape()` | Basic HTML fetch |
-| Scheduled Jobs | `client.create_scheduled_job()`, etc. | `createScheduledJob()`, etc. | Cron scheduling |
-| Credits | `client.get_credits()` | `getCredits()` | Balance check |
-| Feedback | `client.send_feedback()` | `sendFeedback()` | Rating/feedback |
-| Schema Gen | `client.generate_schema()` | `generateSchema()` | AI schema creation |
+| Endpoint | Python Method | Purpose |
+|----------|---------------|---------|
+| SmartScraper | `client.smartscraper()` | AI data extraction |
+| SearchScraper | `client.searchscraper()` | Multi-URL search |
+| Markdownify | `client.markdownify()` | HTML to Markdown |
+| Crawler | `client.crawler()` | Sitemap & crawling |
+| AgenticScraper | `client.agentic_scraper()` | Browser automation |
+| Scrape | `client.scrape()` | Basic HTML fetch |
+| Scheduled Jobs | `client.create_scheduled_job()`, etc. | Cron scheduling |
+| Credits | `client.get_credits()` | Balance check |
+| Feedback | `client.send_feedback()` | Rating/feedback |
+| Schema Gen | `client.generate_schema()` | AI schema creation |
 
 ## Development Workflow
 
 ### Adding a New Endpoint
-
-**Python SDK:**
 
 1. Add request/response models in `scrapegraph_py/models/new_endpoint.py`
 2. Add sync method to `scrapegraph_py/client.py`
@@ -259,17 +189,8 @@ Both SDKs support all ScrapeGraph AI API endpoints:
 6. Update examples in `examples/`
 7. Update README.md with usage examples
 
-**JavaScript SDK:**
-
-1. Create `src/newEndpoint.js` with async function
-2. Export function in `index.js`
-3. Add tests in `test/test_newEndpoint.js`
-4. Update examples in `examples/`
-5. Update README.md with usage examples
-
 ### Testing Strategy
 
-**Python:**
 - Unit tests for models (Pydantic validation)
 - Integration tests for client methods (mocked HTTP)
 - Use `aioresponses` for async client testing
@@ -277,14 +198,9 @@ Both SDKs support all ScrapeGraph AI API endpoints:
 - Mock API responses to avoid real API calls in CI
 - Run `pytest --cov` for coverage reports
 
-**JavaScript:**
-- Integration test files with real/mocked responses
-- Manual testing with `.env` file for API keys
-- Use try/catch to demonstrate error handling
-
 ### Release Process
 
-Both SDKs use **semantic-release** for automated versioning:
+The SDK uses **semantic-release** for automated versioning:
 
 1. **Commit with semantic messages:**
    - `feat: add new endpoint` → Minor bump (0.x.0)
@@ -295,15 +211,14 @@ Both SDKs use **semantic-release** for automated versioning:
 
 3. **GitHub Actions automatically:**
    - Determines version bump
-   - Updates version in `pyproject.toml` / `package.json`
+   - Updates version in `pyproject.toml`
    - Generates CHANGELOG.md
    - Creates GitHub release
-   - Publishes to PyPI / npm
+   - Publishes to PyPI
 
 Configuration files:
 - Python: `.releaserc.yml`
-- JavaScript: `.releaserc` (in scrapegraph-js/)
-- GitHub workflow: `.github/workflows/release-*.yml`
+- GitHub workflow: `.github/workflows/release.yml`
 
 ## Important Conventions
 
@@ -330,28 +245,11 @@ Configuration files:
   - Mock external HTTP calls
   - Aim for >80% coverage
 
-### JavaScript SDK
-
-- **Code Style**:
-  - Prettier for formatting
-  - ESLint for linting
-  - JSDoc comments for functions
-
-- **Async Functions**:
-  - All API calls return Promises
-  - Use async/await pattern
-  - Handle errors with try/catch
-
-- **Exports**:
-  - Named exports in `index.js`
-  - Each function should be independently usable
-
 ## Environment Variables
 
-Both SDKs support API key via environment variable:
+The SDK supports API key via environment variable:
 
 - **Python**: `SGAI_API_KEY`
-- **JavaScript**: `SGAI_APIKEY`
 
 Usage:
 ```bash
@@ -360,20 +258,13 @@ export SGAI_API_KEY="your-api-key-here"
 
 Then initialize client without passing API key:
 ```python
-# Python
 from scrapegraph_py import Client
 client = Client()  # Uses SGAI_API_KEY env var
 ```
 
-```javascript
-// JavaScript
-import { smartScraper } from 'scrapegraph-js';
-// API key can be passed explicitly or via SGAI_APIKEY env var
-```
-
 ## Common Patterns
 
-### Python - Using Sync Client
+### Using Sync Client
 
 ```python
 from scrapegraph_py import Client
@@ -388,7 +279,7 @@ response = client.smartscraper(
 print(response.result)
 ```
 
-### Python - Using Async Client
+### Using Async Client
 
 ```python
 from scrapegraph_py import AsyncClient
@@ -405,7 +296,7 @@ async def main():
 asyncio.run(main())
 ```
 
-### Python - Using Output Schema
+### Using Output Schema
 
 ```python
 from pydantic import BaseModel, Field
@@ -423,25 +314,6 @@ response = client.smartscraper(
 )
 ```
 
-### JavaScript - Basic Usage
-
-```javascript
-import { smartScraper } from 'scrapegraph-js';
-
-(async () => {
-  try {
-    const response = await smartScraper(
-      'your-api-key',
-      'https://example.com',
-      'Extract the main heading'
-    );
-    console.log(response.result);
-  } catch (error) {
-    console.error('Error:', error);
-  }
-})();
-```
-
 ## File Locations Reference
 
 ### Python SDK Key Files
@@ -452,15 +324,6 @@ import { smartScraper } from 'scrapegraph-js';
 - Tests: `tests/`
 - Examples: `examples/`
 - Docs: `docs/` (MkDocs)
-
-### JavaScript SDK Key Files
-
-- Entry point: `index.js`
-- Endpoints: `src/*.js`
-- Utils: `src/utils/`
-- Config: `package.json`, `eslint.config.js`, `.prettierrc.json`
-- Tests: `test/`
-- Examples: `examples/`
 
 ### Root Level
 
@@ -482,19 +345,6 @@ logging.basicConfig(level=logging.DEBUG)
 client = Client(api_key="your-key")
 ```
 
-### JavaScript SDK Debug
-
-Use console logs and error inspection:
-```javascript
-try {
-  const response = await smartScraper(apiKey, url, prompt);
-  console.log('Response:', JSON.stringify(response, null, 2));
-} catch (error) {
-  console.error('Error details:', error);
-  console.error('Stack:', error.stack);
-}
-```
-
 ## Cookbook
 
 The `cookbook/` directory contains practical examples:
@@ -510,7 +360,6 @@ Refer to cookbook for real-world usage patterns.
 
 - [ScrapeGraph AI API Documentation](https://docs.scrapegraphai.com)
 - [Python SDK on PyPI](https://pypi.org/project/scrapegraph-py/)
-- [JavaScript SDK on npm](https://www.npmjs.com/package/scrapegraph-js/)
 - [GitHub Repository](https://github.com/ScrapeGraphAI/scrapegraph-sdk)
 
 ## Support
