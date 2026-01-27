@@ -68,6 +68,11 @@ class SearchScraperRequest(BaseModel):
     mock: bool = Field(default=False, description="Whether to use mock mode for the request")
     render_heavy_js: bool = Field(default=False, description="Whether to render heavy JavaScript on the page")
     stealth: bool = Field(default=False, description="Enable stealth mode to avoid bot detection")
+    location_geo_code: Optional[str] = Field(
+        default=None,
+        description="The geo code of the location to search in (e.g., 'us', 'uk', 'de')",
+        example="us",
+    )
 
     @model_validator(mode="after")
     def validate_user_prompt(self) -> "SearchScraperRequest":
