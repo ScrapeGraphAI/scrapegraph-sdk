@@ -33,6 +33,7 @@ class SearchScraperRequest(BaseModel):
         extraction_mode: Use AI extraction (True) or markdown (False)
         mock: Whether to use mock mode for testing
         render_heavy_js: Whether to render heavy JavaScript
+        location_geo_code: Optional geo code for location-based search (e.g., "us")
 
     Example:
         >>> request = SearchScraperRequest(
@@ -68,6 +69,11 @@ class SearchScraperRequest(BaseModel):
     mock: bool = Field(default=False, description="Whether to use mock mode for the request")
     render_heavy_js: bool = Field(default=False, description="Whether to render heavy JavaScript on the page")
     stealth: bool = Field(default=False, description="Enable stealth mode to avoid bot detection")
+    location_geo_code: Optional[str] = Field(
+        None,
+        description="The geo code of the location to search in",
+        example="us",
+    )
 
     @model_validator(mode="after")
     def validate_user_prompt(self) -> "SearchScraperRequest":
