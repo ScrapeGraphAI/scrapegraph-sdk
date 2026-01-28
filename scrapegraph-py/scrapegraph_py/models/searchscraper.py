@@ -12,10 +12,32 @@ The SearchScraper:
 - Supports both AI extraction and markdown conversion modes
 """
 
+from enum import Enum
 from typing import Optional, Type
 from uuid import UUID
 
 from pydantic import BaseModel, Field, model_validator
+
+
+class TimeRange(str, Enum):
+    """Time range filter for search results.
+
+    Controls how recent the search results should be. This is useful for
+    finding recent news, updates, or time-sensitive information.
+
+    Values:
+        PAST_HOUR: Results from the past hour
+        PAST_24_HOURS: Results from the past 24 hours
+        PAST_WEEK: Results from the past week
+        PAST_MONTH: Results from the past month
+        PAST_YEAR: Results from the past year
+    """
+
+    PAST_HOUR = "past_hour"
+    PAST_24_HOURS = "past_24_hours"
+    PAST_WEEK = "past_week"
+    PAST_MONTH = "past_month"
+    PAST_YEAR = "past_year"
 
 
 class SearchScraperRequest(BaseModel):
@@ -34,6 +56,7 @@ class SearchScraperRequest(BaseModel):
         mock: Whether to use mock mode for testing
         render_heavy_js: Whether to render heavy JavaScript
         location_geo_code: Optional geo code for location-based search (e.g., "us")
+        time_range: Optional time range filter for search results
 
     Example:
         >>> request = SearchScraperRequest(
@@ -73,6 +96,17 @@ class SearchScraperRequest(BaseModel):
         None,
         description="The geo code of the location to search in",
         example="us",
+    )
+    time_range: Optional[TimeRange] = Field(
+        None,
+        description="The date range to filter search results",
+        examples=[
+            TimeRange.PAST_HOUR,
+            TimeRange.PAST_24_HOURS,
+            TimeRange.PAST_WEEK,
+            TimeRange.PAST_MONTH,
+            TimeRange.PAST_YEAR,
+        ],
     )
 
     @model_validator(mode="after")
