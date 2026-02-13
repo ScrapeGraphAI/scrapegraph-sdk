@@ -100,6 +100,7 @@ class SmartScraperRequest(BaseModel):
     plain_text: bool = Field(default=False, description="Whether to return the result as plain text")
     render_heavy_js: bool = Field(default=False, description="Whether to render heavy JavaScript on the page")
     stealth: bool = Field(default=False, description="Enable stealth mode to avoid bot detection")
+    wait_ms: Optional[int] = Field(default=None, description="The number of milliseconds to wait before scraping the website")
 
     @model_validator(mode="after")
     def validate_user_prompt(self) -> "SmartScraperRequest":

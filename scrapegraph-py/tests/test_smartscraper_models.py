@@ -95,6 +95,42 @@ class TestSmartScraperRequest:
         data = request.model_dump(exclude_none=False)
         assert data["render_heavy_js"] is False
 
+    def test_wait_ms_default(self):
+        """Test smartscraper request wait_ms defaults to None"""
+        request = SmartScraperRequest(
+            user_prompt="Extract data",
+            website_url="https://example.com",
+        )
+        assert request.wait_ms is None
+
+    def test_wait_ms_custom_value(self):
+        """Test smartscraper request with custom wait_ms"""
+        request = SmartScraperRequest(
+            user_prompt="Extract data",
+            website_url="https://example.com",
+            wait_ms=5000,
+        )
+        assert request.wait_ms == 5000
+
+    def test_wait_ms_serialization(self):
+        """Test wait_ms is excluded from serialization when None"""
+        request = SmartScraperRequest(
+            user_prompt="Extract data",
+            website_url="https://example.com",
+        )
+        data = request.model_dump()
+        assert "wait_ms" not in data
+
+    def test_wait_ms_serialization_with_value(self):
+        """Test wait_ms is included in serialization when set"""
+        request = SmartScraperRequest(
+            user_prompt="Extract data",
+            website_url="https://example.com",
+            wait_ms=5000,
+        )
+        data = request.model_dump()
+        assert data["wait_ms"] == 5000
+
     def test_invalid_empty_prompt(self):
         """Test smartscraper request with empty prompt"""
         with pytest.raises(ValidationError):
