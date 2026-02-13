@@ -54,7 +54,7 @@ class ScrapeRequest(BaseModel):
         },
         description="Optional headers to send with the request, including cookies "
         "and user agent",
-    ),
+    )
     mock: bool = Field(default=False, description="Whether to use mock mode for the request")
     stealth: bool = Field(default=False, description="Enable stealth mode to avoid bot detection")
     wait_ms: Optional[int] = Field(default=None, description="The number of milliseconds to wait before scraping the website")
