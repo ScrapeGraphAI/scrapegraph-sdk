@@ -458,15 +458,16 @@ class Client:
         # Generic fallback
         return {"status": "mock", "url": url, "method": method, "kwargs": kwargs}
 
-    def markdownify(self, website_url: str, headers: Optional[dict[str, str]] = None, mock: bool = False, render_heavy_js: bool = False, stealth: bool = False, return_toon: bool = False):
+    def markdownify(self, website_url: str, headers: Optional[dict[str, str]] = None, mock: bool = False, render_heavy_js: bool = False, stealth: bool = False, wait_ms: Optional[int] = None, return_toon: bool = False):
         """Send a markdownify request
-        
+
         Args:
             website_url: The URL to convert to markdown
             headers: Optional HTTP headers
             mock: Enable mock mode for testing
             render_heavy_js: Enable heavy JavaScript rendering
             stealth: Enable stealth mode to avoid bot detection
+            wait_ms: Number of milliseconds to wait before scraping the website
             return_toon: If True, return response in TOON format (reduces token usage by 30-60%)
         """
         logger.info(f"🔍 Starting markdownify request for {website_url}")
@@ -479,7 +480,7 @@ class Client:
         if return_toon:
             logger.debug("🎨 TOON format output enabled")
 
-        request = MarkdownifyRequest(website_url=website_url, headers=headers, mock=mock, render_heavy_js=render_heavy_js, stealth=stealth)
+        request = MarkdownifyRequest(website_url=website_url, headers=headers, mock=mock, render_heavy_js=render_heavy_js, stealth=stealth, wait_ms=wait_ms)
         logger.debug("✅ Request validation passed")
 
         result = self._make_request(
@@ -515,6 +516,7 @@ class Client:
         headers: Optional[dict[str, str]] = None,
         mock:bool=False,
         stealth:bool=False,
+        wait_ms: Optional[int] = None,
         return_toon: bool = False,
     ):
         """Send a scrape request to get HTML content from a website
@@ -526,6 +528,7 @@ class Client:
             headers: Optional headers to send with the request
             mock: Enable mock mode for testing
             stealth: Enable stealth mode to avoid bot detection
+            wait_ms: Number of milliseconds to wait before scraping the website
             return_toon: If True, return response in TOON format (reduces token usage by 30-60%)
         """
         logger.info(f"🔍 Starting scrape request for {website_url}")
@@ -544,7 +547,8 @@ class Client:
             branding=branding,
             headers=headers,
             mock=mock,
-            stealth=stealth
+            stealth=stealth,
+            wait_ms=wait_ms,
         )
         logger.debug("✅ Request validation passed")
 
@@ -631,6 +635,7 @@ class Client:
         plain_text: bool = False,
         render_heavy_js: bool = False,
         stealth: bool = False,
+        wait_ms: Optional[int] = None,
         return_toon: bool = False,
     ):
         """
@@ -655,6 +660,7 @@ class Client:
             plain_text: Return plain text instead of structured data
             render_heavy_js: Enable heavy JavaScript rendering
             stealth: Enable stealth mode to avoid bot detection
+            wait_ms: Number of milliseconds to wait before scraping the website
             return_toon: If True, return response in TOON format (reduces token usage by 30-60%)
 
         Returns:
@@ -701,6 +707,7 @@ class Client:
             plain_text=plain_text,
             render_heavy_js=render_heavy_js,
             stealth=stealth,
+            wait_ms=wait_ms,
         )
         logger.debug("✅ Request validation passed")
 

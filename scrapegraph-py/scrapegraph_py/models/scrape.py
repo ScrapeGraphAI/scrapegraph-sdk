@@ -57,6 +57,7 @@ class ScrapeRequest(BaseModel):
     ),
     mock: bool = Field(default=False, description="Whether to use mock mode for the request")
     stealth: bool = Field(default=False, description="Enable stealth mode to avoid bot detection")
+    wait_ms: Optional[int] = Field(default=None, description="The number of milliseconds to wait before scraping the website")
 
     @model_validator(mode="after")
     def validate_url(self) -> "ScrapeRequest":

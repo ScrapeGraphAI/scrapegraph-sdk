@@ -130,6 +130,35 @@ class TestScrapeRequest:
                 ScrapeRequest(website_url=url)
 
 
+    def test_wait_ms_default(self):
+        """Test scrape request wait_ms defaults to None"""
+        request = ScrapeRequest(website_url="https://example.com")
+        assert request.wait_ms is None
+
+    def test_wait_ms_custom_value(self):
+        """Test scrape request with custom wait_ms"""
+        request = ScrapeRequest(
+            website_url="https://example.com",
+            wait_ms=5000,
+        )
+        assert request.wait_ms == 5000
+
+    def test_wait_ms_serialization(self):
+        """Test wait_ms is excluded from serialization when None"""
+        request = ScrapeRequest(website_url="https://example.com")
+        data = request.model_dump()
+        assert "wait_ms" not in data
+
+    def test_wait_ms_serialization_with_value(self):
+        """Test wait_ms is included in serialization when set"""
+        request = ScrapeRequest(
+            website_url="https://example.com",
+            wait_ms=5000,
+        )
+        data = request.model_dump()
+        assert data["wait_ms"] == 5000
+
+
 class TestGetScrapeRequest:
     """Test GetScrapeRequest model"""
 
