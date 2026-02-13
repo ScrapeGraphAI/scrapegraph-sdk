@@ -43,7 +43,7 @@ class TestAsyncMockMode:
             assert response["request_id"].startswith("mock-req-")
             
             # Test feedback endpoint
-            feedback = await client.submit_feedback("test-id", 5, "Great!")
+            feedback = await client.submit_feedback(str(uuid4()), 5, "Great!")
             assert feedback["status"] == "success"
 
     @pytest.mark.asyncio
@@ -70,7 +70,7 @@ class TestAsyncMockMode:
         """Test crawl-specific endpoints in async mock mode"""
         async with AsyncClient(api_key=mock_api_key, mock=True) as client:
             # Test crawl POST
-            crawl_response = await client.crawl(url="https://example.com")
+            crawl_response = await client.crawl(url="https://example.com", extraction_mode=False)
             assert "crawl_id" in crawl_response
             assert crawl_response["crawl_id"].startswith("mock-crawl-")
             

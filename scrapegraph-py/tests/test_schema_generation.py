@@ -8,6 +8,9 @@ import pytest
 import responses
 from pydantic import ValidationError
 
+from aioresponses import aioresponses
+
+from scrapegraph_py.exceptions import APIError
 from scrapegraph_py.models.schema import (
     GenerateSchemaRequest,
     GetSchemaStatusRequest,
@@ -184,8 +187,8 @@ class TestSchemaGenerationClient:
         )
 
         with Client(api_key=mock_api_key) as client:
-            response = client.generate_schema("Find laptops")
-            assert "error" in response
+            with pytest.raises(APIError):
+                client.generate_schema("Find laptops")
 
     @responses.activate
     def test_get_schema_status_success(self, mock_api_key, mock_uuid):
@@ -228,15 +231,14 @@ class TestSchemaGenerationClient:
         )
 
         with Client(api_key=mock_api_key) as client:
-            response = client.get_schema_status(mock_uuid)
-            assert "error" in response
+            with pytest.raises(APIError):
+                client.get_schema_status(mock_uuid)
 
 
 class TestSchemaGenerationAsyncClient:
     """Test cases for schema generation using async client"""
 
     @pytest.mark.asyncio
-    @responses.activate
     async def test_generate_schema_async_success(self, mock_api_key):
         """Test successful async schema generation"""
         mock_response = {
@@ -244,21 +246,20 @@ class TestSchemaGenerationAsyncClient:
             "status": "pending",
             "user_prompt": "Find laptops with brand and price",
         }
-        
-        responses.add(
-            responses.POST,
-            "https://api.scrapegraphai.com/v1/generate_schema",
-            json=mock_response,
-            status=200,
-        )
 
-        async with AsyncClient(api_key=mock_api_key) as client:
-            response = await client.generate_schema("Find laptops with brand and price")
-            assert response["status"] == "pending"
-            assert response["request_id"] is not None
+        with aioresponses() as m:
+            m.post(
+                "https://api.scrapegraphai.com/v1/generate_schema",
+                payload=mock_response,
+                status=200,
+            )
+
+            async with AsyncClient(api_key=mock_api_key) as client:
+                response = await client.generate_schema("Find laptops with brand and price")
+                assert response["status"] == "pending"
+                assert response["request_id"] is not None
 
     @pytest.mark.asyncio
-    @responses.activate
     async def test_generate_schema_async_with_existing_schema(self, mock_api_key, sample_schema):
         """Test async schema generation with existing schema"""
         mock_response = {
@@ -266,23 +267,22 @@ class TestSchemaGenerationAsyncClient:
             "status": "pending",
             "user_prompt": "Add rating field",
         }
-        
-        responses.add(
-            responses.POST,
-            "https://api.scrapegraphai.com/v1/generate_schema",
-            json=mock_response,
-            status=200,
-        )
 
-        async with AsyncClient(api_key=mock_api_key) as client:
-            response = await client.generate_schema(
-                "Add rating field", 
-                existing_schema=sample_schema
+        with aioresponses() as m:
+            m.post(
+                "https://api.scrapegraphai.com/v1/generate_schema",
+                payload=mock_response,
+                status=200,
             )
-            assert response["status"] == "pending"
+
+            async with AsyncClient(api_key=mock_api_key) as client:
+                response = await client.generate_schema(
+                    "Add rating field",
+                    existing_schema=sample_schema
+                )
+                assert response["status"] == "pending"
 
     @pytest.mark.asyncio
-    @responses.activate
     async def test_get_schema_status_async_success(self, mock_api_key, mock_uuid):
         """Test successful async schema status retrieval"""
         mock_response = {
@@ -299,18 +299,18 @@ class TestSchemaGenerationAsyncClient:
                 },
             },
         }
-        
-        responses.add(
-            responses.GET,
-            f"https://api.scrapegraphai.com/v1/generate_schema/{mock_uuid}",
-            json=mock_response,
-            status=200,
-        )
 
-        async with AsyncClient(api_key=mock_api_key) as client:
-            response = await client.get_schema_status(mock_uuid)
-            assert response["status"] == "completed"
-            assert response["generated_schema"] is not None
+        with aioresponses() as m:
+            m.get(
+                f"https://api.scrapegraphai.com/v1/generate_schema/{mock_uuid}",
+                payload=mock_response,
+                status=200,
+            )
+
+            async with AsyncClient(api_key=mock_api_key) as client:
+                response = await client.get_schema_status(mock_uuid)
+                assert response["status"] == "completed"
+                assert response["generated_schema"] is not None
 
 
 class TestSchemaGenerationIntegration:
@@ -430,13 +430,12 @@ class TestSchemaGenerationEdgeCases:
         responses.add(
             responses.POST,
             "https://api.scrapegraphai.com/v1/generate_schema",
-            body=Exception("Network error"),
-            status=500,
+            body=ConnectionError("Network error"),
         )
 
         with Client(api_key=mock_api_key) as client:
-            response = client.generate_schema("Find laptops")
-            assert "error" in response
+            with pytest.raises(ConnectionError):
+                client.generate_schema("Find laptops")
 
     @responses.activate
     def test_generate_schema_malformed_response(self, mock_api_key):

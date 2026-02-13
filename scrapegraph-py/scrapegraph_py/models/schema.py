@@ -46,7 +46,12 @@ class GenerateSchemaRequest(BaseModel):
     def validate_user_prompt(self) -> "GenerateSchemaRequest":
         if not self.user_prompt or not self.user_prompt.strip():
             raise ValueError("user_prompt cannot be empty")
+        self.user_prompt = self.user_prompt.strip()
         return self
+
+    def model_dump(self, *args, **kwargs) -> dict:
+        kwargs.setdefault("exclude_none", True)
+        return super().model_dump(*args, **kwargs)
 
 
 class GetSchemaStatusRequest(BaseModel):
@@ -60,6 +65,7 @@ class GetSchemaStatusRequest(BaseModel):
 
     @model_validator(mode="after")
     def validate_request_id(self) -> "GetSchemaStatusRequest":
+        self.request_id = self.request_id.strip()
         try:
             # Validate the request_id is a valid UUID
             UUID(self.request_id)

@@ -106,7 +106,7 @@ class TestScheduledJobsValidation:
         """Test valid scheduled job creation model"""
         job = ScheduledJobCreate(
             job_name="Test Job",
-            service_type=ServiceType.SMARTSCRAPER,
+            service_type=ServiceType.SMART_SCRAPER,
             cron_expression="0 9 * * *",
             job_config={
                 "website_url": "https://example.com",
@@ -115,7 +115,7 @@ class TestScheduledJobsValidation:
         )
         
         assert job.job_name == "Test Job"
-        assert job.service_type == ServiceType.SMARTSCRAPER
+        assert job.service_type == ServiceType.SMART_SCRAPER
         assert job.cron_expression == "0 9 * * *"
         assert job.is_active is True  # Default value
 
@@ -124,7 +124,7 @@ class TestScheduledJobsValidation:
         with pytest.raises(ValidationError) as exc_info:
             ScheduledJobCreate(
                 job_name="Test Job",
-                service_type=ServiceType.SMARTSCRAPER,
+                service_type=ServiceType.SMART_SCRAPER,
                 cron_expression="invalid cron",  # Invalid format
                 job_config={"website_url": "https://example.com", "user_prompt": "test"}
             )
@@ -136,7 +136,7 @@ class TestScheduledJobsValidation:
         with pytest.raises(ValidationError) as exc_info:
             ScheduledJobCreate(
                 job_name="",  # Empty name
-                service_type=ServiceType.SMARTSCRAPER,
+                service_type=ServiceType.SMART_SCRAPER,
                 cron_expression="0 9 * * *",
                 job_config={"website_url": "https://example.com", "user_prompt": "test"}
             )
@@ -192,7 +192,7 @@ class TestScheduledJobsMockMode:
         
         job = client.create_scheduled_job(
             job_name="Mock Test Job",
-            service_type=ServiceType.SMARTSCRAPER,
+            service_type=ServiceType.SMART_SCRAPER,
             cron_expression="0 9 * * *",
             job_config={
                 "website_url": "https://example.com",
@@ -223,7 +223,7 @@ class TestScheduledJobsMockMode:
         # Create a job first
         job = client.create_scheduled_job(
             job_name="Mock Job",
-            service_type=ServiceType.SMARTSCRAPER,
+            service_type=ServiceType.SMART_SCRAPER,
             cron_expression="0 9 * * *",
             job_config={"website_url": "https://example.com", "user_prompt": "test"}
         )
@@ -266,7 +266,7 @@ class TestScheduledJobsMockMode:
         with pytest.raises(ValidationError):
             client.create_scheduled_job(
                 job_name="Invalid Job",
-                service_type=ServiceType.SMARTSCRAPER,
+                service_type=ServiceType.SMART_SCRAPER,
                 cron_expression="invalid",  # Invalid cron
                 job_config={"website_url": "https://example.com", "user_prompt": "test"}
             )
@@ -275,7 +275,7 @@ class TestScheduledJobsMockMode:
         with pytest.raises(ValidationError):
             client.create_scheduled_job(
                 job_name="",  # Empty name
-                service_type=ServiceType.SMARTSCRAPER,
+                service_type=ServiceType.SMART_SCRAPER,
                 cron_expression="0 9 * * *",
                 job_config={"website_url": "https://example.com", "user_prompt": "test"}
             )
