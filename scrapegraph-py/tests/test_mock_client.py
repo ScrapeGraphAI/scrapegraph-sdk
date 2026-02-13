@@ -43,7 +43,7 @@ class TestMockMode:
         assert response["request_id"].startswith("mock-req-")
         
         # Test feedback endpoint
-        feedback = client.submit_feedback("test-id", 5, "Great!")
+        feedback = client.submit_feedback(str(uuid4()), 5, "Great!")
         assert feedback["status"] == "success"
 
     def test_client_mock_mode_get_endpoints(self, mock_api_key, mock_uuid):
@@ -70,7 +70,7 @@ class TestMockMode:
         client = Client(api_key=mock_api_key, mock=True)
         
         # Test crawl POST
-        crawl_response = client.crawl(url="https://example.com")
+        crawl_response = client.crawl(url="https://example.com", extraction_mode=False)
         assert "crawl_id" in crawl_response
         assert crawl_response["crawl_id"].startswith("mock-crawl-")
         

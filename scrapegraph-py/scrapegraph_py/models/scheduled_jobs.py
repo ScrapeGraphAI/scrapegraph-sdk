@@ -14,7 +14,7 @@ Scheduled Jobs support:
 
 from typing import Any, Dict, Optional
 from enum import Enum
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 class ServiceType(str, Enum):
@@ -33,11 +33,11 @@ class ServiceType(str, Enum):
 
 class ScheduledJobCreate(BaseModel):
     """Model for creating a new scheduled job"""
-    job_name: str = Field(..., description="Name of the scheduled job")
+    job_name: str = Field(..., min_length=1, description="Name of the scheduled job")
     service_type: str = Field(..., description="Type of service (smartscraper, searchscraper, etc.)")
     cron_expression: str = Field(..., description="Cron expression for scheduling")
     job_config: Dict[str, Any] = Field(
-        ..., 
+        ...,
         example={
             "website_url": "https://example.com",
             "user_prompt": "Extract company information",
@@ -49,6 +49,13 @@ class ScheduledJobCreate(BaseModel):
         description="Configuration for the job"
     )
     is_active: bool = Field(default=True, description="Whether the job is active")
+
+    @model_validator(mode="after")
+    def validate_cron_expression(self) -> "ScheduledJobCreate":
+        parts = self.cron_expression.strip().split()
+        if len(parts) != 5:
+            raise ValueError("Cron expression must have exactly 5 fields")
+        return self
 
 
 class ScheduledJobUpdate(BaseModel):
