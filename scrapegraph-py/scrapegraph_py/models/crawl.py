@@ -108,6 +108,11 @@ class CrawlRequest(BaseModel):
         "The webhook will receive a POST request with the crawl results.",
         example="https://example.com/webhook"
     )
+    wait_ms: Optional[int] = Field(
+        default=None,
+        description="Number of milliseconds to wait before scraping each page. "
+        "Useful for pages with heavy JavaScript rendering that need extra time to load.",
+    )
 
     @model_validator(mode="after")
     def validate_url(self) -> "CrawlRequest":
