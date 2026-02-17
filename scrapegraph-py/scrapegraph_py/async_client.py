@@ -884,6 +884,7 @@ class AsyncClient:
         include_paths: Optional[list[str]] = None,
         exclude_paths: Optional[list[str]] = None,
         webhook_url: Optional[str] = None,
+        wait_ms: Optional[int] = None,
         return_toon: bool = False,
     ):
         """Send a crawl request with support for both AI extraction and
@@ -911,6 +912,7 @@ class AsyncClient:
             exclude_paths: List of path patterns to exclude (e.g., ['/admin/*', '/api/*'])
                           Supports wildcards and takes precedence over include_paths
             webhook_url: URL to receive webhook notifications when the crawl completes
+            wait_ms: Number of milliseconds to wait before scraping each page
             return_toon: If True, return response in TOON format (reduces token usage by 30-60%)
         """
         logger.info("🔍 Starting crawl request")
@@ -944,6 +946,8 @@ class AsyncClient:
             logger.debug(f"❌ Exclude paths: {exclude_paths}")
         if webhook_url:
             logger.debug(f"🔔 Webhook URL: {webhook_url}")
+        if wait_ms is not None:
+            logger.debug(f"⏱️ Wait ms: {wait_ms}")
         if return_toon:
             logger.debug("🎨 TOON format output enabled")
 
@@ -977,6 +981,8 @@ class AsyncClient:
             request_data["exclude_paths"] = exclude_paths
         if webhook_url is not None:
             request_data["webhook_url"] = webhook_url
+        if wait_ms is not None:
+            request_data["wait_ms"] = wait_ms
 
         request = CrawlRequest(**request_data)
         logger.debug("✅ Request validation passed")
