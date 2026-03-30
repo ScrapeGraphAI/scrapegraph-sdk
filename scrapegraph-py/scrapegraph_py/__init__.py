@@ -30,7 +30,6 @@ from .models.crawl import CrawlFormat, CrawlRequest
 from .models.extract import ExtractRequest
 from .models.history import HistoryFilter
 from .models.monitor import MonitorCreateRequest
-from .models.schema import SchemaRequest
 from .models.scrape import ScrapeFormat, ScrapeRequest
 from .models.search import SearchRequest
 from .models.shared import FetchConfig, LlmConfig
@@ -50,8 +49,6 @@ __all__ = [
     "ExtractRequest",
     # Search
     "SearchRequest",
-    # Schema
-    "SchemaRequest",
     # Crawl
     "CrawlFormat",
     "CrawlRequest",

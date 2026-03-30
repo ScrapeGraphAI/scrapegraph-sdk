@@ -29,7 +29,6 @@ from scrapegraph_py.models.crawl import CrawlFormat, CrawlRequest
 from scrapegraph_py.models.extract import ExtractRequest
 from scrapegraph_py.models.history import HistoryFilter
 from scrapegraph_py.models.monitor import MonitorCreateRequest
-from scrapegraph_py.models.schema import SchemaRequest
 from scrapegraph_py.models.scrape import ScrapeFormat, ScrapeRequest
 from scrapegraph_py.models.search import SearchRequest
 from scrapegraph_py.models.shared import FetchConfig, LlmConfig
@@ -432,30 +431,6 @@ class Client:
         )
         return self._make_request(
             "POST", f"{self.base_url}/search", json=request.model_dump()
-        )
-
-    # ------------------------------------------------------------------
-    # Schema
-    # ------------------------------------------------------------------
-
-    def schema(
-        self,
-        prompt: str,
-        existing_schema: Optional[Dict[str, Any]] = None,
-    ) -> Dict[str, Any]:
-        """Generate a JSON schema from a natural language prompt.
-
-        Args:
-            prompt: Description of the schema to generate
-            existing_schema: Optional existing schema to modify/extend
-        """
-        logger.info("Generating schema")
-        request = SchemaRequest(
-            prompt=prompt,
-            existing_schema=existing_schema,
-        )
-        return self._make_request(
-            "POST", f"{self.base_url}/schema", json=request.model_dump()
         )
 
     # ------------------------------------------------------------------

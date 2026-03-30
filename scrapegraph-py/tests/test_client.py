@@ -160,22 +160,6 @@ def test_search_with_num_results(client):
 
 
 # ------------------------------------------------------------------
-# Schema
-# ------------------------------------------------------------------
-
-
-@responses.activate
-def test_schema(client):
-    responses.add(
-        responses.POST,
-        f"{API_BASE_URL}/schema",
-        json={"request_id": str(uuid4()), "schema": {"type": "object"}},
-    )
-    result = client.schema("Generate a schema for product data")
-    assert "schema" in result
-
-
-# ------------------------------------------------------------------
 # Credits
 # ------------------------------------------------------------------
 

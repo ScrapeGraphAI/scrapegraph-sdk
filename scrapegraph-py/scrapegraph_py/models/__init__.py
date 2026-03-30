@@ -6,7 +6,6 @@ from .shared import FetchConfig, LlmConfig
 from .scrape import ScrapeFormat, ScrapeRequest, GetScrapeRequest
 from .extract import ExtractRequest
 from .search import SearchRequest
-from .schema import SchemaRequest
 from .crawl import CrawlFormat, CrawlRequest
 from .monitor import MonitorCreateRequest
 from .history import HistoryFilter
@@ -23,8 +22,6 @@ __all__ = [
     "ExtractRequest",
     # Search
     "SearchRequest",
-    # Schema
-    "SchemaRequest",
     # Crawl
     "CrawlFormat",
     "CrawlRequest",

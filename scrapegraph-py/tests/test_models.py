@@ -6,7 +6,6 @@ from scrapegraph_py.models.crawl import CrawlFormat, CrawlRequest
 from scrapegraph_py.models.extract import ExtractRequest
 from scrapegraph_py.models.history import HistoryFilter
 from scrapegraph_py.models.monitor import MonitorCreateRequest
-from scrapegraph_py.models.schema import SchemaRequest
 from scrapegraph_py.models.scrape import ScrapeFormat, ScrapeRequest
 from scrapegraph_py.models.search import SearchRequest
 from scrapegraph_py.models.shared import FetchConfig, LlmConfig
@@ -112,29 +111,6 @@ def test_search_request_num_results_bounds():
         SearchRequest(query="test", num_results=2)
     with pytest.raises(ValueError):
         SearchRequest(query="test", num_results=21)
-
-
-# ------------------------------------------------------------------
-# Schema
-# ------------------------------------------------------------------
-
-
-def test_schema_request_valid():
-    req = SchemaRequest(prompt="Product with name and price")
-    assert "Product" in req.prompt
-
-
-def test_schema_request_empty_prompt():
-    with pytest.raises(ValueError, match="Prompt cannot be empty"):
-        SchemaRequest(prompt="")
-
-
-def test_schema_request_with_existing():
-    req = SchemaRequest(
-        prompt="Add rating field",
-        existing_schema={"type": "object"},
-    )
-    assert req.existing_schema is not None
 
 
 # ------------------------------------------------------------------

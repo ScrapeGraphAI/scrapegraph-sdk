@@ -125,22 +125,6 @@ async def test_search(client):
 
 
 # ------------------------------------------------------------------
-# Schema
-# ------------------------------------------------------------------
-
-
-@pytest.mark.asyncio
-async def test_schema(client):
-    with aioresponses() as mocked:
-        mocked.post(
-            f"{API_BASE_URL}/schema",
-            payload={"request_id": str(uuid4()), "schema": {"type": "object"}},
-        )
-        result = await client.schema("Generate a schema for product data")
-        assert "schema" in result
-
-
-# ------------------------------------------------------------------
 # Credits
 # ------------------------------------------------------------------
 
