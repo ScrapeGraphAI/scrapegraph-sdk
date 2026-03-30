@@ -13,7 +13,7 @@ pip install scrapegraph-py==2.0.0
 | Area | v1 | v2 |
 |------|----|----|
 | **Package version** | 1.x | 2.0.0 |
-| **API base URL** | `https://api.scrapegraphai.com/v1` | `https://api.scrapegraphai.com/api/v1` |
+| **API base URL** | `https://api.scrapegraphai.com/v1` | `https://api.scrapegraphai.com/api/v2` |
 | **Auth header** | `SGAI-APIKEY: <key>` | `Authorization: Bearer <key>` (+ `SGAI-APIKEY` for backwards compat) |
 | **SDK version header** | None | `X-SDK-Version: python@2.0.0` |
 | **Client init** | `Client(api_key=...)` | `Client(api_key=..., base_url=...)` |
@@ -50,7 +50,7 @@ from scrapegraph_py import Client
 
 client = Client(
     api_key="sgai-...",
-    base_url="https://api.scrapegraphai.com/api/v1",  # optional override
+    base_url="https://api.scrapegraphai.com/api/v2",  # optional override
     verify_ssl=True,
     timeout=30,
     max_retries=3,
