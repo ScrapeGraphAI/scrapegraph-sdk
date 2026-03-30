@@ -1,111 +1,168 @@
 """
-Asynchronous HTTP client for the ScrapeGraphAI API.
-
-This module provides an asynchronous client for interacting with all ScrapeGraphAI
-API endpoints including smartscraper, searchscraper, crawl, agentic scraper,
-markdownify, schema generation, scheduled jobs, and utility functions.
-
-The AsyncClient class supports:
-- API key authentication
-- SSL verification configuration
-- Request timeout configuration
-- Automatic retry logic with exponential backoff
-- Mock mode for testing
-- Async context manager support for proper resource cleanup
-- Concurrent requests using asyncio
+Asynchronous HTTP client for the ScrapeGraphAI v2 API.
 
 Example:
-    Basic usage with environment variables:
-        >>> import asyncio
-        >>> from scrapegraph_py import AsyncClient
-        >>> async def main():
-        ...     client = AsyncClient.from_env()
-        ...     result = await client.smartscraper(
-        ...         website_url="https://example.com",
-        ...         user_prompt="Extract product information"
-        ...     )
-        ...     await client.close()
-        >>> asyncio.run(main())
-
-    Using async context manager:
-        >>> async def main():
-        ...     async with AsyncClient(api_key="sgai-...") as client:
-        ...         result = await client.scrape(website_url="https://example.com")
-        >>> asyncio.run(main())
+    >>> import asyncio
+    >>> from scrapegraph_py import AsyncClient
+    >>> async def main():
+    ...     async with AsyncClient(api_key="sgai-...") as client:
+    ...         result = await client.extract(
+    ...             url="https://example.com",
+    ...             prompt="Extract product information"
+    ...         )
+    ...         print(result)
+    >>> asyncio.run(main())
 """
+
 import asyncio
-from typing import Any, Dict, Optional, Callable
+from typing import Any, Dict, List, Optional
 
 from aiohttp import ClientSession, ClientTimeout, TCPConnector
 from aiohttp.client_exceptions import ClientError
 from pydantic import BaseModel
-from urllib.parse import urlparse
-import uuid as _uuid
 
 from scrapegraph_py.config import API_BASE_URL, DEFAULT_HEADERS
 from scrapegraph_py.exceptions import APIError
 from scrapegraph_py.logger import sgai_logger as logger
-from scrapegraph_py.models.agenticscraper import (
-    AgenticScraperRequest,
-    GetAgenticScraperRequest,
-)
-from scrapegraph_py.models.crawl import CrawlRequest, GetCrawlRequest
-from scrapegraph_py.models.feedback import FeedbackRequest
-from scrapegraph_py.models.scrape import GetScrapeRequest, ScrapeRequest
-from scrapegraph_py.models.markdownify import GetMarkdownifyRequest, MarkdownifyRequest
-from scrapegraph_py.models.schema import (
-    GenerateSchemaRequest,
-    GetSchemaStatusRequest,
-    SchemaGenerationResponse,
-)
-from scrapegraph_py.models.searchscraper import (
-    GetSearchScraperRequest,
-    SearchScraperRequest,
-    TimeRange,
-)
-from scrapegraph_py.models.sitemap import SitemapRequest, SitemapResponse
-from scrapegraph_py.models.smartscraper import (
-    GetSmartScraperRequest,
-    SmartScraperRequest,
-)
-from scrapegraph_py.models.scheduled_jobs import (
-    GetJobExecutionsRequest,
-    GetScheduledJobRequest,
-    GetScheduledJobsRequest,
-    JobActionRequest,
-    ScheduledJobCreate,
-    ScheduledJobUpdate,
-    TriggerJobRequest,
-)
+from scrapegraph_py.models.crawl import CrawlFormat, CrawlRequest
+from scrapegraph_py.models.extract import ExtractRequest
+from scrapegraph_py.models.history import HistoryFilter
+from scrapegraph_py.models.monitor import MonitorCreateRequest
+from scrapegraph_py.models.schema import SchemaRequest
+from scrapegraph_py.models.scrape import ScrapeFormat, ScrapeRequest
+from scrapegraph_py.models.search import SearchRequest
+from scrapegraph_py.models.shared import FetchConfig, LlmConfig
 from scrapegraph_py.utils.helpers import handle_async_response, validate_api_key
-from scrapegraph_py.utils.toon_converter import process_response_with_toon
+
+
+class _AsyncCrawlNamespace:
+    """Namespaced async crawl operations."""
+
+    def __init__(self, client: "AsyncClient"):
+        self._client = client
+
+    async def start(
+        self,
+        url: str,
+        depth: int = 2,
+        max_pages: int = 10,
+        format: str = "markdown",
+        include_patterns: Optional[List[str]] = None,
+        exclude_patterns: Optional[List[str]] = None,
+        fetch_config: Optional[FetchConfig] = None,
+    ) -> Dict[str, Any]:
+        """Start a crawl job."""
+        logger.info(f"Starting crawl for {url}")
+        request = CrawlRequest(
+            url=url,
+            depth=depth,
+            max_pages=max_pages,
+            format=CrawlFormat(format),
+            include_patterns=include_patterns,
+            exclude_patterns=exclude_patterns,
+            fetch_config=fetch_config,
+        )
+        return await self._client._make_request(
+            "POST", f"{self._client.base_url}/crawl", json=request.model_dump()
+        )
+
+    async def status(self, crawl_id: str) -> Dict[str, Any]:
+        """Get crawl job status and results."""
+        logger.info(f"Fetching crawl status for {crawl_id}")
+        return await self._client._make_request(
+            "GET", f"{self._client.base_url}/crawl/{crawl_id}"
+        )
+
+    async def stop(self, crawl_id: str) -> Dict[str, Any]:
+        """Stop a running crawl job."""
+        logger.info(f"Stopping crawl {crawl_id}")
+        return await self._client._make_request(
+            "POST", f"{self._client.base_url}/crawl/{crawl_id}/stop"
+        )
+
+    async def resume(self, crawl_id: str) -> Dict[str, Any]:
+        """Resume a stopped crawl job."""
+        logger.info(f"Resuming crawl {crawl_id}")
+        return await self._client._make_request(
+            "POST", f"{self._client.base_url}/crawl/{crawl_id}/resume"
+        )
+
+
+class _AsyncMonitorNamespace:
+    """Namespaced async monitor operations."""
+
+    def __init__(self, client: "AsyncClient"):
+        self._client = client
+
+    async def create(
+        self,
+        name: str,
+        url: str,
+        prompt: str,
+        cron: str,
+        output_schema: Optional[Dict[str, Any]] = None,
+        fetch_config: Optional[FetchConfig] = None,
+        llm_config: Optional[LlmConfig] = None,
+    ) -> Dict[str, Any]:
+        """Create a new monitor."""
+        logger.info(f"Creating monitor '{name}' for {url}")
+        request = MonitorCreateRequest(
+            name=name,
+            url=url,
+            prompt=prompt,
+            cron=cron,
+            output_schema=output_schema,
+            fetch_config=fetch_config,
+            llm_config=llm_config,
+        )
+        return await self._client._make_request(
+            "POST", f"{self._client.base_url}/monitor", json=request.model_dump()
+        )
+
+    async def list(self) -> Dict[str, Any]:
+        """List all monitors."""
+        logger.info("Listing monitors")
+        return await self._client._make_request("GET", f"{self._client.base_url}/monitor")
+
+    async def get(self, monitor_id: str) -> Dict[str, Any]:
+        """Get a specific monitor."""
+        logger.info(f"Fetching monitor {monitor_id}")
+        return await self._client._make_request(
+            "GET", f"{self._client.base_url}/monitor/{monitor_id}"
+        )
+
+    async def pause(self, monitor_id: str) -> Dict[str, Any]:
+        """Pause a monitor."""
+        logger.info(f"Pausing monitor {monitor_id}")
+        return await self._client._make_request(
+            "POST", f"{self._client.base_url}/monitor/{monitor_id}/pause"
+        )
+
+    async def resume(self, monitor_id: str) -> Dict[str, Any]:
+        """Resume a paused monitor."""
+        logger.info(f"Resuming monitor {monitor_id}")
+        return await self._client._make_request(
+            "POST", f"{self._client.base_url}/monitor/{monitor_id}/resume"
+        )
+
+    async def delete(self, monitor_id: str) -> Dict[str, Any]:
+        """Delete a monitor."""
+        logger.info(f"Deleting monitor {monitor_id}")
+        return await self._client._make_request(
+            "DELETE", f"{self._client.base_url}/monitor/{monitor_id}"
+        )
 
 
 class AsyncClient:
-    """
-    Asynchronous client for the ScrapeGraphAI API.
-
-    This class provides asynchronous methods for all ScrapeGraphAI API endpoints.
-    It handles authentication, request management, error handling, and supports
-    mock mode for testing. Uses aiohttp for efficient async HTTP requests.
-
-    Attributes:
-        api_key (str): The API key for authentication
-        headers (dict): Default headers including API key
-        timeout (ClientTimeout): Request timeout configuration
-        max_retries (int): Maximum number of retry attempts
-        retry_delay (float): Base delay between retries in seconds
-        mock (bool): Whether mock mode is enabled
-        session (ClientSession): Aiohttp session for connection pooling
+    """Asynchronous client for the ScrapeGraphAI v2 API.
 
     Example:
-        >>> async def example():
-        ...     async with AsyncClient.from_env() as client:
-        ...         result = await client.smartscraper(
-        ...             website_url="https://example.com",
-        ...             user_prompt="Extract all products"
-        ...         )
+        >>> async with AsyncClient(api_key="sgai-...") as client:
+        ...     result = await client.scrape("https://example.com")
+        ...     result = await client.extract("https://example.com", prompt="Extract prices")
+        ...     job = await client.crawl.start("https://example.com", depth=3)
     """
+
     @classmethod
     def from_env(
         cls,
@@ -113,67 +170,42 @@ class AsyncClient:
         timeout: Optional[float] = None,
         max_retries: int = 3,
         retry_delay: float = 1.0,
-        mock: Optional[bool] = None,
-        mock_handler: Optional[Callable[[str, str, Dict[str, Any]], Any]] = None,
-        mock_responses: Optional[Dict[str, Any]] = None,
-    ):
-        """Initialize AsyncClient using API key from environment variable.
-
-        Args:
-            verify_ssl: Whether to verify SSL certificates
-            timeout: Request timeout in seconds. None means no timeout (infinite)
-            max_retries: Maximum number of retry attempts
-            retry_delay: Delay between retries in seconds
-        """
+    ) -> "AsyncClient":
+        """Initialize AsyncClient using SGAI_API_KEY environment variable."""
         from os import getenv
 
-        # Allow enabling mock mode from environment if not explicitly provided
-        if mock is None:
-            mock_env = getenv("SGAI_MOCK", "0").strip().lower()
-            mock = mock_env in {"1", "true", "yes", "on"}
-        
         api_key = getenv("SGAI_API_KEY")
-        # In mock mode, we don't need a real API key
         if not api_key:
-            if mock:
-                api_key = "sgai-00000000-0000-0000-0000-000000000000"
-            else:
-                raise ValueError("SGAI_API_KEY environment variable not set")
+            raise ValueError("SGAI_API_KEY environment variable not set")
         return cls(
             api_key=api_key,
             verify_ssl=verify_ssl,
             timeout=timeout,
             max_retries=max_retries,
             retry_delay=retry_delay,
-            mock=bool(mock),
-            mock_handler=mock_handler,
-            mock_responses=mock_responses,
         )
 
     def __init__(
         self,
         api_key: str = None,
+        base_url: Optional[str] = None,
         verify_ssl: bool = True,
         timeout: Optional[float] = None,
         max_retries: int = 3,
         retry_delay: float = 1.0,
-        mock: bool = False,
-        mock_handler: Optional[Callable[[str, str, Dict[str, Any]], Any]] = None,
-        mock_responses: Optional[Dict[str, Any]] = None,
     ):
-        """Initialize AsyncClient with configurable parameters.
+        """Initialize AsyncClient.
 
         Args:
-            api_key: API key for authentication. If None, will try to
-                     load from environment
+            api_key: API key for authentication. If None, reads from SGAI_API_KEY env var
+            base_url: Override the default API base URL
             verify_ssl: Whether to verify SSL certificates
-            timeout: Request timeout in seconds. None means no timeout (infinite)
-            max_retries: Maximum number of retry attempts
-            retry_delay: Delay between retries in seconds
+            timeout: Request timeout in seconds (None = no timeout)
+            max_retries: Maximum retry attempts on server errors
+            retry_delay: Base delay between retries in seconds
         """
-        logger.info("🔑 Initializing AsyncClient")
+        logger.info("Initializing AsyncClient")
 
-        # Try to get API key from environment if not provided
         if api_key is None:
             from os import getenv
 
@@ -184,1141 +216,249 @@ class AsyncClient:
                 )
 
         validate_api_key(api_key)
-        logger.debug(
-            f"🛠️ Configuration: verify_ssl={verify_ssl}, "
-            f"timeout={timeout}, max_retries={max_retries}"
-        )
+
         self.api_key = api_key
-        self.headers = {**DEFAULT_HEADERS, "SGAI-APIKEY": api_key}
+        self.base_url = (base_url or API_BASE_URL).rstrip("/")
+        self.headers = {
+            **DEFAULT_HEADERS,
+            "Authorization": f"Bearer {api_key}",
+            "SGAI-APIKEY": api_key,
+        }
         self.max_retries = max_retries
         self.retry_delay = retry_delay
-        self.mock = bool(mock)
-        self.mock_handler = mock_handler
-        self.mock_responses = mock_responses or {}
 
         ssl = None if verify_ssl else False
         self.timeout = ClientTimeout(total=timeout) if timeout is not None else None
 
         self.session = ClientSession(
-            headers=self.headers, connector=TCPConnector(ssl=ssl), timeout=self.timeout
+            headers=self.headers,
+            connector=TCPConnector(ssl=ssl),
+            timeout=self.timeout,
         )
 
-        logger.info("✅ AsyncClient initialized successfully")
+        # Namespaced sub-clients
+        self.crawl = _AsyncCrawlNamespace(self)
+        self.monitor = _AsyncMonitorNamespace(self)
 
-    async def _make_request(self, method: str, url: str, **kwargs) -> Any:
-        """
-        Make asynchronous HTTP request with retry logic and error handling.
+        logger.info("AsyncClient initialized successfully")
 
-        Args:
-            method: HTTP method (GET, POST, etc.)
-            url: Full URL for the request
-            **kwargs: Additional arguments to pass to aiohttp
-
-        Returns:
-            Parsed JSON response data
-
-        Raises:
-            APIError: If the API returns an error response
-            ConnectionError: If unable to connect after all retries
-
-        Note:
-            In mock mode, this method returns deterministic responses without
-            making actual HTTP requests.
-        """
-        # Short-circuit when mock mode is enabled
-        if getattr(self, "mock", False):
-            return self._mock_response(method, url, **kwargs)
+    async def _make_request(self, method: str, url: str, **kwargs: Any) -> Any:
+        """Make async HTTP request with retry logic."""
         for attempt in range(self.max_retries):
             try:
-                logger.info(
-                    f"🚀 Making {method} request to {url} "
-                    f"(Attempt {attempt + 1}/{self.max_retries})"
+                logger.debug(
+                    f"Making {method} request to {url} "
+                    f"(attempt {attempt + 1}/{self.max_retries})"
                 )
-                logger.debug(f"🔍 Request parameters: {kwargs}")
-
                 async with self.session.request(method, url, **kwargs) as response:
-                    logger.debug(f"📥 Response status: {response.status}")
-                    result = await handle_async_response(response)
-                    logger.info(f"✅ Request completed successfully: {method} {url}")
-                    return result
+                    return await handle_async_response(response)
 
             except ClientError as e:
-                logger.warning(f"⚠️ Request attempt {attempt + 1} failed: {str(e)}")
+                logger.warning(f"Request attempt {attempt + 1} failed: {e}")
                 if hasattr(e, "status") and e.status is not None:
                     try:
                         error_data = await e.response.json()
                         error_msg = error_data.get("error", str(e))
-                        logger.error(f"🔴 API Error: {error_msg}")
                         raise APIError(error_msg, status_code=e.status)
-                    except ValueError:
-                        logger.error("🔴 Could not parse error response")
+                    except (ValueError, AttributeError):
                         raise APIError(
                             str(e),
-                            status_code=e.status if hasattr(e, "status") else None,
+                            status_code=getattr(e, "status", None),
                         )
 
                 if attempt == self.max_retries - 1:
-                    logger.error(f"❌ All retry attempts failed for {method} {url}")
-                    raise ConnectionError(f"Failed to connect to API: {str(e)}")
+                    raise ConnectionError(f"Failed to connect to API: {e}")
 
                 retry_delay = self.retry_delay * (attempt + 1)
-                logger.info(f"⏳ Waiting {retry_delay}s before retry {attempt + 2}")
+                logger.info(f"Waiting {retry_delay}s before retry {attempt + 2}")
                 await asyncio.sleep(retry_delay)
 
-    def _mock_response(self, method: str, url: str, **kwargs) -> Any:
-        """Return a deterministic mock response without performing network I/O.
-
-        Resolution order:
-        1) If a custom mock_handler is provided, delegate to it
-        2) If mock_responses contains a key for the request path, use it
-        3) Fallback to built-in defaults per endpoint family
-        """
-        logger.info(f"🧪 Mock mode active. Returning stub for {method} {url}")
-
-        # 1) Custom handler
-        if self.mock_handler is not None:
-            try:
-                return self.mock_handler(method, url, kwargs)
-            except Exception as handler_error:
-                logger.warning(f"Custom mock_handler raised: {handler_error}. Falling back to defaults.")
-
-        # 2) Path-based override
-        try:
-            parsed = urlparse(url)
-            path = parsed.path.rstrip("/")
-        except Exception:
-            path = url
-
-        override = self.mock_responses.get(path)
-        if override is not None:
-            return override() if callable(override) else override
-
-        # 3) Built-in defaults
-        def new_id(prefix: str) -> str:
-            return f"{prefix}-{_uuid.uuid4()}"
-
-        upper_method = method.upper()
-
-        # Credits endpoint
-        if path.endswith("/credits") and upper_method == "GET":
-            return {"remaining_credits": 1000, "total_credits_used": 0}
-
-        # Health check endpoint
-        if path.endswith("/healthz") and upper_method == "GET":
-            return {"status": "healthy", "message": "Service is operational"}
-
-        # Feedback acknowledge
-        if path.endswith("/feedback") and upper_method == "POST":
-            return {"status": "success"}
-
-        # Create-like endpoints (POST)
-        if upper_method == "POST":
-            if path.endswith("/crawl"):
-                return {"crawl_id": new_id("mock-crawl")}
-            elif path.endswith("/scheduled-jobs"):
-                return {
-                    "id": new_id("mock-job"),
-                    "user_id": new_id("mock-user"),
-                    "job_name": "Mock Scheduled Job",
-                    "service_type": "smartscraper",
-                    "cron_expression": "0 9 * * 1",
-                    "job_config": {"mock": "config"},
-                    "is_active": True,
-                    "created_at": "2024-01-01T00:00:00Z",
-                    "updated_at": "2024-01-01T00:00:00Z",
-                    "next_run_at": "2024-01-08T09:00:00Z"
-                }
-            elif "/pause" in path:
-                return {
-                    "message": "Job paused successfully",
-                    "job_id": new_id("mock-job"),
-                    "is_active": False
-                }
-            elif "/resume" in path:
-                return {
-                    "message": "Job resumed successfully",
-                    "job_id": new_id("mock-job"),
-                    "is_active": True,
-                    "next_run_at": "2024-01-08T09:00:00Z"
-                }
-            elif "/trigger" in path:
-                task_id = new_id("mock-task")
-                return {
-                    "execution_id": task_id,
-                    "scheduled_job_id": new_id("mock-job"),
-                    "triggered_at": "2024-01-01T00:00:00Z",
-                    "message": f"Job triggered successfully. Task ID: {task_id}"
-                }
-            # All other POST endpoints return a request id
-            return {"request_id": new_id("mock-req")}
-
-        # Status-like endpoints (GET)
-        if upper_method == "GET":
-            if "markdownify" in path:
-                return {"status": "completed", "content": "# Mock markdown\n\n..."}
-            if "smartscraper" in path:
-                return {"status": "completed", "result": [{"field": "value"}]}
-            if "searchscraper" in path:
-                return {
-                    "status": "completed", 
-                    "results": [{"url": "https://example.com"}],
-                    "markdown_content": "# Mock Markdown Content\n\nThis is mock markdown content for testing purposes.\n\n## Section 1\n\nSome content here.\n\n## Section 2\n\nMore content here.",
-                    "reference_urls": ["https://example.com", "https://example2.com"]
-                }
-            if "crawl" in path:
-                return {"status": "completed", "pages": []}
-            if "agentic-scrapper" in path:
-                return {"status": "completed", "actions": []}
-            if "scheduled-jobs" in path:
-                if "/executions" in path:
-                    return {
-                        "executions": [
-                            {
-                                "id": new_id("mock-exec"),
-                                "scheduled_job_id": new_id("mock-job"),
-                                "execution_id": new_id("mock-task"),
-                                "status": "completed",
-                                "started_at": "2024-01-01T00:00:00Z",
-                                "completed_at": "2024-01-01T00:01:00Z",
-                                "result": {"mock": "result"},
-                                "credits_used": 10
-                            }
-                        ],
-                        "total": 1,
-                        "page": 1,
-                        "page_size": 20
-                    }
-                elif path.endswith("/scheduled-jobs"):  # List jobs endpoint
-                    return {
-                        "jobs": [
-                            {
-                                "id": new_id("mock-job"),
-                                "user_id": new_id("mock-user"),
-                                "job_name": "Mock Scheduled Job",
-                                "service_type": "smartscraper",
-                                "cron_expression": "0 9 * * 1",
-                                "job_config": {"mock": "config"},
-                                "is_active": True,
-                                "created_at": "2024-01-01T00:00:00Z",
-                                "updated_at": "2024-01-01T00:00:00Z",
-                                "next_run_at": "2024-01-08T09:00:00Z"
-                            }
-                        ],
-                        "total": 1,
-                        "page": 1,
-                        "page_size": 20
-                    }
-                else:  # Single job endpoint
-                    return {
-                        "id": new_id("mock-job"),
-                        "user_id": new_id("mock-user"),
-                        "job_name": "Mock Scheduled Job",
-                        "service_type": "smartscraper",
-                        "cron_expression": "0 9 * * 1",
-                        "job_config": {"mock": "config"},
-                        "is_active": True,
-                        "created_at": "2024-01-01T00:00:00Z",
-                        "updated_at": "2024-01-01T00:00:00Z",
-                        "next_run_at": "2024-01-08T09:00:00Z"
-                    }
-
-        # Update operations (PATCH/PUT)
-        if upper_method in ["PATCH", "PUT"] and "scheduled-jobs" in path:
-            return {
-                "id": new_id("mock-job"),
-                "user_id": new_id("mock-user"),
-                "job_name": "Updated Mock Scheduled Job",
-                "service_type": "smartscraper",
-                "cron_expression": "0 10 * * 1",
-                "job_config": {"mock": "updated_config"},
-                "is_active": True,
-                "created_at": "2024-01-01T00:00:00Z",
-                "updated_at": "2024-01-01T01:00:00Z",
-                "next_run_at": "2024-01-08T10:00:00Z"
-            }
-
-        # Delete operations
-        if upper_method == "DELETE" and "scheduled-jobs" in path:
-            return {"message": "Scheduled job deleted successfully"}
-
-        # Generic fallback
-        return {"status": "mock", "url": url, "method": method, "kwargs": kwargs}
-
-    async def markdownify(
-        self, website_url: str, headers: Optional[dict[str, str]] = None, mock: bool = False, render_heavy_js: bool = False, stealth: bool = False, wait_ms: Optional[int] = None, return_toon: bool = False
-    ):
-        """Send a markdownify request
-
-        Args:
-            website_url: The URL to convert to markdown
-            headers: Optional HTTP headers
-            mock: Enable mock mode for testing
-            render_heavy_js: Enable heavy JavaScript rendering
-            stealth: Enable stealth mode to avoid bot detection
-            wait_ms: Number of milliseconds to wait before scraping the website
-            return_toon: If True, return response in TOON format (reduces token usage by 30-60%)
-        """
-        logger.info(f"🔍 Starting markdownify request for {website_url}")
-        if headers:
-            logger.debug("🔧 Using custom headers")
-        if stealth:
-            logger.debug("🥷 Stealth mode enabled")
-        if render_heavy_js:
-            logger.debug("⚡ Heavy JavaScript rendering enabled")
-        if return_toon:
-            logger.debug("🎨 TOON format output enabled")
-
-        request = MarkdownifyRequest(website_url=website_url, headers=headers, mock=mock, render_heavy_js=render_heavy_js, stealth=stealth, wait_ms=wait_ms)
-        logger.debug("✅ Request validation passed")
-
-        result = await self._make_request(
-            "POST", f"{API_BASE_URL}/markdownify", json=request.model_dump()
-        )
-        logger.info("✨ Markdownify request completed successfully")
-        return process_response_with_toon(result, return_toon)
-
-    async def get_markdownify(self, request_id: str, return_toon: bool = False):
-        """Get the result of a previous markdownify request
-        
-        Args:
-            request_id: The request ID to fetch
-            return_toon: If True, return response in TOON format (reduces token usage by 30-60%)
-        """
-        logger.info(f"🔍 Fetching markdownify result for request {request_id}")
-        if return_toon:
-            logger.debug("🎨 TOON format output enabled")
-
-        # Validate input using Pydantic model
-        GetMarkdownifyRequest(request_id=request_id)
-        logger.debug("✅ Request ID validation passed")
-
-        result = await self._make_request(
-            "GET", f"{API_BASE_URL}/markdownify/{request_id}"
-        )
-        logger.info(f"✨ Successfully retrieved result for request {request_id}")
-        return process_response_with_toon(result, return_toon)
+    # ------------------------------------------------------------------
+    # Scrape
+    # ------------------------------------------------------------------
 
     async def scrape(
         self,
-        website_url: str,
-        render_heavy_js: bool = False,
-        branding: bool = False,
-        headers: Optional[dict[str, str]] = None,
-        stealth: bool = False,
-        wait_ms: Optional[int] = None,
-        return_toon: bool = False,
-    ):
-        """Send a scrape request to get HTML content from a website
+        url: str,
+        format: str = "markdown",
+        fetch_config: Optional[FetchConfig] = None,
+    ) -> Dict[str, Any]:
+        """Scrape a page and return it in the specified format.
 
         Args:
-            website_url: The URL of the website to get HTML from
-            render_heavy_js: Whether to render heavy JavaScript (defaults to False)
-            branding: Whether to include branding in the response (defaults to False)
-            headers: Optional headers to send with the request
-            stealth: Enable stealth mode to avoid bot detection
-            wait_ms: Number of milliseconds to wait before scraping the website
-            return_toon: If True, return response in TOON format (reduces token usage by 30-60%)
+            url: URL to scrape
+            format: Output format - 'markdown', 'html', 'screenshot', or 'branding'
+            fetch_config: Fetch configuration options
         """
-        logger.info(f"🔍 Starting scrape request for {website_url}")
-        logger.debug(f"🔧 Render heavy JS: {render_heavy_js}")
-        logger.debug(f"🔧 Branding: {branding}")
-        if headers:
-            logger.debug("🔧 Using custom headers")
-        if stealth:
-            logger.debug("🥷 Stealth mode enabled")
-        if return_toon:
-            logger.debug("🎨 TOON format output enabled")
-
+        logger.info(f"Scraping {url} (format={format})")
         request = ScrapeRequest(
-            website_url=website_url,
-            render_heavy_js=render_heavy_js,
-            branding=branding,
-            headers=headers,
-            stealth=stealth,
-            wait_ms=wait_ms,
-        )
-        logger.debug("✅ Request validation passed")
-
-        result = await self._make_request(
-            "POST", f"{API_BASE_URL}/scrape", json=request.model_dump()
-        )
-        logger.info("✨ Scrape request completed successfully")
-        return process_response_with_toon(result, return_toon)
-
-    async def get_scrape(self, request_id: str, return_toon: bool = False):
-        """Get the result of a previous scrape request
-        
-        Args:
-            request_id: The request ID to fetch
-            return_toon: If True, return response in TOON format (reduces token usage by 30-60%)
-        """
-        logger.info(f"🔍 Fetching scrape result for request {request_id}")
-        if return_toon:
-            logger.debug("🎨 TOON format output enabled")
-
-        # Validate input using Pydantic model
-        GetScrapeRequest(request_id=request_id)
-        logger.debug("✅ Request ID validation passed")
-
-        result = await self._make_request(
-            "GET", f"{API_BASE_URL}/scrape/{request_id}")
-        logger.info(f"✨ Successfully retrieved result for request {request_id}")
-        return process_response_with_toon(result, return_toon)
-
-    async def sitemap(
-        self,
-        website_url: str,
-        mock: bool = False,
-    ) -> SitemapResponse:
-        """Extract all URLs from a website's sitemap.
-
-        Automatically discovers sitemap from robots.txt or common sitemap locations.
-
-        Args:
-            website_url: The URL of the website to extract sitemap from
-            mock: Whether to use mock mode for this request
-
-        Returns:
-            SitemapResponse: Object containing list of URLs extracted from sitemap
-
-        Raises:
-            ValueError: If website_url is invalid
-            APIError: If the API request fails
-
-        Examples:
-            >>> async with AsyncClient(api_key="your-api-key") as client:
-            ...     response = await client.sitemap("https://example.com")
-            ...     print(f"Found {len(response.urls)} URLs")
-            ...     for url in response.urls[:5]:
-            ...         print(url)
-        """
-        logger.info(f"🗺️  Starting sitemap extraction for {website_url}")
-
-        request = SitemapRequest(
-            website_url=website_url,
-            mock=mock
-        )
-        logger.debug("✅ Request validation passed")
-
-        result = await self._make_request(
-            "POST", f"{API_BASE_URL}/sitemap", json=request.model_dump()
-        )
-        logger.info(f"✨ Sitemap extraction completed successfully - found {len(result.get('urls', []))} URLs")
-
-        # Parse response into SitemapResponse model
-        return SitemapResponse(**result)
-
-    async def smartscraper(
-        self,
-        user_prompt: str,
-        website_url: Optional[str] = None,
-        website_html: Optional[str] = None,
-        website_markdown: Optional[str] = None,
-        headers: Optional[dict[str, str]] = None,
-        cookies: Optional[Dict[str, str]] = None,
-        output_schema: Optional[BaseModel] = None,
-        number_of_scrolls: Optional[int] = None,
-        total_pages: Optional[int] = None,
-        mock: bool = False,
-        plain_text: bool = False,
-        render_heavy_js: bool = False,
-        stealth: bool = False,
-        wait_ms: Optional[int] = None,
-        return_toon: bool = False,
-    ):
-        """
-        Send a smartscraper request with optional pagination support and cookies.
-
-        Supports three types of input (must provide exactly one):
-        - website_url: Scrape from a URL
-        - website_html: Process local HTML content
-        - website_markdown: Process local Markdown content
-
-        Args:
-            user_prompt: Natural language prompt describing what to extract
-            website_url: URL to scrape (optional)
-            website_html: Raw HTML content to process (optional, max 2MB)
-            website_markdown: Markdown content to process (optional, max 2MB)
-            headers: Optional HTTP headers
-            cookies: Optional cookies for authentication
-            output_schema: Optional Pydantic model for structured output
-            number_of_scrolls: Number of times to scroll (0-100)
-            total_pages: Number of pages to scrape (1-10)
-            mock: Enable mock mode for testing
-            plain_text: Return plain text instead of structured data
-            render_heavy_js: Enable heavy JavaScript rendering
-            stealth: Enable stealth mode to avoid bot detection
-            wait_ms: Number of milliseconds to wait before scraping the website
-            return_toon: If True, return response in TOON format (reduces token usage by 30-60%)
-
-        Returns:
-            Dictionary containing the scraping results, or TOON formatted string if return_toon=True
-
-        Raises:
-            ValueError: If validation fails or invalid parameters provided
-            APIError: If the API request fails
-        """
-        logger.info("🔍 Starting smartscraper request")
-        if website_url:
-            logger.debug(f"🌐 URL: {website_url}")
-        if website_html:
-            logger.debug("📄 Using provided HTML content")
-        if website_markdown:
-            logger.debug("📝 Using provided Markdown content")
-        if headers:
-            logger.debug("🔧 Using custom headers")
-        if cookies:
-            logger.debug("🍪 Using cookies for authentication/session management")
-        if number_of_scrolls is not None:
-            logger.debug(f"🔄 Number of scrolls: {number_of_scrolls}")
-        if total_pages is not None:
-            logger.debug(f"📄 Total pages to scrape: {total_pages}")
-        if stealth:
-            logger.debug("🥷 Stealth mode enabled")
-        if render_heavy_js:
-            logger.debug("⚡ Heavy JavaScript rendering enabled")
-        if return_toon:
-            logger.debug("🎨 TOON format output enabled")
-        logger.debug(f"📝 Prompt: {user_prompt}")
-
-        request = SmartScraperRequest(
-            website_url=website_url,
-            website_html=website_html,
-            website_markdown=website_markdown,
-            headers=headers,
-            cookies=cookies,
-            user_prompt=user_prompt,
-            output_schema=output_schema,
-            number_of_scrolls=number_of_scrolls,
-            total_pages=total_pages,
-            mock=mock,
-            plain_text=plain_text,
-            render_heavy_js=render_heavy_js,
-            stealth=stealth,
-            wait_ms=wait_ms,
-        )
-
-        logger.debug("✅ Request validation passed")
-
-        result = await self._make_request(
-            "POST", f"{API_BASE_URL}/smartscraper", json=request.model_dump()
-        )
-        logger.info("✨ Smartscraper request completed successfully")
-        return process_response_with_toon(result, return_toon)
-
-    async def get_smartscraper(self, request_id: str, return_toon: bool = False):
-        """Get the result of a previous smartscraper request
-        
-        Args:
-            request_id: The request ID to fetch
-            return_toon: If True, return response in TOON format (reduces token usage by 30-60%)
-        """
-        logger.info(f"🔍 Fetching smartscraper result for request {request_id}")
-        if return_toon:
-            logger.debug("🎨 TOON format output enabled")
-
-        # Validate input using Pydantic model
-        GetSmartScraperRequest(request_id=request_id)
-        logger.debug("✅ Request ID validation passed")
-
-        result = await self._make_request(
-            "GET", f"{API_BASE_URL}/smartscraper/{request_id}"
-        )
-        logger.info(f"✨ Successfully retrieved result for request {request_id}")
-        return process_response_with_toon(result, return_toon)
-
-    async def submit_feedback(
-        self, request_id: str, rating: int, feedback_text: Optional[str] = None
-    ):
-        """Submit feedback for a request"""
-        logger.info(f"📝 Submitting feedback for request {request_id}")
-        logger.debug(f"⭐ Rating: {rating}, Feedback: {feedback_text}")
-
-        feedback = FeedbackRequest(
-            request_id=request_id, rating=rating, feedback_text=feedback_text
-        )
-        logger.debug("✅ Feedback validation passed")
-
-        result = await self._make_request(
-            "POST", f"{API_BASE_URL}/feedback", json=feedback.model_dump()
-        )
-        logger.info("✨ Feedback submitted successfully")
-        return result
-
-    async def get_credits(self):
-        """Get credits information"""
-        logger.info("💳 Fetching credits information")
-
-        result = await self._make_request(
-            "GET",
-            f"{API_BASE_URL}/credits",
-        )
-        logger.info(
-            f"✨ Credits info retrieved: "
-            f"{result.get('remaining_credits')} credits remaining"
-        )
-        return result
-
-    async def healthz(self):
-        """Check the health status of the service
-        
-        This endpoint is useful for monitoring and ensuring the service is operational.
-        It returns a JSON response indicating the service's health status.
-        
-        Returns:
-            dict: Health status information
-            
-        Example:
-            >>> async with AsyncClient.from_env() as client:
-            ...     health = await client.healthz()
-            ...     print(health)
-        """
-        logger.info("🏥 Checking service health")
-
-        result = await self._make_request(
-            "GET",
-            f"{API_BASE_URL}/healthz",
-        )
-        logger.info("✨ Health check completed successfully")
-        return result
-
-    async def searchscraper(
-        self,
-        user_prompt: str,
-        num_results: Optional[int] = 3,
-        headers: Optional[dict[str, str]] = None,
-        output_schema: Optional[BaseModel] = None,
-        extraction_mode: bool = True,
-        stealth: bool = False,
-        location_geo_code: Optional[str] = None,
-        time_range: Optional[TimeRange] = None,
-        return_toon: bool = False,
-    ):
-        """Send a searchscraper request
-
-        Args:
-            user_prompt: The search prompt string
-            num_results: Number of websites to scrape (3-20). Default is 3.
-                        More websites provide better research depth but cost more
-                        credits. Credit calculation: 30 base + 10 per additional
-                        website beyond 3.
-            headers: Optional headers to send with the request
-            output_schema: Optional schema to structure the output
-            extraction_mode: Whether to use AI extraction (True) or markdown conversion (False).
-                           AI extraction costs 10 credits per page, markdown conversion costs 2 credits per page.
-            stealth: Enable stealth mode to avoid bot detection
-            location_geo_code: Optional geo code of the location to search in (e.g., "us")
-            time_range: Optional time range filter for search results (e.g., TimeRange.PAST_WEEK)
-            return_toon: If True, return response in TOON format (reduces token usage by 30-60%)
-        """
-        logger.info("🔍 Starting searchscraper request")
-        logger.debug(f"📝 Prompt: {user_prompt}")
-        logger.debug(f"🌐 Number of results: {num_results}")
-        logger.debug(f"🤖 Extraction mode: {'AI extraction' if extraction_mode else 'Markdown conversion'}")
-        if headers:
-            logger.debug("🔧 Using custom headers")
-        if stealth:
-            logger.debug("🥷 Stealth mode enabled")
-        if location_geo_code:
-            logger.debug(f"🌍 Location geo code: {location_geo_code}")
-        if time_range:
-            logger.debug(f"📅 Time range: {time_range.value}")
-        if return_toon:
-            logger.debug("🎨 TOON format output enabled")
-
-        request = SearchScraperRequest(
-            user_prompt=user_prompt,
-            num_results=num_results,
-            headers=headers,
-            output_schema=output_schema,
-            extraction_mode=extraction_mode,
-            stealth=stealth,
-            location_geo_code=location_geo_code,
-            time_range=time_range,
-        )
-        logger.debug("✅ Request validation passed")
-
-        result = await self._make_request(
-            "POST", f"{API_BASE_URL}/searchscraper", json=request.model_dump()
-        )
-        logger.info("✨ Searchscraper request completed successfully")
-        return process_response_with_toon(result, return_toon)
-
-    async def get_searchscraper(self, request_id: str, return_toon: bool = False):
-        """Get the result of a previous searchscraper request
-        
-        Args:
-            request_id: The request ID to fetch
-            return_toon: If True, return response in TOON format (reduces token usage by 30-60%)
-        """
-        logger.info(f"🔍 Fetching searchscraper result for request {request_id}")
-        if return_toon:
-            logger.debug("🎨 TOON format output enabled")
-
-        # Validate input using Pydantic model
-        GetSearchScraperRequest(request_id=request_id)
-        logger.debug("✅ Request ID validation passed")
-
-        result = await self._make_request(
-            "GET", f"{API_BASE_URL}/searchscraper/{request_id}"
-        )
-        logger.info(f"✨ Successfully retrieved result for request {request_id}")
-        return process_response_with_toon(result, return_toon)
-
-    async def crawl(
-        self,
-        url: str,
-        prompt: Optional[str] = None,
-        data_schema: Optional[Dict[str, Any]] = None,
-        extraction_mode: bool = True,
-        cache_website: bool = True,
-        depth: int = 2,
-        breadth: Optional[int] = None,
-        max_pages: int = 2,
-        same_domain_only: bool = True,
-        batch_size: Optional[int] = None,
-        sitemap: bool = False,
-        headers: Optional[dict[str, str]] = None,
-        render_heavy_js: bool = False,
-        stealth: bool = False,
-        include_paths: Optional[list[str]] = None,
-        exclude_paths: Optional[list[str]] = None,
-        webhook_url: Optional[str] = None,
-        wait_ms: Optional[int] = None,
-        return_toon: bool = False,
-    ):
-        """Send a crawl request with support for both AI extraction and
-        markdown conversion modes
-
-        Args:
-            url: The starting URL to crawl
-            prompt: AI prompt for data extraction (required for AI extraction mode)
-            data_schema: Schema for structured output
-            extraction_mode: Whether to use AI extraction (True) or markdown (False)
-            cache_website: Whether to cache the website
-            depth: Maximum depth of link traversal
-            breadth: Maximum number of links to crawl per depth level. If None, unlimited (default).
-                    Controls the 'width' of exploration at each depth. Useful for limiting crawl scope
-                    on large sites. Note: max_pages always takes priority. Ignored when sitemap=True.
-            max_pages: Maximum number of pages to crawl
-            same_domain_only: Only crawl pages within the same domain
-            batch_size: Number of pages to process in batch
-            sitemap: Use sitemap for crawling
-            headers: Optional HTTP headers
-            render_heavy_js: Enable heavy JavaScript rendering
-            stealth: Enable stealth mode to avoid bot detection
-            include_paths: List of path patterns to include (e.g., ['/products/*', '/blog/**'])
-                          Supports wildcards: * matches any characters, ** matches any path segments
-            exclude_paths: List of path patterns to exclude (e.g., ['/admin/*', '/api/*'])
-                          Supports wildcards and takes precedence over include_paths
-            webhook_url: URL to receive webhook notifications when the crawl completes
-            wait_ms: Number of milliseconds to wait before scraping each page
-            return_toon: If True, return response in TOON format (reduces token usage by 30-60%)
-        """
-        logger.info("🔍 Starting crawl request")
-        logger.debug(f"🌐 URL: {url}")
-        logger.debug(
-            f"🤖 Extraction mode: {'AI' if extraction_mode else 'Markdown conversion'}"
-        )
-        if extraction_mode:
-            logger.debug(f"📝 Prompt: {prompt}")
-            logger.debug(f"📊 Schema provided: {bool(data_schema)}")
-        else:
-            logger.debug(
-                "📄 Markdown conversion mode - no AI processing, 2 credits per page"
-            )
-        logger.debug(f"💾 Cache website: {cache_website}")
-        logger.debug(f"🔍 Depth: {depth}")
-        if breadth is not None:
-            logger.debug(f"📏 Breadth: {breadth}")
-        logger.debug(f"📄 Max pages: {max_pages}")
-        logger.debug(f"🏠 Same domain only: {same_domain_only}")
-        logger.debug(f"🗺️ Use sitemap: {sitemap}")
-        if stealth:
-            logger.debug("🥷 Stealth mode enabled")
-        if render_heavy_js:
-            logger.debug("⚡ Heavy JavaScript rendering enabled")
-        if batch_size is not None:
-            logger.debug(f"📦 Batch size: {batch_size}")
-        if include_paths:
-            logger.debug(f"✅ Include paths: {include_paths}")
-        if exclude_paths:
-            logger.debug(f"❌ Exclude paths: {exclude_paths}")
-        if webhook_url:
-            logger.debug(f"🔔 Webhook URL: {webhook_url}")
-        if wait_ms is not None:
-            logger.debug(f"⏱️ Wait ms: {wait_ms}")
-        if return_toon:
-            logger.debug("🎨 TOON format output enabled")
-
-        # Build request data, excluding None values
-        request_data = {
-            "url": url,
-            "extraction_mode": extraction_mode,
-            "cache_website": cache_website,
-            "depth": depth,
-            "max_pages": max_pages,
-            "same_domain_only": same_domain_only,
-            "sitemap": sitemap,
-            "render_heavy_js": render_heavy_js,
-            "stealth": stealth,
-        }
-
-        # Add optional parameters only if provided
-        if prompt is not None:
-            request_data["prompt"] = prompt
-        if data_schema is not None:
-            request_data["data_schema"] = data_schema
-        if breadth is not None:
-            request_data["breadth"] = breadth
-        if batch_size is not None:
-            request_data["batch_size"] = batch_size
-        if headers is not None:
-            request_data["headers"] = headers
-        if include_paths is not None:
-            request_data["include_paths"] = include_paths
-        if exclude_paths is not None:
-            request_data["exclude_paths"] = exclude_paths
-        if webhook_url is not None:
-            request_data["webhook_url"] = webhook_url
-        if wait_ms is not None:
-            request_data["wait_ms"] = wait_ms
-
-        request = CrawlRequest(**request_data)
-        logger.debug("✅ Request validation passed")
-
-        # Serialize the request, excluding None values
-        request_json = request.model_dump(exclude_none=True)
-        result = await self._make_request(
-            "POST", f"{API_BASE_URL}/crawl", json=request_json
-        )
-        logger.info("✨ Crawl request completed successfully")
-        return process_response_with_toon(result, return_toon)
-
-    async def get_crawl(self, crawl_id: str, return_toon: bool = False):
-        """Get the result of a previous crawl request
-        
-        Args:
-            crawl_id: The crawl ID to fetch
-            return_toon: If True, return response in TOON format (reduces token usage by 30-60%)
-        """
-        logger.info(f"🔍 Fetching crawl result for request {crawl_id}")
-        if return_toon:
-            logger.debug("🎨 TOON format output enabled")
-
-        # Validate input using Pydantic model
-        GetCrawlRequest(crawl_id=crawl_id)
-        logger.debug("✅ Request ID validation passed")
-
-        result = await self._make_request("GET", f"{API_BASE_URL}/crawl/{crawl_id}")
-        logger.info(f"✨ Successfully retrieved result for request {crawl_id}")
-        return process_response_with_toon(result, return_toon)
-
-    async def agenticscraper(
-        self,
-        url: str,
-        steps: list[str],
-        use_session: bool = True,
-        user_prompt: Optional[str] = None,
-        output_schema: Optional[Dict[str, Any]] = None,
-        ai_extraction: bool = False,
-        stealth: bool = False,
-        return_toon: bool = False,
-    ):
-        """Send an agentic scraper request to perform automated actions on a webpage
-
-        Args:
-            url: The URL to scrape
-            steps: List of steps to perform on the webpage
-            use_session: Whether to use session for the scraping (default: True)
-            user_prompt: Prompt for AI extraction (required when ai_extraction=True)
-            output_schema: Schema for structured data extraction (optional, used with ai_extraction=True)
-            ai_extraction: Whether to use AI for data extraction from the scraped content (default: False)
-            stealth: Enable stealth mode to avoid bot detection
-            return_toon: If True, return response in TOON format (reduces token usage by 30-60%)
-        """
-        logger.info(f"🤖 Starting agentic scraper request for {url}")
-        logger.debug(f"🔧 Use session: {use_session}")
-        logger.debug(f"📋 Steps: {steps}")
-        logger.debug(f"🧠 AI extraction: {ai_extraction}")
-        if ai_extraction:
-            logger.debug(f"💭 User prompt: {user_prompt}")
-            logger.debug(f"📋 Output schema provided: {output_schema is not None}")
-        if stealth:
-            logger.debug("🥷 Stealth mode enabled")
-        if return_toon:
-            logger.debug("🎨 TOON format output enabled")
-
-        request = AgenticScraperRequest(
             url=url,
-            steps=steps,
-            use_session=use_session,
-            user_prompt=user_prompt,
-            output_schema=output_schema,
-            ai_extraction=ai_extraction,
-            stealth=stealth,
+            format=ScrapeFormat(format),
+            fetch_config=fetch_config,
         )
-        logger.debug("✅ Request validation passed")
-
-        result = await self._make_request(
-            "POST", f"{API_BASE_URL}/agentic-scrapper", json=request.model_dump()
+        return await self._make_request(
+            "POST", f"{self.base_url}/scrape", json=request.model_dump()
         )
-        logger.info("✨ Agentic scraper request completed successfully")
-        return process_response_with_toon(result, return_toon)
 
-    async def get_agenticscraper(self, request_id: str, return_toon: bool = False):
-        """Get the result of a previous agentic scraper request
-        
-        Args:
-            request_id: The request ID to fetch
-            return_toon: If True, return response in TOON format (reduces token usage by 30-60%)
-        """
-        logger.info(f"🔍 Fetching agentic scraper result for request {request_id}")
-        if return_toon:
-            logger.debug("🎨 TOON format output enabled")
+    # ------------------------------------------------------------------
+    # Extract  (replaces SmartScraper)
+    # ------------------------------------------------------------------
 
-        # Validate input using Pydantic model
-        GetAgenticScraperRequest(request_id=request_id)
-        logger.debug("✅ Request ID validation passed")
-
-        result = await self._make_request("GET", f"{API_BASE_URL}/agentic-scrapper/{request_id}")
-        logger.info(f"✨ Successfully retrieved result for request {request_id}")
-        return process_response_with_toon(result, return_toon)
-
-    async def generate_schema(
+    async def extract(
         self,
-        user_prompt: str,
-        existing_schema: Optional[Dict[str, Any]] = None,
-    ):
-        """Generate a JSON schema from a user prompt
-        
-        Args:
-            user_prompt: The user's search query to be refined into a schema
-            existing_schema: Optional existing JSON schema to modify/extend
-        """
-        logger.info("🔧 Starting schema generation request")
-        logger.debug(f"💭 User prompt: {user_prompt}")
-        if existing_schema:
-            logger.debug(f"📋 Existing schema provided: {existing_schema is not None}")
+        url: str,
+        prompt: str,
+        output_schema: Optional[Any] = None,
+        fetch_config: Optional[FetchConfig] = None,
+        llm_config: Optional[LlmConfig] = None,
+    ) -> Dict[str, Any]:
+        """Extract structured data from a page using AI.
 
-        request = GenerateSchemaRequest(
-            user_prompt=user_prompt,
+        Args:
+            url: URL to extract data from
+            prompt: Natural language prompt describing what to extract
+            output_schema: JSON Schema dict or Pydantic BaseModel class for output structure
+            fetch_config: Fetch configuration options
+            llm_config: LLM configuration options
+        """
+        logger.info(f"Extracting from {url}")
+
+        schema_dict = None
+        if output_schema is not None:
+            if isinstance(output_schema, type) and issubclass(output_schema, BaseModel):
+                schema_dict = output_schema.model_json_schema()
+            elif isinstance(output_schema, dict):
+                schema_dict = output_schema
+            else:
+                raise ValueError(
+                    "output_schema must be a dict (JSON Schema) or a Pydantic BaseModel class"
+                )
+
+        request = ExtractRequest(
+            url=url,
+            prompt=prompt,
+            output_schema=schema_dict,
+            fetch_config=fetch_config,
+            llm_config=llm_config,
+        )
+        return await self._make_request(
+            "POST", f"{self.base_url}/extract", json=request.model_dump()
+        )
+
+    # ------------------------------------------------------------------
+    # Search  (replaces SearchScraper)
+    # ------------------------------------------------------------------
+
+    async def search(
+        self,
+        query: str,
+        num_results: int = 5,
+        output_schema: Optional[Any] = None,
+        llm_config: Optional[LlmConfig] = None,
+    ) -> Dict[str, Any]:
+        """Search the web and extract structured results.
+
+        Args:
+            query: The search query
+            num_results: Number of results (3-20, default 5)
+            output_schema: JSON Schema dict or Pydantic BaseModel class for output structure
+            llm_config: LLM configuration options
+        """
+        logger.info(f"Searching: {query}")
+
+        schema_dict = None
+        if output_schema is not None:
+            if isinstance(output_schema, type) and issubclass(output_schema, BaseModel):
+                schema_dict = output_schema.model_json_schema()
+            elif isinstance(output_schema, dict):
+                schema_dict = output_schema
+            else:
+                raise ValueError(
+                    "output_schema must be a dict (JSON Schema) or a Pydantic BaseModel class"
+                )
+
+        request = SearchRequest(
+            query=query,
+            num_results=num_results,
+            output_schema=schema_dict,
+            llm_config=llm_config,
+        )
+        return await self._make_request(
+            "POST", f"{self.base_url}/search", json=request.model_dump()
+        )
+
+    # ------------------------------------------------------------------
+    # Schema
+    # ------------------------------------------------------------------
+
+    async def schema(
+        self,
+        prompt: str,
+        existing_schema: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any]:
+        """Generate a JSON schema from a natural language prompt.
+
+        Args:
+            prompt: Description of the schema to generate
+            existing_schema: Optional existing schema to modify/extend
+        """
+        logger.info("Generating schema")
+        request = SchemaRequest(
+            prompt=prompt,
             existing_schema=existing_schema,
         )
-        logger.debug("✅ Request validation passed")
-
-        result = await self._make_request(
-            "POST", f"{API_BASE_URL}/generate_schema", json=request.model_dump()
+        return await self._make_request(
+            "POST", f"{self.base_url}/schema", json=request.model_dump()
         )
-        logger.info("✨ Schema generation request completed successfully")
-        return result
 
-    async def get_schema_status(self, request_id: str):
-        """Get the result of a previous schema generation request
-        
-        Args:
-            request_id: The request ID returned from generate_schema
-        """
-        logger.info(f"🔍 Fetching schema generation status for request {request_id}")
+    # ------------------------------------------------------------------
+    # Credits
+    # ------------------------------------------------------------------
 
-        # Validate input using Pydantic model
-        GetSchemaStatusRequest(request_id=request_id)
-        logger.debug("✅ Request ID validation passed")
+    async def credits(self) -> Dict[str, Any]:
+        """Get remaining API credits."""
+        logger.info("Fetching credits")
+        return await self._make_request("GET", f"{self.base_url}/credits")
 
-        result = await self._make_request("GET", f"{API_BASE_URL}/generate_schema/{request_id}")
-        logger.info(f"✨ Successfully retrieved schema status for request {request_id}")
-        return result
+    # ------------------------------------------------------------------
+    # History
+    # ------------------------------------------------------------------
 
-    async def create_scheduled_job(
+    async def history(
         self,
-        job_name: str,
-        service_type: str,
-        cron_expression: str,
-        job_config: dict,
-        is_active: bool = True,
-    ):
-        """Create a new scheduled job"""
-        logger.info(f"📅 Creating scheduled job: {job_name}")
-
-        request = ScheduledJobCreate(
-            job_name=job_name,
-            service_type=service_type,
-            cron_expression=cron_expression,
-            job_config=job_config,
-            is_active=is_active,
-        )
-
-        result = await self._make_request(
-            "POST", f"{API_BASE_URL}/scheduled-jobs", json=request.model_dump()
-        )
-        logger.info("✨ Scheduled job created successfully")
-        return result
-
-    async def get_scheduled_jobs(
-        self,
-        page: int = 1,
-        page_size: int = 20,
-        service_type: Optional[str] = None,
-        is_active: Optional[bool] = None,
-    ):
-        """Get list of scheduled jobs with pagination"""
-        logger.info("📋 Fetching scheduled jobs")
-
-        GetScheduledJobsRequest(
-            page=page,
-            page_size=page_size,
-            service_type=service_type,
-            is_active=is_active,
-        )
-
-        params = {"page": page, "page_size": page_size}
-        if service_type:
-            params["service_type"] = service_type
-        if is_active is not None:
-            params["is_active"] = is_active
-
-        result = await self._make_request("GET", f"{API_BASE_URL}/scheduled-jobs", params=params)
-        logger.info(f"✨ Successfully retrieved {len(result.get('jobs', []))} scheduled jobs")
-        return result
-
-    async def get_scheduled_job(self, job_id: str):
-        """Get details of a specific scheduled job"""
-        logger.info(f"🔍 Fetching scheduled job {job_id}")
-
-        GetScheduledJobRequest(job_id=job_id)
-
-        result = await self._make_request("GET", f"{API_BASE_URL}/scheduled-jobs/{job_id}")
-        logger.info(f"✨ Successfully retrieved scheduled job {job_id}")
-        return result
-
-    async def update_scheduled_job(
-        self,
-        job_id: str,
-        job_name: Optional[str] = None,
-        cron_expression: Optional[str] = None,
-        job_config: Optional[dict] = None,
-        is_active: Optional[bool] = None,
-    ):
-        """Update an existing scheduled job (partial update)"""
-        logger.info(f"📝 Updating scheduled job {job_id}")
-
-        update_data = {}
-        if job_name is not None:
-            update_data["job_name"] = job_name
-        if cron_expression is not None:
-            update_data["cron_expression"] = cron_expression
-        if job_config is not None:
-            update_data["job_config"] = job_config
-        if is_active is not None:
-            update_data["is_active"] = is_active
-
-        ScheduledJobUpdate(**update_data)
-
-        result = await self._make_request(
-            "PATCH", f"{API_BASE_URL}/scheduled-jobs/{job_id}", json=update_data
-        )
-        logger.info(f"✨ Successfully updated scheduled job {job_id}")
-        return result
-
-    async def replace_scheduled_job(
-        self,
-        job_id: str,
-        job_name: str,
-        cron_expression: str,
-        job_config: dict,
-        is_active: bool = True,
-    ):
-        """Replace an existing scheduled job (full update)"""
-        logger.info(f"🔄 Replacing scheduled job {job_id}")
-
-        request_data = {
-            "job_name": job_name,
-            "cron_expression": cron_expression,
-            "job_config": job_config,
-            "is_active": is_active,
-        }
-
-        result = await self._make_request(
-            "PUT", f"{API_BASE_URL}/scheduled-jobs/{job_id}", json=request_data
-        )
-        logger.info(f"✨ Successfully replaced scheduled job {job_id}")
-        return result
-
-    async def delete_scheduled_job(self, job_id: str):
-        """Delete a scheduled job"""
-        logger.info(f"🗑️ Deleting scheduled job {job_id}")
-
-        JobActionRequest(job_id=job_id)
-
-        result = await self._make_request("DELETE", f"{API_BASE_URL}/scheduled-jobs/{job_id}")
-        logger.info(f"✨ Successfully deleted scheduled job {job_id}")
-        return result
-
-    async def pause_scheduled_job(self, job_id: str):
-        """Pause a scheduled job"""
-        logger.info(f"⏸️ Pausing scheduled job {job_id}")
-
-        JobActionRequest(job_id=job_id)
-
-        result = await self._make_request("POST", f"{API_BASE_URL}/scheduled-jobs/{job_id}/pause")
-        logger.info(f"✨ Successfully paused scheduled job {job_id}")
-        return result
-
-    async def resume_scheduled_job(self, job_id: str):
-        """Resume a paused scheduled job"""
-        logger.info(f"▶️ Resuming scheduled job {job_id}")
-
-        JobActionRequest(job_id=job_id)
-
-        result = await self._make_request("POST", f"{API_BASE_URL}/scheduled-jobs/{job_id}/resume")
-        logger.info(f"✨ Successfully resumed scheduled job {job_id}")
-        return result
-
-    async def trigger_scheduled_job(self, job_id: str):
-        """Manually trigger a scheduled job"""
-        logger.info(f"🚀 Manually triggering scheduled job {job_id}")
-
-        TriggerJobRequest(job_id=job_id)
-
-        result = await self._make_request("POST", f"{API_BASE_URL}/scheduled-jobs/{job_id}/trigger")
-        logger.info(f"✨ Successfully triggered scheduled job {job_id}")
-        return result
-
-    async def get_job_executions(
-        self,
-        job_id: str,
-        page: int = 1,
-        page_size: int = 20,
+        endpoint: Optional[str] = None,
         status: Optional[str] = None,
-    ):
-        """Get execution history for a scheduled job"""
-        logger.info(f"📊 Fetching execution history for job {job_id}")
+        limit: Optional[int] = None,
+        offset: Optional[int] = None,
+    ) -> Dict[str, Any]:
+        """Retrieve request history.
 
-        GetJobExecutionsRequest(
-            job_id=job_id,
-            page=page,
-            page_size=page_size,
-            status=status,
+        Args:
+            endpoint: Filter by endpoint name (e.g. 'scrape', 'extract')
+            status: Filter by request status
+            limit: Maximum number of results (1-100)
+            offset: Number of results to skip
+        """
+        logger.info("Fetching history")
+        filter_obj = HistoryFilter(
+            endpoint=endpoint, status=status, limit=limit, offset=offset
+        )
+        params = filter_obj.to_params()
+        return await self._make_request(
+            "GET", f"{self.base_url}/history", params=params or None
         )
 
-        params = {"page": page, "page_size": page_size}
-        if status:
-            params["status"] = status
+    # ------------------------------------------------------------------
+    # Lifecycle
+    # ------------------------------------------------------------------
 
-        result = await self._make_request(
-            "GET", f"{API_BASE_URL}/scheduled-jobs/{job_id}/executions", params=params
-        )
-        logger.info(f"✨ Successfully retrieved execution history for job {job_id}")
-        return result
-
-    async def close(self):
-        """Close the session to free up resources"""
-        logger.info("🔒 Closing AsyncClient session")
+    async def close(self) -> None:
+        """Close the HTTP session."""
+        logger.info("Closing AsyncClient session")
         await self.session.close()
-        logger.debug("✅ Session closed successfully")
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> "AsyncClient":
         return self
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
+    async def __aexit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
         await self.close()

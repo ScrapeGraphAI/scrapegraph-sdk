@@ -1,57 +1,35 @@
 """
-Pydantic models for all ScrapeGraphAI API endpoints.
-
-This module provides request and response models for validating and
-structuring data for all API operations. All models use Pydantic for
-data validation and serialization.
-
-Available Models:
-    - AgenticScraperRequest, GetAgenticScraperRequest: Agentic scraper operations
-    - CrawlRequest, GetCrawlRequest: Website crawling operations
-    - FeedbackRequest: User feedback submission
-    - ScrapeRequest, GetScrapeRequest: Basic HTML scraping
-    - MarkdownifyRequest, GetMarkdownifyRequest: Markdown conversion
-    - SearchScraperRequest, GetSearchScraperRequest: Web research
-    - SmartScraperRequest, GetSmartScraperRequest: AI-powered scraping
-    - GenerateSchemaRequest, GetSchemaStatusRequest: Schema generation
-    - ScheduledJob models: Job scheduling and management
-
-Example:
-    >>> from scrapegraph_py.models import SmartScraperRequest
-    >>> request = SmartScraperRequest(
-    ...     website_url="https://example.com",
-    ...     user_prompt="Extract product info"
-    ... )
+Pydantic models for the ScrapeGraphAI v2 API.
 """
 
-from .agenticscraper import AgenticScraperRequest, GetAgenticScraperRequest
-from .crawl import CrawlRequest, GetCrawlRequest
-from .feedback import FeedbackRequest
-from .scrape import GetScrapeRequest, ScrapeRequest
-from .markdownify import GetMarkdownifyRequest, MarkdownifyRequest
-from .searchscraper import GetSearchScraperRequest, SearchScraperRequest, TimeRange
-from .sitemap import SitemapRequest, SitemapResponse
-from .smartscraper import GetSmartScraperRequest, SmartScraperRequest
-from .schema import GenerateSchemaRequest, GetSchemaStatusRequest, SchemaGenerationResponse
+from .shared import FetchConfig, LlmConfig
+from .scrape import ScrapeFormat, ScrapeRequest, GetScrapeRequest
+from .extract import ExtractRequest
+from .search import SearchRequest
+from .schema import SchemaRequest
+from .crawl import CrawlFormat, CrawlRequest
+from .monitor import MonitorCreateRequest
+from .history import HistoryFilter
 
 __all__ = [
-    "AgenticScraperRequest",
-    "GetAgenticScraperRequest",
-    "CrawlRequest",
-    "GetCrawlRequest",
-    "FeedbackRequest",
-    "GetScrapeRequest",
+    # Shared
+    "FetchConfig",
+    "LlmConfig",
+    # Scrape
+    "ScrapeFormat",
     "ScrapeRequest",
-    "GetMarkdownifyRequest",
-    "MarkdownifyRequest",
-    "GetSearchScraperRequest",
-    "SearchScraperRequest",
-    "TimeRange",
-    "SitemapRequest",
-    "SitemapResponse",
-    "GetSmartScraperRequest",
-    "SmartScraperRequest",
-    "GenerateSchemaRequest",
-    "GetSchemaStatusRequest",
-    "SchemaGenerationResponse",
+    "GetScrapeRequest",
+    # Extract
+    "ExtractRequest",
+    # Search
+    "SearchRequest",
+    # Schema
+    "SchemaRequest",
+    # Crawl
+    "CrawlFormat",
+    "CrawlRequest",
+    # Monitor
+    "MonitorCreateRequest",
+    # History
+    "HistoryFilter",
 ]

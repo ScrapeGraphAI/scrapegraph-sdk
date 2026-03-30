@@ -1,91 +1,96 @@
 """
-Pydantic models for the Scrape API endpoint.
+Pydantic models for the v2 Scrape endpoint.
 
-This module defines request and response models for the basic Scrape endpoint,
-which retrieves raw HTML content from websites.
-
-The Scrape endpoint is useful for:
-- Getting clean HTML content from websites
-- Handling JavaScript-heavy sites
-- Preprocessing before AI extraction
+POST /api/v1/scrape - Fetch a page in a given format (markdown, html, screenshot, branding).
 """
 
-from typing import Optional
-from uuid import UUID
+from enum import Enum
+from typing import Any, Dict, Literal, Optional
 
 from pydantic import BaseModel, Field, model_validator
 
+from .shared import FetchConfig
+
+
+class ScrapeFormat(str, Enum):
+    """Output format for the scrape endpoint."""
+
+    MARKDOWN = "markdown"
+    HTML = "html"
+    SCREENSHOT = "screenshot"
+    BRANDING = "branding"
+
+
+class MarkdownConfig(BaseModel):
+    """Configuration for markdown output."""
+
+    mode: str = Field(default="normal", description="Markdown mode (normal, etc.)")
+
+
+class HtmlConfig(BaseModel):
+    """Configuration for html output."""
+
+    mode: str = Field(default="normal", description="HTML mode")
+
+
+class ScreenshotConfig(BaseModel):
+    """Configuration for screenshot output."""
+
+    full_page: bool = Field(default=False, description="Capture full page")
+
 
 class ScrapeRequest(BaseModel):
+    """Request model for POST /api/v1/scrape.
+
+    The API expects a format-specific config key in the body, e.g.:
+        {"url": "...", "markdown": {"mode": "normal"}}
+        {"url": "...", "html": {"mode": "normal"}}
+        {"url": "...", "screenshot": {"full_page": false}}
     """
-    Request model for the Scrape endpoint.
 
-    This model validates and structures requests for basic HTML scraping
-    without AI extraction.
-
-    Attributes:
-        website_url: URL of the website to scrape
-        render_heavy_js: Whether to render heavy JavaScript (default: False)
-        branding: Whether to include branding in the response (default: False)
-        headers: Optional HTTP headers including cookies
-        mock: Whether to use mock mode for testing
-
-    Example:
-        >>> request = ScrapeRequest(
-        ...     website_url="https://example.com",
-        ...     render_heavy_js=True,
-        ...     branding=True
-        ... )
-    """
-    website_url: str = Field(..., example="https://scrapegraphai.com/")
-    render_heavy_js: bool = Field(
-        False,
-        description="Whether to render heavy JavaScript (defaults to False)",
+    url: str = Field(..., description="URL of the page to scrape")
+    format: ScrapeFormat = Field(
+        default=ScrapeFormat.MARKDOWN,
+        description="Output format: markdown, html, screenshot, or branding",
+        exclude=True,
     )
-    branding: bool = Field(
-        False,
-        description="Whether to include branding in the response (defaults to False)",
+    markdown: Optional[MarkdownConfig] = Field(default=None)
+    html: Optional[HtmlConfig] = Field(default=None)
+    screenshot: Optional[ScreenshotConfig] = Field(default=None)
+    branding: Optional[Dict[str, Any]] = Field(default=None)
+    fetch_config: Optional[FetchConfig] = Field(
+        default=None, description="Fetch configuration options"
     )
-    headers: Optional[dict[str, str]] = Field(
-        None,
-        example={
-            "User-Agent": "scrapegraph-py",
-            "Cookie": "cookie1=value1; cookie2=value2",
-        },
-        description="Optional headers to send with the request, including cookies "
-        "and user agent",
-    )
-    mock: bool = Field(default=False, description="Whether to use mock mode for the request")
-    stealth: bool = Field(default=False, description="Enable stealth mode to avoid bot detection")
-    wait_ms: Optional[int] = Field(default=None, description="The number of milliseconds to wait before scraping the website")
 
     @model_validator(mode="after")
     def validate_url(self) -> "ScrapeRequest":
-        if self.website_url is None or not self.website_url.strip():
-            raise ValueError("Website URL cannot be empty")
-        if not (
-            self.website_url.startswith("http://")
-            or self.website_url.startswith("https://")
-        ):
-            raise ValueError("Invalid URL")
+        if not self.url or not self.url.strip():
+            raise ValueError("URL cannot be empty")
+        if not (self.url.startswith("http://") or self.url.startswith("https://")):
+            raise ValueError("URL must start with http:// or https://")
         return self
 
-    def model_dump(self, *args, **kwargs) -> dict:
-        # Set exclude_none=True to exclude None values from serialization
+    @model_validator(mode="after")
+    def set_format_config(self) -> "ScrapeRequest":
+        """Auto-populate the format config key if none were explicitly set."""
+        has_any = any([self.markdown, self.html, self.screenshot, self.branding])
+        if not has_any:
+            if self.format == ScrapeFormat.MARKDOWN:
+                self.markdown = MarkdownConfig()
+            elif self.format == ScrapeFormat.HTML:
+                self.html = HtmlConfig()
+            elif self.format == ScrapeFormat.SCREENSHOT:
+                self.screenshot = ScreenshotConfig()
+            elif self.format == ScrapeFormat.BRANDING:
+                self.branding = {}
+        return self
+
+    def model_dump(self, *args: Any, **kwargs: Any) -> Dict[str, Any]:
         kwargs.setdefault("exclude_none", True)
         return super().model_dump(*args, **kwargs)
 
 
 class GetScrapeRequest(BaseModel):
-    """Request model for get_scrape endpoint"""
+    """Request model for GET /api/v1/scrape/:id."""
 
-    request_id: str = Field(..., example="123e4567-e89b-12d3-a456-426614174000")
-
-    @model_validator(mode="after")
-    def validate_request_id(self) -> "GetScrapeRequest":
-        try:
-            # Validate the request_id is a valid UUID
-            UUID(self.request_id)
-        except ValueError:
-            raise ValueError("request_id must be a valid UUID")
-        return self
+    request_id: str = Field(..., description="The request ID to fetch")
