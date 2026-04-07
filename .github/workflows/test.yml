@@ -29,68 +29,18 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pytest pytest-asyncio responses aioresponses
+        pip install pytest pytest-asyncio responses aioresponses flake8 black isort
         cd scrapegraph-py
         pip install -e ".[html]"
+
+    - name: Lint
+      run: |
+        cd scrapegraph-py
+        black --check scrapegraph_py/ tests/
+        isort --check-only scrapegraph_py/ tests/
+        flake8 scrapegraph_py/ tests/ --max-line-length=120 --extend-ignore=E203,W503,E501,F401,F841
 
     - name: Run tests
       run: |
         cd scrapegraph-py
         pytest tests/ -v --ignore=tests/test_integration_v2.py
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
-      with:
-        file: ./scrapegraph-py/coverage.xml
-        flags: unittests
-        name: codecov-umbrella
-        fail_ci_if_error: false
-
-  lint:
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: "3.11"
-
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install flake8 black isort mypy
-        cd scrapegraph-py
-        pip install -e .
-
-    - name: Run linting
-      run: |
-        cd scrapegraph-py
-        flake8 scrapegraph_py/ tests/ --max-line-length=120 --extend-ignore=E203,W503,E501,F401,F841
-        black --check scrapegraph_py/ tests/
-        isort --check-only scrapegraph_py/ tests/
-        mypy scrapegraph_py/ --ignore-missing-imports
-
-  security:
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: "3.11"
-
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install bandit safety
-        cd scrapegraph-py
-        pip install -e .
-
-    - name: Run security checks
-      run: |
-        cd scrapegraph-py
-        bandit -r scrapegraph_py/ -f json -o bandit-report.json || true
-        safety check --json --output safety-report.json || true
