@@ -15,6 +15,7 @@ Example:
     Disable logging:
         >>> sgai_logger.disable()
 """
+
 import logging
 import logging.handlers
 from typing import Dict, Optional

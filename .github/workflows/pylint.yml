@@ -14,7 +14,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd scrapegraph-py
-          uv sync --frozen
+          uv sync --frozen || uv sync
       - name: Analysing the code with pylint
         run: |
           cd scrapegraph-py

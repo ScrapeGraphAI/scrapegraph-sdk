@@ -121,7 +121,9 @@ class _AsyncMonitorNamespace:
     async def list(self) -> Dict[str, Any]:
         """List all monitors."""
         logger.info("Listing monitors")
-        return await self._client._make_request("GET", f"{self._client.base_url}/monitor")
+        return await self._client._make_request(
+            "GET", f"{self._client.base_url}/monitor"
+        )
 
     async def get(self, monitor_id: str) -> Dict[str, Any]:
         """Get a specific monitor."""
