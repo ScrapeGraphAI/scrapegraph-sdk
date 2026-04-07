@@ -10,6 +10,7 @@ from scrapegraph_py.models.scrape import ScrapeFormat, ScrapeRequest
 from scrapegraph_py.models.search import SearchRequest
 from scrapegraph_py.models.shared import FetchConfig, LlmConfig
 
+
 # ------------------------------------------------------------------
 # Shared models
 # ------------------------------------------------------------------

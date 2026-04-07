@@ -15,9 +15,7 @@ class ExtractRequest(BaseModel):
     """Request model for POST /v2/extract."""
 
     url: str = Field(..., description="URL of the page to extract data from")
-    prompt: str = Field(
-        ..., description="Natural language prompt describing what to extract"
-    )
+    prompt: str = Field(..., description="Natural language prompt describing what to extract")
     output_schema: Optional[Dict[str, Any]] = Field(
         default=None,
         description="JSON Schema defining the structure of the extracted data",

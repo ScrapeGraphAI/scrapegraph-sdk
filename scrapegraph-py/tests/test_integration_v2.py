@@ -14,9 +14,12 @@ import pytest
 
 from scrapegraph_py.client import Client
 
+
 pytestmark = pytest.mark.integration
 
-BASE_URL = os.getenv("SGAI_API_BASE_URL", "https://sgai-api-dev-v2.onrender.com/api/v1")
+BASE_URL = os.getenv(
+    "SGAI_API_BASE_URL", "https://sgai-api-dev-v2.onrender.com/api/v1"
+)
 
 
 @pytest.fixture
@@ -27,7 +30,6 @@ def client():
 
     # Patch the base URL for dev testing
     import scrapegraph_py.config as cfg
-
     original = cfg.API_BASE_URL
     cfg.API_BASE_URL = BASE_URL
 
