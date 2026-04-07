@@ -83,7 +83,9 @@ class _CrawlNamespace:
             crawl_id: The crawl job ID
         """
         logger.info(f"Fetching crawl status for {crawl_id}")
-        return self._client._make_request("GET", f"{self._client.base_url}/crawl/{crawl_id}")
+        return self._client._make_request(
+            "GET", f"{self._client.base_url}/crawl/{crawl_id}"
+        )
 
     def stop(self, crawl_id: str) -> Dict[str, Any]:
         """Stop a running crawl job.

@@ -15,9 +15,7 @@ class HistoryFilter(BaseModel):
     endpoint: Optional[str] = Field(
         default=None, description="Filter by endpoint name (e.g. 'scrape', 'extract')"
     )
-    status: Optional[str] = Field(
-        default=None, description="Filter by request status"
-    )
+    status: Optional[str] = Field(default=None, description="Filter by request status")
     limit: Optional[int] = Field(
         default=None, ge=1, le=100, description="Maximum number of results (1-100)"
     )
