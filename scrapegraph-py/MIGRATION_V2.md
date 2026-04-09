@@ -97,12 +97,11 @@ response = client.extract(
     prompt="Extract the main heading and description",
     output_schema=MyPydanticModel,
     fetch_config=FetchConfig(
+        mode="js+stealth",
         headers={"User-Agent": "MyBot"},
         cookies={"session": "abc123"},
         scrolls=3,
-        render_js=True,
-        stealth=True,
-        wait_ms=2000,
+        wait=2000,
     ),
 )
 ```
@@ -115,9 +114,9 @@ response = client.extract(
 | `headers` | `fetch_config=FetchConfig(headers=...)` |
 | `cookies` | `fetch_config=FetchConfig(cookies=...)` |
 | `number_of_scrolls` | `fetch_config=FetchConfig(scrolls=...)` |
-| `render_heavy_js` | `fetch_config=FetchConfig(render_js=...)` |
-| `stealth` | `fetch_config=FetchConfig(stealth=...)` |
-| `wait_ms` | `fetch_config=FetchConfig(wait_ms=...)` |
+| `render_heavy_js` | `fetch_config=FetchConfig(mode="js")` or `mode="js+stealth"` |
+| `stealth` | `fetch_config=FetchConfig(mode="direct+stealth")` or `mode="js+stealth"` |
+| `wait_ms` | `fetch_config=FetchConfig(wait=...)` |
 | `mock` | Removed |
 | `plain_text` | Removed |
 | `total_pages` | Removed |
@@ -163,7 +162,7 @@ response = client.search(
 | `num_results` | `num_results` (unchanged) |
 | `output_schema` | `output_schema` (unchanged) |
 | `extraction_mode` | Removed (always AI extraction) |
-| `stealth` | Removed |
+| `stealth` | Removed (use `fetch_config=FetchConfig(mode=...)` on other endpoints) |
 | `location_geo_code` | Removed |
 | `time_range` | Removed |
 | `mock` | Removed |
@@ -211,9 +210,8 @@ response = client.scrape(
     "https://example.com",
     format="markdown",
     fetch_config=FetchConfig(
-        render_js=True,
-        stealth=True,
-        wait_ms=2000,
+        mode="js+stealth",
+        wait=2000,
         headers={"User-Agent": "MyBot"},
     ),
 )
@@ -222,11 +220,11 @@ response = client.scrape(
 | v1 parameter | v2 equivalent |
 |---|---|
 | `website_url` | `url` (positional) |
-| `render_heavy_js` | `fetch_config=FetchConfig(render_js=...)` |
+| `render_heavy_js` | `fetch_config=FetchConfig(mode="js")` or `mode="js+stealth"` |
 | `branding` | `format="branding"` |
 | `headers` | `fetch_config=FetchConfig(headers=...)` |
-| `stealth` | `fetch_config=FetchConfig(stealth=...)` |
-| `wait_ms` | `fetch_config=FetchConfig(wait_ms=...)` |
+| `stealth` | `fetch_config=FetchConfig(mode="direct+stealth")` or `mode="js+stealth"` |
+| `wait_ms` | `fetch_config=FetchConfig(wait=...)` |
 | `mock` | Removed |
 | `return_toon` | Removed |
 
@@ -254,7 +252,7 @@ response = client.markdownify(
 response = client.scrape(
     "https://example.com",
     format="markdown",
-    fetch_config=FetchConfig(render_js=True, stealth=True),
+    fetch_config=FetchConfig(mode="js+stealth"),
 )
 ```
 
@@ -305,9 +303,8 @@ response = client.crawl.start(
     include_patterns=["/blog/*"],
     exclude_patterns=["/admin/*"],
     fetch_config=FetchConfig(
-        render_js=True,
-        stealth=True,
-        wait_ms=1000,
+        mode="js+stealth",
+        wait=1000,
         headers={"User-Agent": "MyBot"},
     ),
 )
@@ -332,7 +329,7 @@ client.crawl.resume(crawl_id)
 | `max_pages` | `max_pages` (unchanged) |
 | `include_paths` | `include_patterns` |
 | `exclude_paths` | `exclude_patterns` |
-| `headers`, `stealth`, `render_heavy_js`, `wait_ms` | Moved to `fetch_config=FetchConfig(...)` |
+| `headers`, `stealth`, `render_heavy_js`, `wait_ms` | Moved to `fetch_config=FetchConfig(mode=..., wait=..., headers=...)` |
 | `same_domain_only` | Removed |
 | `batch_size` | Removed |
 | `sitemap` | Removed |
@@ -402,7 +399,7 @@ monitor = client.monitor.create(
     prompt="Extract company info",
     cron="0 9 * * *",
     output_schema={"type": "object", "properties": {"name": {"type": "string"}}},
-    fetch_config=FetchConfig(stealth=True),
+    fetch_config=FetchConfig(mode="direct+stealth"),
     llm_config=LlmConfig(temperature=0.1),
 )
 
@@ -530,16 +527,26 @@ Controls how pages are fetched. Used by `scrape()`, `extract()`, `crawl.start()`
 from scrapegraph_py import FetchConfig
 
 config = FetchConfig(
-    mock=False,          # Use mock mode for testing
-    stealth=True,        # Avoid bot detection
-    scrolls=3,           # Number of page scrolls (0-100)
-    country="us",        # Geo-located requests
-    cookies={"k": "v"},  # Cookies to send
+    mode="js+stealth",   # Fetch mode: auto, fast, js, direct+stealth, js+stealth
+    timeout=30000,       # Request timeout in ms (1000-60000)
+    wait=2000,           # Wait after page load in ms (0-30000)
     headers={"k": "v"},  # Custom HTTP headers
-    wait_ms=2000,        # Wait before scraping (ms)
-    render_js=True,      # Render heavy JavaScript
+    cookies={"k": "v"},  # Cookies to send
+    country="us",        # Two-letter country code for geo-located requests
+    scrolls=3,           # Number of page scrolls (0-100)
+    mock=False,          # Use mock mode for testing
 )
 ```
+
+**Available fetch modes:**
+
+| Mode | Description |
+|---|---|
+| `auto` | Automatically selects the best provider chain (default) |
+| `fast` | Direct HTTP fetch via impit — fastest, no JS rendering |
+| `js` | Headless browser rendering for JavaScript-heavy pages |
+| `direct+stealth` | Residential proxy with stealth headers, no JS |
+| `js+stealth` | JS rendering combined with stealth/residential proxy |
 
 ### LlmConfig
 
@@ -639,7 +646,7 @@ For a fast migration, search your codebase for these patterns:
 | `client.replace_scheduled_job(` | Remove |
 | `client.get_job_executions(` | Remove |
 | `return_toon=True` | Remove |
-| `render_heavy_js=` | `fetch_config=FetchConfig(render_js=...)` |
+| `render_heavy_js=` | `fetch_config=FetchConfig(mode="js")` or `mode="js+stealth"` |
 | `from scrapegraph_py.models.smartscraper import` | Remove |
 | `from scrapegraph_py.models.searchscraper import` | Remove |
 | `from scrapegraph_py.models.markdownify import` | Remove |

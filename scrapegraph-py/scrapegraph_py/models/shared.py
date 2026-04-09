@@ -4,38 +4,61 @@ Shared configuration models for the ScrapeGraphAI v2 API.
 These models are used across multiple endpoints for fetch and LLM configuration.
 """
 
+from enum import Enum
 from typing import Any, Dict, Optional
 
 from pydantic import BaseModel, Field
 
 
+class FetchMode(str, Enum):
+    """Fetch/proxy mode controlling how pages are retrieved.
+
+    - AUTO: Automatically selects the best provider chain.
+    - FAST: Direct HTTP fetch via impit (fastest, no JS).
+    - JS: Headless browser rendering for JavaScript-heavy pages.
+    - DIRECT_STEALTH: Residential proxy with stealth headers (no JS).
+    - JS_STEALTH: JS rendering combined with stealth/residential proxy.
+    """
+
+    AUTO = "auto"
+    FAST = "fast"
+    JS = "js"
+    DIRECT_STEALTH = "direct+stealth"
+    JS_STEALTH = "js+stealth"
+
+
 class FetchConfig(BaseModel):
     """Configuration for how pages are fetched."""
 
-    mock: bool = Field(default=False, description="Use mock mode for testing")
-    stealth: bool = Field(
-        default=False, description="Enable stealth mode to avoid bot detection"
+    mode: FetchMode = Field(
+        default=FetchMode.AUTO,
+        description="Fetch/proxy mode: 'auto', 'fast', 'js', 'direct+stealth', 'js+stealth'",
     )
-    scrolls: Optional[int] = Field(
-        default=None, ge=0, le=100, description="Number of scrolls to perform (0-100)"
+    timeout: Optional[int] = Field(
+        default=None,
+        ge=1000,
+        le=60000,
+        description="Request timeout in milliseconds (1000-60000)",
     )
-    country: Optional[str] = Field(
-        default=None, description="Country code for geo-located requests (e.g. 'us')"
-    )
-    cookies: Optional[Dict[str, str]] = Field(
-        default=None, description="Cookies to send with the request"
+    wait: Optional[int] = Field(
+        default=None,
+        ge=0,
+        le=30000,
+        description="Milliseconds to wait after page load before scraping (0-30000)",
     )
     headers: Optional[Dict[str, str]] = Field(
         default=None, description="Custom HTTP headers to send with the request"
     )
-    wait_ms: Optional[int] = Field(
-        default=None,
-        ge=0,
-        description="Milliseconds to wait before scraping for JS rendering",
+    cookies: Optional[Dict[str, str]] = Field(
+        default=None, description="Cookies to send with the request"
     )
-    render_js: bool = Field(
-        default=False, description="Whether to render heavy JavaScript"
+    country: Optional[str] = Field(
+        default=None, description="Two-letter country code for geo-located requests (e.g. 'us')"
     )
+    scrolls: Optional[int] = Field(
+        default=None, ge=0, le=100, description="Number of scrolls to perform (0-100)"
+    )
+    mock: bool = Field(default=False, description="Use mock mode for testing")
 
     def model_dump(self, *args: Any, **kwargs: Any) -> Dict[str, Any]:
         kwargs.setdefault("exclude_none", True)

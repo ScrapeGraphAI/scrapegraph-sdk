@@ -1,7 +1,7 @@
 """
 Extract data from a JavaScript-heavy page using FetchConfig.
 
-Use FetchConfig to enable stealth mode, JS rendering, scrolling,
+Use FetchConfig to set the fetch mode, wait time, scrolling,
 and other options needed for dynamic pages.
 """
 
@@ -15,9 +15,8 @@ result = client.extract(
     url="https://example.com",
     prompt="Extract all visible text content",
     fetch_config=FetchConfig(
-        stealth=True,
-        render_js=True,
-        wait_ms=2000,
+        mode="js+stealth",
+        wait=2000,
         scrolls=3,
     ),
 )

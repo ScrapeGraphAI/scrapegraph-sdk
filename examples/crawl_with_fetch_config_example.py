@@ -1,7 +1,7 @@
 """
 Crawl with custom fetch configuration.
 
-Use FetchConfig to enable stealth mode, JS rendering, etc. for all
+Use FetchConfig to set the fetch mode, wait time, etc. for all
 pages during the crawl.
 """
 
@@ -17,9 +17,8 @@ job = client.crawl.start(
     max_pages=10,
     format="html",
     fetch_config=FetchConfig(
-        stealth=True,
-        render_js=True,
-        wait_ms=1000,
+        mode="js",
+        wait=1000,
     ),
 )
 print("Crawl started:", json.dumps(job, indent=2))

@@ -8,7 +8,7 @@ from scrapegraph_py.models.history import HistoryFilter
 from scrapegraph_py.models.monitor import MonitorCreateRequest
 from scrapegraph_py.models.scrape import ScrapeFormat, ScrapeRequest
 from scrapegraph_py.models.search import SearchRequest
-from scrapegraph_py.models.shared import FetchConfig, LlmConfig
+from scrapegraph_py.models.shared import FetchConfig, FetchMode, LlmConfig
 
 # ------------------------------------------------------------------
 # Shared models
@@ -18,15 +18,25 @@ from scrapegraph_py.models.shared import FetchConfig, LlmConfig
 def test_fetch_config_defaults():
     config = FetchConfig()
     assert config.mock is False
-    assert config.stealth is False
-    assert config.render_js is False
+    assert config.mode == FetchMode.AUTO
 
 
 def test_fetch_config_excludes_none():
-    config = FetchConfig(stealth=True)
+    config = FetchConfig(mode="fast")
     data = config.model_dump()
     assert "cookies" not in data
-    assert data["stealth"] is True
+    assert data["mode"] == "fast"
+
+
+def test_fetch_config_all_modes():
+    for mode in FetchMode:
+        config = FetchConfig(mode=mode)
+        assert config.mode == mode
+
+
+def test_fetch_config_invalid_mode():
+    with pytest.raises(ValueError):
+        FetchConfig(mode="invalid")
 
 
 def test_llm_config_excludes_none():

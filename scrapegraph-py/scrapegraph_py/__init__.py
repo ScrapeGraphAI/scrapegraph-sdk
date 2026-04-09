@@ -32,7 +32,7 @@ from .models.history import HistoryFilter
 from .models.monitor import MonitorCreateRequest
 from .models.scrape import ScrapeFormat, ScrapeRequest
 from .models.search import SearchRequest
-from .models.shared import FetchConfig, LlmConfig
+from .models.shared import FetchConfig, FetchMode, LlmConfig
 
 __version__ = VERSION
 
@@ -41,6 +41,7 @@ __all__ = [
     "AsyncClient",
     # Shared config
     "FetchConfig",
+    "FetchMode",
     "LlmConfig",
     # Scrape
     "ScrapeFormat",
