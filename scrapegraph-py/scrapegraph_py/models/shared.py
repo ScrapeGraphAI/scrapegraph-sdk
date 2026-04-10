@@ -53,7 +53,8 @@ class FetchConfig(BaseModel):
         default=None, description="Cookies to send with the request"
     )
     country: Optional[str] = Field(
-        default=None, description="Two-letter country code for geo-located requests (e.g. 'us')"
+        default=None,
+        description="Two-letter country code for geo-located requests (e.g. 'us')",
     )
     scrolls: Optional[int] = Field(
         default=None, ge=0, le=100, description="Number of scrolls to perform (0-100)"
