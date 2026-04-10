@@ -122,6 +122,22 @@ def test_search_request_num_results_bounds():
         SearchRequest(query="test", num_results=21)
 
 
+def test_search_request_with_location_geo_code():
+    req = SearchRequest(query="test", location_geo_code="us")
+    assert req.location_geo_code == "us"
+
+
+def test_search_request_location_geo_code_excluded_when_none():
+    req = SearchRequest(query="test")
+    data = req.model_dump()
+    assert "location_geo_code" not in data
+
+
+def test_search_request_location_geo_code_too_long():
+    with pytest.raises(ValueError):
+        SearchRequest(query="test", location_geo_code="a" * 11)
+
+
 # ------------------------------------------------------------------
 # Crawl
 # ------------------------------------------------------------------

@@ -402,6 +402,7 @@ class Client:
         query: str,
         num_results: int = 5,
         output_schema: Optional[Any] = None,
+        location_geo_code: Optional[str] = None,
         llm_config: Optional[LlmConfig] = None,
     ) -> Dict[str, Any]:
         """Search the web and extract structured results.
@@ -410,6 +411,7 @@ class Client:
             query: The search query
             num_results: Number of results (3-20, default 5)
             output_schema: JSON Schema dict or Pydantic BaseModel class for output structure
+            location_geo_code: Two-letter country code for geo-targeted results (e.g. 'us', 'gb')
             llm_config: LLM configuration options
         """
         logger.info(f"Searching: {query}")
@@ -429,6 +431,7 @@ class Client:
             query=query,
             num_results=num_results,
             output_schema=schema_dict,
+            location_geo_code=location_geo_code,
             llm_config=llm_config,
         )
         return self._make_request(

@@ -124,6 +124,20 @@ async def test_search(client):
         assert "results" in result
 
 
+@pytest.mark.asyncio
+async def test_search_with_location_geo_code(client):
+    with aioresponses() as mocked:
+        mocked.post(
+            f"{API_BASE_URL}/search",
+            payload={
+                "request_id": str(uuid4()),
+                "results": [{"url": "https://example.it"}],
+            },
+        )
+        result = await client.search("best restaurants", location_geo_code="it")
+        assert "results" in result
+
+
 # ------------------------------------------------------------------
 # Credits
 # ------------------------------------------------------------------

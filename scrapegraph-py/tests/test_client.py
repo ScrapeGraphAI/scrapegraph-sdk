@@ -159,6 +159,17 @@ def test_search_with_num_results(client):
     assert "results" in result
 
 
+@responses.activate
+def test_search_with_location_geo_code(client):
+    responses.add(
+        responses.POST,
+        f"{API_BASE_URL}/search",
+        json={"request_id": str(uuid4()), "results": [{"url": "https://example.it"}]},
+    )
+    result = client.search("best restaurants", location_geo_code="it")
+    assert "results" in result
+
+
 # ------------------------------------------------------------------
 # Credits
 # ------------------------------------------------------------------
