@@ -240,7 +240,7 @@ async def test_monitor_create(client):
             name="Price Monitor",
             url="https://example.com/products",
             prompt="Extract product prices",
-            cron="0 9 * * 1",
+            interval="0 9 * * 1",
         )
         assert result["name"] == "Price Monitor"
 

@@ -22,7 +22,7 @@ class MonitorCreateRequest(BaseModel):
     name: str = Field(..., description="Name of the monitor")
     url: str = Field(..., description="URL to monitor")
     prompt: str = Field(..., description="Prompt for AI extraction")
-    cron: str = Field(..., description="Cron expression for scheduling (5 fields)")
+    interval: str = Field(..., description="Cron expression for scheduling (5 fields)")
     output_schema: Optional[Dict[str, Any]] = Field(
         default=None,
         description="JSON Schema defining the structure of extracted data",
@@ -44,9 +44,9 @@ class MonitorCreateRequest(BaseModel):
             raise ValueError("URL must start with http:// or https://")
         if not self.prompt or not self.prompt.strip():
             raise ValueError("Prompt cannot be empty")
-        parts = self.cron.strip().split()
+        parts = self.interval.strip().split()
         if len(parts) != 5:
-            raise ValueError("Cron expression must have exactly 5 fields")
+            raise ValueError("Interval cron expression must have exactly 5 fields")
         return self
 
     def model_dump(self, *args: Any, **kwargs: Any) -> Dict[str, Any]:

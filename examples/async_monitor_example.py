@@ -15,7 +15,7 @@ async def main():
             name="Async Price Tracker",
             url="https://example.com/products",
             prompt="Extract product prices",
-            cron="0 12 * * *",  # Every day at noon
+            interval="0 12 * * *",  # Every day at noon
         )
         print("Created:", json.dumps(monitor, indent=2))
 

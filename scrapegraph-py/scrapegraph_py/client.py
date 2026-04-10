@@ -121,7 +121,7 @@ class _MonitorNamespace:
         name: str,
         url: str,
         prompt: str,
-        cron: str,
+        interval: str,
         output_schema: Optional[Dict[str, Any]] = None,
         fetch_config: Optional[FetchConfig] = None,
         llm_config: Optional[LlmConfig] = None,
@@ -132,7 +132,7 @@ class _MonitorNamespace:
             name: Name of the monitor
             url: URL to monitor
             prompt: Prompt for AI extraction
-            cron: Cron expression (5 fields)
+            interval: Cron expression (5 fields)
             output_schema: Optional JSON Schema for structured output
             fetch_config: Fetch configuration options
             llm_config: LLM configuration options
@@ -142,7 +142,7 @@ class _MonitorNamespace:
             name=name,
             url=url,
             prompt=prompt,
-            cron=cron,
+            interval=interval,
             output_schema=output_schema,
             fetch_config=fetch_config,
             llm_config=llm_config,

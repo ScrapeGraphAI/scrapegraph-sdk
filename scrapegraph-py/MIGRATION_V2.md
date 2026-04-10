@@ -349,7 +349,7 @@ client.crawl.resume(crawl_id)
 
 ### Scheduled Jobs → `monitor.*`
 
-The entire scheduled jobs API has been replaced by the **monitor** namespace. Monitors are simpler: instead of configuring a `service_type` + `job_config`, you directly provide a `url`, `prompt`, and `cron`.
+The entire scheduled jobs API has been replaced by the **monitor** namespace. Monitors are simpler: instead of configuring a `service_type` + `job_config`, you directly provide a `url`, `prompt`, and `interval` (a cron expression).
 
 #### v1
 
@@ -397,7 +397,7 @@ monitor = client.monitor.create(
     name="Daily Scraper",
     url="https://example.com",
     prompt="Extract company info",
-    cron="0 9 * * *",
+    interval="0 9 * * *",
     output_schema={"type": "object", "properties": {"name": {"type": "string"}}},
     fetch_config=FetchConfig(mode="direct+stealth"),
     llm_config=LlmConfig(temperature=0.1),
@@ -602,7 +602,7 @@ async def main():
             name="Tracker",
             url="https://example.com",
             prompt="Extract prices",
-            cron="0 9 * * *",
+            interval="0 9 * * *",
         )
 
 asyncio.run(main())

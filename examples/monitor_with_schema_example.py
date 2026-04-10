@@ -33,7 +33,7 @@ monitor = client.monitor.create(
     name="Weekly Product Monitor",
     url="https://example.com/shop",
     prompt="Extract all product names, prices, and currencies",
-    cron="0 8 * * 1",  # Every Monday at 8am
+    interval="0 8 * * 1",  # Every Monday at 8am
     output_schema=schema,
 )
 print("Monitor created:", json.dumps(monitor, indent=2))

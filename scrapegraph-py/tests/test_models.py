@@ -185,18 +185,18 @@ def test_monitor_create_valid():
         name="Price Tracker",
         url="https://example.com",
         prompt="Extract prices",
-        cron="0 9 * * 1",
+        interval="0 9 * * 1",
     )
     assert req.name == "Price Tracker"
 
 
-def test_monitor_create_invalid_cron():
+def test_monitor_create_invalid_interval():
     with pytest.raises(ValueError, match="5 fields"):
         MonitorCreateRequest(
             name="Test",
             url="https://example.com",
             prompt="Test",
-            cron="invalid",
+            interval="invalid",
         )
 
 
@@ -206,7 +206,7 @@ def test_monitor_create_empty_name():
             name="",
             url="https://example.com",
             prompt="Test",
-            cron="0 9 * * 1",
+            interval="0 9 * * 1",
         )
 
 
