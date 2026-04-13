@@ -19,19 +19,22 @@ from typing import Any, Dict, List, Optional
 
 from aiohttp import ClientSession, ClientTimeout, TCPConnector
 from aiohttp.client_exceptions import ClientError
-from pydantic import BaseModel
 
 from scrapegraph_py.config import API_BASE_URL, DEFAULT_HEADERS
 from scrapegraph_py.exceptions import APIError
 from scrapegraph_py.logger import sgai_logger as logger
-from scrapegraph_py.models.crawl import CrawlFormat, CrawlRequest
-from scrapegraph_py.models.extract import ExtractRequest
-from scrapegraph_py.models.history import HistoryFilter
-from scrapegraph_py.models.monitor import MonitorCreateRequest
-from scrapegraph_py.models.scrape import ScrapeFormat, ScrapeRequest
-from scrapegraph_py.models.search import SearchRequest
 from scrapegraph_py.models.shared import FetchConfig, LlmConfig
 from scrapegraph_py.utils.helpers import handle_async_response, validate_api_key
+from scrapegraph_py.utils.request_builders import (
+    build_crawl_payload,
+    build_extract_payload,
+    build_history_params,
+    build_monitor_payload,
+    build_schema_payload,
+    build_scrape_payload,
+    build_search_payload,
+    build_validate_params,
+)
 
 
 class _AsyncCrawlNamespace:
@@ -43,26 +46,37 @@ class _AsyncCrawlNamespace:
     async def start(
         self,
         url: str,
-        depth: int = 2,
+        depth: Optional[int] = None,
         max_pages: int = 10,
         format: str = "markdown",
         include_patterns: Optional[List[str]] = None,
         exclude_patterns: Optional[List[str]] = None,
         fetch_config: Optional[FetchConfig] = None,
+        formats: Optional[List[Dict[str, Any]]] = None,
+        max_depth: Optional[int] = None,
+        max_links_per_page: int = 10,
+        allow_external: bool = False,
+        content_types: Optional[List[str]] = None,
     ) -> Dict[str, Any]:
         """Start a crawl job."""
         logger.info(f"Starting crawl for {url}")
-        request = CrawlRequest(
-            url=url,
-            depth=depth,
-            max_pages=max_pages,
-            format=CrawlFormat(format),
-            include_patterns=include_patterns,
-            exclude_patterns=exclude_patterns,
-            fetch_config=fetch_config,
-        )
         return await self._client._make_request(
-            "POST", f"{self._client.base_url}/crawl", json=request.model_dump()
+            "POST",
+            f"{self._client.base_url}/crawl",
+            json=build_crawl_payload(
+                url,
+                depth=depth,
+                max_pages=max_pages,
+                format=format,
+                include_patterns=include_patterns,
+                exclude_patterns=exclude_patterns,
+                fetch_config=fetch_config,
+                formats=formats,
+                max_depth=max_depth,
+                max_links_per_page=max_links_per_page,
+                allow_external=allow_external,
+                content_types=content_types,
+            ),
         )
 
     async def status(self, crawl_id: str) -> Dict[str, Any]:
@@ -95,27 +109,34 @@ class _AsyncMonitorNamespace:
 
     async def create(
         self,
-        name: str,
+        name: Optional[str],
         url: str,
-        prompt: str,
+        prompt: Optional[str],
         interval: str,
         output_schema: Optional[Dict[str, Any]] = None,
         fetch_config: Optional[FetchConfig] = None,
         llm_config: Optional[LlmConfig] = None,
+        schema: Optional[Any] = None,
+        formats: Optional[List[Dict[str, Any]]] = None,
+        webhook_url: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Create a new monitor."""
         logger.info(f"Creating monitor '{name}' for {url}")
-        request = MonitorCreateRequest(
-            name=name,
-            url=url,
-            prompt=prompt,
-            interval=interval,
-            output_schema=output_schema,
-            fetch_config=fetch_config,
-            llm_config=llm_config,
-        )
         return await self._client._make_request(
-            "POST", f"{self._client.base_url}/monitor", json=request.model_dump()
+            "POST",
+            f"{self._client.base_url}/monitor",
+            json=build_monitor_payload(
+                name=name,
+                url=url,
+                prompt=prompt,
+                interval=interval,
+                output_schema=output_schema,
+                fetch_config=fetch_config,
+                llm_config=llm_config,
+                schema=schema,
+                formats=formats,
+                webhook_url=webhook_url,
+            ),
         )
 
     async def list(self) -> Dict[str, Any]:
@@ -188,7 +209,7 @@ class AsyncClient:
 
     def __init__(
         self,
-        api_key: str = None,
+        api_key: Optional[str] = None,
         base_url: Optional[str] = None,
         verify_ssl: bool = True,
         timeout: Optional[float] = None,
@@ -283,22 +304,27 @@ class AsyncClient:
         url: str,
         format: str = "markdown",
         fetch_config: Optional[FetchConfig] = None,
+        formats: Optional[List[Dict[str, Any]]] = None,
+        content_type: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Scrape a page and return it in the specified format.
 
         Args:
             url: URL to scrape
-            format: Output format - 'markdown', 'html', 'screenshot', or 'branding'
+            format: Legacy single output format
             fetch_config: Fetch configuration options
         """
         logger.info(f"Scraping {url} (format={format})")
-        request = ScrapeRequest(
-            url=url,
-            format=ScrapeFormat(format),
-            fetch_config=fetch_config,
-        )
         return await self._make_request(
-            "POST", f"{self.base_url}/scrape", json=request.model_dump()
+            "POST",
+            f"{self.base_url}/scrape",
+            json=build_scrape_payload(
+                url,
+                format=format,
+                fetch_config=fetch_config,
+                formats=formats,
+                content_type=content_type,
+            ),
         )
 
     # ------------------------------------------------------------------
@@ -307,43 +333,43 @@ class AsyncClient:
 
     async def extract(
         self,
-        url: str,
+        url: Optional[str],
         prompt: str,
         output_schema: Optional[Any] = None,
         fetch_config: Optional[FetchConfig] = None,
         llm_config: Optional[LlmConfig] = None,
+        *,
+        schema: Optional[Any] = None,
+        mode: str = "normal",
+        content_type: Optional[str] = None,
+        html: Optional[str] = None,
+        markdown: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Extract structured data from a page using AI.
 
         Args:
             url: URL to extract data from
             prompt: Natural language prompt describing what to extract
-            output_schema: JSON Schema dict or Pydantic BaseModel class for output structure
+            output_schema: Legacy alias for schema
             fetch_config: Fetch configuration options
-            llm_config: LLM configuration options
+            llm_config: Deprecated and ignored by the SGAI v2 extract route
         """
         logger.info(f"Extracting from {url}")
-
-        schema_dict = None
-        if output_schema is not None:
-            if isinstance(output_schema, type) and issubclass(output_schema, BaseModel):
-                schema_dict = output_schema.model_json_schema()
-            elif isinstance(output_schema, dict):
-                schema_dict = output_schema
-            else:
-                raise ValueError(
-                    "output_schema must be a dict (JSON Schema) or a Pydantic BaseModel class"
-                )
-
-        request = ExtractRequest(
-            url=url,
-            prompt=prompt,
-            output_schema=schema_dict,
-            fetch_config=fetch_config,
-            llm_config=llm_config,
-        )
         return await self._make_request(
-            "POST", f"{self.base_url}/extract", json=request.model_dump()
+            "POST",
+            f"{self.base_url}/extract",
+            json=build_extract_payload(
+                url=url,
+                prompt=prompt,
+                output_schema=output_schema,
+                fetch_config=fetch_config,
+                llm_config=llm_config,
+                schema=schema,
+                mode=mode,
+                content_type=content_type,
+                html=html,
+                markdown=markdown,
+            ),
         )
 
     # ------------------------------------------------------------------
@@ -357,38 +383,40 @@ class AsyncClient:
         output_schema: Optional[Any] = None,
         location_geo_code: Optional[str] = None,
         llm_config: Optional[LlmConfig] = None,
+        *,
+        schema: Optional[Any] = None,
+        prompt: Optional[str] = None,
+        format: str = "markdown",
+        mode: str = "prune",
+        fetch_config: Optional[FetchConfig] = None,
+        time_range: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Search the web and extract structured results.
 
         Args:
             query: The search query
             num_results: Number of results (3-20, default 5)
-            output_schema: JSON Schema dict or Pydantic BaseModel class for output structure
-            location_geo_code: Two-letter country code for geo-targeted results (e.g. 'us', 'gb')
-            llm_config: LLM configuration options
+            output_schema: Legacy alias for schema
+            location_geo_code: Geo code for geo-targeted results
+            llm_config: Deprecated and ignored by the SGAI v2 search route
         """
         logger.info(f"Searching: {query}")
-
-        schema_dict = None
-        if output_schema is not None:
-            if isinstance(output_schema, type) and issubclass(output_schema, BaseModel):
-                schema_dict = output_schema.model_json_schema()
-            elif isinstance(output_schema, dict):
-                schema_dict = output_schema
-            else:
-                raise ValueError(
-                    "output_schema must be a dict (JSON Schema) or a Pydantic BaseModel class"
-                )
-
-        request = SearchRequest(
-            query=query,
-            num_results=num_results,
-            output_schema=schema_dict,
-            location_geo_code=location_geo_code,
-            llm_config=llm_config,
-        )
         return await self._make_request(
-            "POST", f"{self.base_url}/search", json=request.model_dump()
+            "POST",
+            f"{self.base_url}/search",
+            json=build_search_payload(
+                query=query,
+                num_results=num_results,
+                output_schema=output_schema,
+                location_geo_code=location_geo_code,
+                llm_config=llm_config,
+                schema=schema,
+                prompt=prompt,
+                format=format,
+                mode=mode,
+                fetch_config=fetch_config,
+                time_range=time_range,
+            ),
         )
 
     # ------------------------------------------------------------------
@@ -410,22 +438,58 @@ class AsyncClient:
         status: Optional[str] = None,
         limit: Optional[int] = None,
         offset: Optional[int] = None,
+        *,
+        page: Optional[int] = None,
+        service: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Retrieve request history.
 
         Args:
-            endpoint: Filter by endpoint name (e.g. 'scrape', 'extract')
-            status: Filter by request status
+            endpoint: Legacy alias for service
+            status: Unsupported in SGAI v2
             limit: Maximum number of results (1-100)
-            offset: Number of results to skip
+            offset: Legacy alias mapped onto page when possible
         """
         logger.info("Fetching history")
-        filter_obj = HistoryFilter(
-            endpoint=endpoint, status=status, limit=limit, offset=offset
-        )
-        params = filter_obj.to_params()
         return await self._make_request(
-            "GET", f"{self.base_url}/history", params=params or None
+            "GET",
+            f"{self.base_url}/history",
+            params=build_history_params(
+                endpoint=endpoint,
+                status=status,
+                limit=limit,
+                offset=offset,
+                page=page,
+                service=service,
+            )
+            or None,
+        )
+
+    # ------------------------------------------------------------------
+    # Schema / Validate
+    # ------------------------------------------------------------------
+
+    async def schema(
+        self,
+        prompt: str,
+        existing_schema: Optional[Any] = None,
+        model: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        """Generate or refine a JSON schema from a prompt."""
+        logger.info("Generating schema")
+        return await self._make_request(
+            "POST",
+            f"{self.base_url}/schema",
+            json=build_schema_payload(
+                prompt, existing_schema=existing_schema, model=model
+            ),
+        )
+
+    async def validate(self, email: str) -> Dict[str, Any]:
+        """Validate an email address against SGAI's allowlist endpoint."""
+        logger.info("Validating email")
+        return await self._make_request(
+            "GET", f"{self.base_url}/validate", params=build_validate_params(email)
         )
 
     # ------------------------------------------------------------------

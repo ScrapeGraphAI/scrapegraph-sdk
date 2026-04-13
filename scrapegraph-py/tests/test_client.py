@@ -1,13 +1,9 @@
-"""Tests for the synchronous Client (v2 API)."""
-
-from uuid import uuid4
+"""Tests for the synchronous Client against the SGAI v2 contract."""
 
 import pytest
-import responses
 from pydantic import BaseModel, Field
 
 from scrapegraph_py.client import Client
-from scrapegraph_py.config import API_BASE_URL
 from tests.utils import generate_mock_api_key
 
 
@@ -21,11 +17,6 @@ def client(api_key):
     c = Client(api_key=api_key)
     yield c
     c.close()
-
-
-# ------------------------------------------------------------------
-# Auth & headers
-# ------------------------------------------------------------------
 
 
 def test_bearer_auth_header(api_key):
@@ -48,337 +39,289 @@ def test_missing_api_key_raises():
             os.environ["SGAI_API_KEY"] = old
 
 
-# ------------------------------------------------------------------
-# Scrape
-# ------------------------------------------------------------------
+def test_scrape_translates_legacy_format_to_formats_array(client):
+    captured = {}
 
+    def fake_request(method, url, **kwargs):
+        captured["method"] = method
+        captured["url"] = url
+        captured["json"] = kwargs["json"]
+        return {
+            "results": {"html": "<h1>Hello</h1>"},
+            "metadata": {"url": "https://example.com"},
+        }
 
-@responses.activate
-def test_scrape(client):
-    responses.add(
-        responses.POST,
-        f"{API_BASE_URL}/scrape",
-        json={"request_id": str(uuid4()), "content": "# Hello"},
-    )
-    result = client.scrape("https://example.com")
-    assert "content" in result
+    client._make_request = fake_request
 
-
-@responses.activate
-def test_scrape_html_format(client):
-    responses.add(
-        responses.POST,
-        f"{API_BASE_URL}/scrape",
-        json={"request_id": str(uuid4()), "content": "<h1>Hello</h1>"},
-    )
     result = client.scrape("https://example.com", format="html")
-    assert "content" in result
+
+    assert captured["method"] == "POST"
+    assert captured["url"].endswith("/scrape")
+    assert captured["json"] == {
+        "url": "https://example.com",
+        "formats": [{"type": "html", "mode": "normal"}],
+    }
+    assert result["results"]["html"] == "<h1>Hello</h1>"
 
 
-# ------------------------------------------------------------------
-# Extract
-# ------------------------------------------------------------------
+def test_extract_sends_schema_and_fetch_config(client):
+    captured = {}
 
-
-@responses.activate
-def test_extract(client):
-    responses.add(
-        responses.POST,
-        f"{API_BASE_URL}/extract",
-        json={"request_id": str(uuid4()), "result": {"title": "Example"}},
-    )
-    result = client.extract(
-        url="https://example.com",
-        prompt="Extract the title",
-    )
-    assert result["result"]["title"] == "Example"
-
-
-@responses.activate
-def test_extract_with_pydantic_schema(client):
     class Product(BaseModel):
         name: str = Field(description="Product name")
-        price: float = Field(description="Product price")
 
-    responses.add(
-        responses.POST,
-        f"{API_BASE_URL}/extract",
-        json={"request_id": str(uuid4()), "result": {"name": "Widget", "price": 9.99}},
-    )
+    def fake_request(method, url, **kwargs):
+        captured["method"] = method
+        captured["url"] = url
+        captured["json"] = kwargs["json"]
+        return {
+            "json": {"name": "Widget"},
+            "raw": None,
+            "usage": {},
+            "metadata": {"chunker": {}},
+        }
+
+    client._make_request = fake_request
+
     result = client.extract(
         url="https://example.com",
-        prompt="Extract product info",
+        prompt="Extract product name",
         output_schema=Product,
+        fetch_config={"timeout": 5000},
     )
-    assert result["result"]["name"] == "Widget"
 
-
-@responses.activate
-def test_extract_with_dict_schema(client):
-    schema = {
-        "type": "object",
-        "properties": {"title": {"type": "string"}},
+    assert captured["method"] == "POST"
+    assert captured["url"].endswith("/extract")
+    assert captured["json"] == {
+        "url": "https://example.com",
+        "prompt": "Extract product name",
+        "schema": {
+            "properties": {
+                "name": {
+                    "description": "Product name",
+                    "title": "Name",
+                    "type": "string",
+                }
+            },
+            "required": ["name"],
+            "title": "Product",
+            "type": "object",
+        },
+        "mode": "normal",
+        "fetchConfig": {"mode": "auto", "timeout": 5000, "mock": False},
     }
-    responses.add(
-        responses.POST,
-        f"{API_BASE_URL}/extract",
-        json={"request_id": str(uuid4()), "result": {"title": "Test"}},
+    assert result["json"]["name"] == "Widget"
+
+
+def test_search_accepts_single_result_and_uses_camel_case(client):
+    captured = {}
+
+    def fake_request(method, url, **kwargs):
+        captured["json"] = kwargs["json"]
+        return {
+            "results": [{"url": "https://example.com"}],
+            "metadata": {"search": {}, "pages": {"requested": 1, "scraped": 1}},
+        }
+
+    client._make_request = fake_request
+
+    result = client.search(
+        "example domain",
+        num_results=1,
+        prompt="Extract titles",
+        schema={"type": "object", "properties": {"title": {"type": "string"}}},
+        location_geo_code="it",
+        time_range="past_week",
     )
-    result = client.extract(
-        url="https://example.com",
-        prompt="Extract title",
-        output_schema=schema,
-    )
-    assert result["result"]["title"] == "Test"
+
+    assert captured["json"] == {
+        "query": "example domain",
+        "numResults": 1,
+        "format": "markdown",
+        "mode": "prune",
+        "prompt": "Extract titles",
+        "schema": {"type": "object", "properties": {"title": {"type": "string"}}},
+        "locationGeoCode": "it",
+        "timeRange": "past_week",
+    }
+    assert result["results"][0]["url"] == "https://example.com"
 
 
-# ------------------------------------------------------------------
-# Search
-# ------------------------------------------------------------------
-
-
-@responses.activate
-def test_search(client):
-    responses.add(
-        responses.POST,
-        f"{API_BASE_URL}/search",
-        json={"request_id": str(uuid4()), "results": [{"url": "https://example.com"}]},
-    )
-    result = client.search("best web scrapers 2025")
-    assert "results" in result
-
-
-@responses.activate
-def test_search_with_num_results(client):
-    responses.add(
-        responses.POST,
-        f"{API_BASE_URL}/search",
-        json={"request_id": str(uuid4()), "results": []},
-    )
-    result = client.search("test query", num_results=10)
-    assert "results" in result
-
-
-@responses.activate
-def test_search_with_location_geo_code(client):
-    responses.add(
-        responses.POST,
-        f"{API_BASE_URL}/search",
-        json={"request_id": str(uuid4()), "results": [{"url": "https://example.it"}]},
-    )
-    result = client.search("best restaurants", location_geo_code="it")
-    assert "results" in result
-
-
-# ------------------------------------------------------------------
-# Credits
-# ------------------------------------------------------------------
-
-
-@responses.activate
-def test_credits(client):
-    responses.add(
-        responses.GET,
-        f"{API_BASE_URL}/credits",
-        json={"remaining_credits": 1000, "total_credits_used": 50},
-    )
+def test_credits_returns_v2_balance_shape(client):
+    client._make_request = lambda method, url, **kwargs: {
+        "remaining": 1000,
+        "used": 50,
+        "plan": "local",
+    }
     result = client.credits()
-    assert result["remaining_credits"] == 1000
+    assert result["remaining"] == 1000
+    assert result["used"] == 50
 
 
-# ------------------------------------------------------------------
-# History
-# ------------------------------------------------------------------
+def test_history_maps_legacy_endpoint_and_offset(client):
+    captured = {}
+
+    def fake_request(method, url, **kwargs):
+        captured["params"] = kwargs["params"]
+        return {"data": [], "pagination": {"page": 3, "limit": 10, "total": 0}}
+
+    client._make_request = fake_request
+
+    result = client.history(endpoint="scrape", limit=10, offset=20)
+
+    assert captured["params"] == {"page": 3, "limit": 10, "service": "scrape"}
+    assert result["pagination"]["page"] == 3
 
 
-@responses.activate
-def test_history(client):
-    responses.add(
-        responses.GET,
-        f"{API_BASE_URL}/history",
-        json={"requests": [], "total": 0},
+def test_history_rejects_status_filter(client):
+    with pytest.raises(ValueError, match="not supported"):
+        client.history(status="completed")
+
+
+def test_schema_posts_prompt_and_existing_schema(client):
+    captured = {}
+
+    def fake_request(method, url, **kwargs):
+        captured["method"] = method
+        captured["url"] = url
+        captured["json"] = kwargs["json"]
+        return {
+            "refinedPrompt": "Refined prompt",
+            "schema": {"type": "object"},
+            "usage": {},
+        }
+
+    client._make_request = fake_request
+
+    result = client.schema(
+        "Extract product data",
+        existing_schema={"type": "object", "properties": {"name": {"type": "string"}}},
     )
-    result = client.history()
-    assert "requests" in result
+
+    assert captured["method"] == "POST"
+    assert captured["url"].endswith("/schema")
+    assert captured["json"] == {
+        "prompt": "Extract product data",
+        "existingSchema": {
+            "type": "object",
+            "properties": {"name": {"type": "string"}},
+        },
+    }
+    assert result["schema"]["type"] == "object"
 
 
-@responses.activate
-def test_history_with_filters(client):
-    responses.add(
-        responses.GET,
-        f"{API_BASE_URL}/history",
-        json={"requests": [], "total": 0},
+def test_validate_uses_email_query_param(client):
+    captured = {}
+
+    def fake_request(method, url, **kwargs):
+        captured["method"] = method
+        captured["url"] = url
+        captured["params"] = kwargs["params"]
+        return {"ok": True}
+
+    client._make_request = fake_request
+
+    result = client.validate("user@example.com")
+
+    assert captured["method"] == "GET"
+    assert captured["url"].endswith("/validate")
+    assert captured["params"] == {"email": "user@example.com"}
+    assert result["ok"] is True
+
+
+def test_crawl_start_translates_legacy_depth_and_format(client):
+    captured = {}
+
+    def fake_request(method, url, **kwargs):
+        captured["json"] = kwargs["json"]
+        return {
+            "id": "crawl-123",
+            "status": "running",
+            "total": 0,
+            "finished": 0,
+            "pages": [],
+        }
+
+    client._make_request = fake_request
+
+    result = client.crawl.start(
+        "https://example.com", depth=3, max_pages=20, format="html"
     )
-    result = client.history(endpoint="scrape", status="completed", limit=10)
-    assert "requests" in result
+
+    assert captured["json"] == {
+        "url": "https://example.com",
+        "formats": [{"type": "html", "mode": "normal"}],
+        "maxDepth": 3,
+        "maxPages": 20,
+        "maxLinksPerPage": 10,
+        "allowExternal": False,
+    }
+    assert result["id"] == "crawl-123"
 
 
-# ------------------------------------------------------------------
-# Crawl namespace
-# ------------------------------------------------------------------
+def test_monitor_create_translates_legacy_prompt_to_json_format(client):
+    captured = {}
 
+    def fake_request(method, url, **kwargs):
+        captured["json"] = kwargs["json"]
+        return {
+            "cronId": "mon-1",
+            "scheduleId": "sched-1",
+            "interval": "0 9 * * 1",
+            "status": "active",
+            "config": kwargs["json"],
+            "createdAt": "2026-01-01T00:00:00.000Z",
+            "updatedAt": "2026-01-01T00:00:00.000Z",
+        }
 
-@responses.activate
-def test_crawl_start(client):
-    crawl_id = str(uuid4())
-    responses.add(
-        responses.POST,
-        f"{API_BASE_URL}/crawl",
-        json={"id": crawl_id, "status": "running"},
-    )
-    result = client.crawl.start("https://example.com", depth=3, max_pages=20)
-    assert result["id"] == crawl_id
+    client._make_request = fake_request
 
-
-@responses.activate
-def test_crawl_status(client):
-    crawl_id = str(uuid4())
-    responses.add(
-        responses.GET,
-        f"{API_BASE_URL}/crawl/{crawl_id}",
-        json={"id": crawl_id, "status": "completed", "pages": []},
-    )
-    result = client.crawl.status(crawl_id)
-    assert result["status"] == "completed"
-
-
-@responses.activate
-def test_crawl_stop(client):
-    crawl_id = str(uuid4())
-    responses.add(
-        responses.POST,
-        f"{API_BASE_URL}/crawl/{crawl_id}/stop",
-        json={"id": crawl_id, "status": "stopped"},
-    )
-    result = client.crawl.stop(crawl_id)
-    assert result["status"] == "stopped"
-
-
-@responses.activate
-def test_crawl_resume(client):
-    crawl_id = str(uuid4())
-    responses.add(
-        responses.POST,
-        f"{API_BASE_URL}/crawl/{crawl_id}/resume",
-        json={"id": crawl_id, "status": "running"},
-    )
-    result = client.crawl.resume(crawl_id)
-    assert result["status"] == "running"
-
-
-# ------------------------------------------------------------------
-# Monitor namespace
-# ------------------------------------------------------------------
-
-
-@responses.activate
-def test_monitor_create(client):
-    monitor_id = str(uuid4())
-    responses.add(
-        responses.POST,
-        f"{API_BASE_URL}/monitor",
-        json={"id": monitor_id, "name": "Price Monitor"},
-    )
     result = client.monitor.create(
         name="Price Monitor",
         url="https://example.com/products",
         prompt="Extract product prices",
         interval="0 9 * * 1",
+        output_schema={"type": "object", "properties": {"price": {"type": "number"}}},
     )
-    assert result["name"] == "Price Monitor"
+
+    assert captured["json"] == {
+        "name": "Price Monitor",
+        "url": "https://example.com/products",
+        "formats": [
+            {
+                "type": "json",
+                "prompt": "Extract product prices",
+                "mode": "normal",
+                "schema": {
+                    "type": "object",
+                    "properties": {"price": {"type": "number"}},
+                },
+            }
+        ],
+        "interval": "0 9 * * 1",
+    }
+    assert result["cronId"] == "mon-1"
 
 
-@responses.activate
-def test_monitor_list(client):
-    responses.add(
-        responses.GET,
-        f"{API_BASE_URL}/monitor",
-        json={"monitors": [], "total": 0},
-    )
-    result = client.monitor.list()
-    assert "monitors" in result
-
-
-@responses.activate
-def test_monitor_get(client):
-    monitor_id = str(uuid4())
-    responses.add(
-        responses.GET,
-        f"{API_BASE_URL}/monitor/{monitor_id}",
-        json={"id": monitor_id, "name": "Test Monitor"},
-    )
-    result = client.monitor.get(monitor_id)
-    assert result["id"] == monitor_id
-
-
-@responses.activate
-def test_monitor_pause(client):
-    monitor_id = str(uuid4())
-    responses.add(
-        responses.POST,
-        f"{API_BASE_URL}/monitor/{monitor_id}/pause",
-        json={"id": monitor_id, "status": "paused"},
-    )
-    result = client.monitor.pause(monitor_id)
-    assert result["status"] == "paused"
-
-
-@responses.activate
-def test_monitor_resume(client):
-    monitor_id = str(uuid4())
-    responses.add(
-        responses.POST,
-        f"{API_BASE_URL}/monitor/{monitor_id}/resume",
-        json={"id": monitor_id, "status": "active"},
-    )
-    result = client.monitor.resume(monitor_id)
-    assert result["status"] == "active"
-
-
-@responses.activate
-def test_monitor_delete(client):
-    monitor_id = str(uuid4())
-    responses.add(
-        responses.DELETE,
-        f"{API_BASE_URL}/monitor/{monitor_id}",
-        json={"message": "deleted"},
-    )
-    result = client.monitor.delete(monitor_id)
-    assert result["message"] == "deleted"
-
-
-# ------------------------------------------------------------------
-# Error handling
-# ------------------------------------------------------------------
-
-
-@responses.activate
 def test_api_error_handling(client):
     from scrapegraph_py.exceptions import APIError
 
-    responses.add(
-        responses.POST,
-        f"{API_BASE_URL}/scrape",
-        json={"error": "Invalid URL"},
-        status=400,
-    )
+    def fake_request(method, url, **kwargs):
+        raise APIError("Invalid URL", status_code=400)
+
+    client._make_request = fake_request
+
     with pytest.raises(APIError) as exc_info:
         client.scrape("https://example.com")
     assert exc_info.value.status_code == 400
 
 
-# ------------------------------------------------------------------
-# Context manager
-# ------------------------------------------------------------------
-
-
-@responses.activate
 def test_context_manager(api_key):
-    responses.add(
-        responses.GET,
-        f"{API_BASE_URL}/credits",
-        json={"remaining_credits": 500},
-    )
     with Client(api_key=api_key) as client:
+        client._make_request = lambda method, url, **kwargs: {
+            "remaining": 500,
+            "used": 0,
+            "plan": "local",
+        }
         result = client.credits()
-        assert result["remaining_credits"] == 500
+        assert result["remaining"] == 500

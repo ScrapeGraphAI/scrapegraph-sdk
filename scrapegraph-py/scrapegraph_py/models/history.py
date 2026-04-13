@@ -1,26 +1,23 @@
-"""
-Pydantic models for the v2 History endpoint.
-
-GET /v2/history - Retrieve request history with optional filters.
-"""
+"""Pydantic models for the SGAI v2 history endpoint."""
 
 from typing import Any, Dict, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import Field
+
+from .shared import CamelModel
 
 
-class HistoryFilter(BaseModel):
-    """Query parameters for GET /v2/history."""
+class HistoryFilter(CamelModel):
+    """Query parameters for GET /api/v2/history."""
 
-    endpoint: Optional[str] = Field(
-        default=None, description="Filter by endpoint name (e.g. 'scrape', 'extract')"
+    page: Optional[int] = Field(
+        default=None, ge=1, description="One-based results page"
     )
-    status: Optional[str] = Field(default=None, description="Filter by request status")
     limit: Optional[int] = Field(
         default=None, ge=1, le=100, description="Maximum number of results (1-100)"
     )
-    offset: Optional[int] = Field(
-        default=None, ge=0, description="Number of results to skip"
+    service: Optional[str] = Field(
+        default=None, description="Filter by service name (e.g. 'scrape', 'extract')"
     )
 
     def to_params(self) -> Dict[str, Any]:

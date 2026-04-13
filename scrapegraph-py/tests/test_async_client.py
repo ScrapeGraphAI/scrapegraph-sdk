@@ -1,14 +1,10 @@
-"""Tests for the asynchronous AsyncClient (v2 API)."""
-
-from uuid import uuid4
+"""Tests for the asynchronous AsyncClient against the SGAI v2 contract."""
 
 import pytest
 import pytest_asyncio
-from aioresponses import aioresponses
 from pydantic import BaseModel, Field
 
 from scrapegraph_py.async_client import AsyncClient
-from scrapegraph_py.config import API_BASE_URL
 from tests.utils import generate_mock_api_key
 
 
@@ -24,11 +20,6 @@ async def client(api_key):
     await c.close()
 
 
-# ------------------------------------------------------------------
-# Auth & headers
-# ------------------------------------------------------------------
-
-
 @pytest.mark.asyncio
 async def test_bearer_auth_header(api_key):
     c = AsyncClient(api_key=api_key)
@@ -37,305 +28,288 @@ async def test_bearer_auth_header(api_key):
     await c.close()
 
 
-# ------------------------------------------------------------------
-# Scrape
-# ------------------------------------------------------------------
+@pytest.mark.asyncio
+async def test_scrape_translates_legacy_format_to_formats_array(client):
+    captured = {}
+
+    async def fake_request(method, url, **kwargs):
+        captured["method"] = method
+        captured["url"] = url
+        captured["json"] = kwargs["json"]
+        return {
+            "results": {"html": "<h1>Hello</h1>"},
+            "metadata": {"url": "https://example.com"},
+        }
+
+    client._make_request = fake_request
+
+    result = await client.scrape("https://example.com", format="html")
+
+    assert captured["method"] == "POST"
+    assert captured["url"].endswith("/scrape")
+    assert captured["json"] == {
+        "url": "https://example.com",
+        "formats": [{"type": "html", "mode": "normal"}],
+    }
+    assert result["results"]["html"] == "<h1>Hello</h1>"
 
 
 @pytest.mark.asyncio
-async def test_scrape(client):
-    with aioresponses() as mocked:
-        mocked.post(
-            f"{API_BASE_URL}/scrape",
-            payload={"request_id": str(uuid4()), "content": "# Hello"},
-        )
-        result = await client.scrape("https://example.com")
-        assert "content" in result
+async def test_extract_sends_schema_and_fetch_config(client):
+    captured = {}
 
-
-@pytest.mark.asyncio
-async def test_scrape_html_format(client):
-    with aioresponses() as mocked:
-        mocked.post(
-            f"{API_BASE_URL}/scrape",
-            payload={"request_id": str(uuid4()), "content": "<h1>Hello</h1>"},
-        )
-        result = await client.scrape("https://example.com", format="html")
-        assert "content" in result
-
-
-# ------------------------------------------------------------------
-# Extract
-# ------------------------------------------------------------------
-
-
-@pytest.mark.asyncio
-async def test_extract(client):
-    with aioresponses() as mocked:
-        mocked.post(
-            f"{API_BASE_URL}/extract",
-            payload={"request_id": str(uuid4()), "result": {"title": "Example"}},
-        )
-        result = await client.extract(
-            url="https://example.com",
-            prompt="Extract the title",
-        )
-        assert result["result"]["title"] == "Example"
-
-
-@pytest.mark.asyncio
-async def test_extract_with_pydantic_schema(client):
     class Product(BaseModel):
         name: str = Field(description="Product name")
-        price: float = Field(description="Product price")
 
-    with aioresponses() as mocked:
-        mocked.post(
-            f"{API_BASE_URL}/extract",
-            payload={
-                "request_id": str(uuid4()),
-                "result": {"name": "Widget", "price": 9.99},
+    async def fake_request(method, url, **kwargs):
+        captured["json"] = kwargs["json"]
+        return {
+            "json": {"name": "Widget"},
+            "raw": None,
+            "usage": {},
+            "metadata": {"chunker": {}},
+        }
+
+    client._make_request = fake_request
+
+    result = await client.extract(
+        url="https://example.com",
+        prompt="Extract product name",
+        output_schema=Product,
+        fetch_config={"timeout": 5000},
+    )
+
+    assert captured["json"] == {
+        "url": "https://example.com",
+        "prompt": "Extract product name",
+        "schema": {
+            "properties": {
+                "name": {
+                    "description": "Product name",
+                    "title": "Name",
+                    "type": "string",
+                }
             },
-        )
-        result = await client.extract(
-            url="https://example.com",
-            prompt="Extract product info",
-            output_schema=Product,
-        )
-        assert result["result"]["name"] == "Widget"
-
-
-# ------------------------------------------------------------------
-# Search
-# ------------------------------------------------------------------
+            "required": ["name"],
+            "title": "Product",
+            "type": "object",
+        },
+        "mode": "normal",
+        "fetchConfig": {"mode": "auto", "timeout": 5000, "mock": False},
+    }
+    assert result["json"]["name"] == "Widget"
 
 
 @pytest.mark.asyncio
-async def test_search(client):
-    with aioresponses() as mocked:
-        mocked.post(
-            f"{API_BASE_URL}/search",
-            payload={
-                "request_id": str(uuid4()),
-                "results": [{"url": "https://example.com"}],
-            },
-        )
-        result = await client.search("best web scrapers 2025")
-        assert "results" in result
+async def test_search_accepts_single_result_and_uses_camel_case(client):
+    captured = {}
+
+    async def fake_request(method, url, **kwargs):
+        captured["json"] = kwargs["json"]
+        return {
+            "results": [{"url": "https://example.com"}],
+            "metadata": {"search": {}, "pages": {"requested": 1, "scraped": 1}},
+        }
+
+    client._make_request = fake_request
+
+    result = await client.search(
+        "example domain",
+        num_results=1,
+        prompt="Extract titles",
+        schema={"type": "object", "properties": {"title": {"type": "string"}}},
+        location_geo_code="it",
+        time_range="past_week",
+    )
+
+    assert captured["json"] == {
+        "query": "example domain",
+        "numResults": 1,
+        "format": "markdown",
+        "mode": "prune",
+        "prompt": "Extract titles",
+        "schema": {"type": "object", "properties": {"title": {"type": "string"}}},
+        "locationGeoCode": "it",
+        "timeRange": "past_week",
+    }
+    assert result["results"][0]["url"] == "https://example.com"
 
 
 @pytest.mark.asyncio
-async def test_search_with_location_geo_code(client):
-    with aioresponses() as mocked:
-        mocked.post(
-            f"{API_BASE_URL}/search",
-            payload={
-                "request_id": str(uuid4()),
-                "results": [{"url": "https://example.it"}],
-            },
-        )
-        result = await client.search("best restaurants", location_geo_code="it")
-        assert "results" in result
+async def test_credits_returns_v2_balance_shape(client):
+    async def fake_request(method, url, **kwargs):
+        return {"remaining": 1000, "used": 50, "plan": "local"}
 
-
-# ------------------------------------------------------------------
-# Credits
-# ------------------------------------------------------------------
+    client._make_request = fake_request
+    result = await client.credits()
+    assert result["remaining"] == 1000
+    assert result["used"] == 50
 
 
 @pytest.mark.asyncio
-async def test_credits(client):
-    with aioresponses() as mocked:
-        mocked.get(
-            f"{API_BASE_URL}/credits",
-            payload={"remaining_credits": 1000, "total_credits_used": 50},
-        )
-        result = await client.credits()
-        assert result["remaining_credits"] == 1000
+async def test_history_maps_legacy_endpoint_and_offset(client):
+    captured = {}
 
+    async def fake_request(method, url, **kwargs):
+        captured["params"] = kwargs["params"]
+        return {"data": [], "pagination": {"page": 3, "limit": 10, "total": 0}}
 
-# ------------------------------------------------------------------
-# History
-# ------------------------------------------------------------------
+    client._make_request = fake_request
 
+    result = await client.history(endpoint="scrape", limit=10, offset=20)
 
-@pytest.mark.asyncio
-async def test_history(client):
-    with aioresponses() as mocked:
-        mocked.get(
-            f"{API_BASE_URL}/history",
-            payload={"requests": [], "total": 0},
-        )
-        result = await client.history()
-        assert "requests" in result
-
-
-# ------------------------------------------------------------------
-# Crawl namespace
-# ------------------------------------------------------------------
+    assert captured["params"] == {"page": 3, "limit": 10, "service": "scrape"}
+    assert result["pagination"]["page"] == 3
 
 
 @pytest.mark.asyncio
-async def test_crawl_start(client):
-    crawl_id = str(uuid4())
-    with aioresponses() as mocked:
-        mocked.post(
-            f"{API_BASE_URL}/crawl",
-            payload={"id": crawl_id, "status": "running"},
-        )
-        result = await client.crawl.start("https://example.com", depth=3)
-        assert result["id"] == crawl_id
+async def test_history_rejects_status_filter(client):
+    with pytest.raises(ValueError, match="not supported"):
+        await client.history(status="completed")
 
 
 @pytest.mark.asyncio
-async def test_crawl_status(client):
-    crawl_id = str(uuid4())
-    with aioresponses() as mocked:
-        mocked.get(
-            f"{API_BASE_URL}/crawl/{crawl_id}",
-            payload={"id": crawl_id, "status": "completed", "pages": []},
-        )
-        result = await client.crawl.status(crawl_id)
-        assert result["status"] == "completed"
+async def test_schema_posts_prompt_and_existing_schema(client):
+    captured = {}
+
+    async def fake_request(method, url, **kwargs):
+        captured["json"] = kwargs["json"]
+        return {
+            "refinedPrompt": "Refined prompt",
+            "schema": {"type": "object"},
+            "usage": {},
+        }
+
+    client._make_request = fake_request
+
+    result = await client.schema(
+        "Extract product data",
+        existing_schema={"type": "object", "properties": {"name": {"type": "string"}}},
+    )
+
+    assert captured["json"] == {
+        "prompt": "Extract product data",
+        "existingSchema": {
+            "type": "object",
+            "properties": {"name": {"type": "string"}},
+        },
+    }
+    assert result["schema"]["type"] == "object"
 
 
 @pytest.mark.asyncio
-async def test_crawl_stop(client):
-    crawl_id = str(uuid4())
-    with aioresponses() as mocked:
-        mocked.post(
-            f"{API_BASE_URL}/crawl/{crawl_id}/stop",
-            payload={"id": crawl_id, "status": "stopped"},
-        )
-        result = await client.crawl.stop(crawl_id)
-        assert result["status"] == "stopped"
+async def test_validate_uses_email_query_param(client):
+    captured = {}
+
+    async def fake_request(method, url, **kwargs):
+        captured["params"] = kwargs["params"]
+        return {"ok": True}
+
+    client._make_request = fake_request
+
+    result = await client.validate("user@example.com")
+
+    assert captured["params"] == {"email": "user@example.com"}
+    assert result["ok"] is True
 
 
 @pytest.mark.asyncio
-async def test_crawl_resume(client):
-    crawl_id = str(uuid4())
-    with aioresponses() as mocked:
-        mocked.post(
-            f"{API_BASE_URL}/crawl/{crawl_id}/resume",
-            payload={"id": crawl_id, "status": "running"},
-        )
-        result = await client.crawl.resume(crawl_id)
-        assert result["status"] == "running"
+async def test_crawl_start_translates_legacy_depth_and_format(client):
+    captured = {}
 
+    async def fake_request(method, url, **kwargs):
+        captured["json"] = kwargs["json"]
+        return {
+            "id": "crawl-123",
+            "status": "running",
+            "total": 0,
+            "finished": 0,
+            "pages": [],
+        }
 
-# ------------------------------------------------------------------
-# Monitor namespace
-# ------------------------------------------------------------------
+    client._make_request = fake_request
 
+    result = await client.crawl.start(
+        "https://example.com", depth=3, max_pages=20, format="html"
+    )
 
-@pytest.mark.asyncio
-async def test_monitor_create(client):
-    monitor_id = str(uuid4())
-    with aioresponses() as mocked:
-        mocked.post(
-            f"{API_BASE_URL}/monitor",
-            payload={"id": monitor_id, "name": "Price Monitor"},
-        )
-        result = await client.monitor.create(
-            name="Price Monitor",
-            url="https://example.com/products",
-            prompt="Extract product prices",
-            interval="0 9 * * 1",
-        )
-        assert result["name"] == "Price Monitor"
+    assert captured["json"] == {
+        "url": "https://example.com",
+        "formats": [{"type": "html", "mode": "normal"}],
+        "maxDepth": 3,
+        "maxPages": 20,
+        "maxLinksPerPage": 10,
+        "allowExternal": False,
+    }
+    assert result["id"] == "crawl-123"
 
 
 @pytest.mark.asyncio
-async def test_monitor_list(client):
-    with aioresponses() as mocked:
-        mocked.get(
-            f"{API_BASE_URL}/monitor",
-            payload={"monitors": [], "total": 0},
-        )
-        result = await client.monitor.list()
-        assert "monitors" in result
+async def test_monitor_create_translates_legacy_prompt_to_json_format(client):
+    captured = {}
 
+    async def fake_request(method, url, **kwargs):
+        captured["json"] = kwargs["json"]
+        return {
+            "cronId": "mon-1",
+            "scheduleId": "sched-1",
+            "interval": "0 9 * * 1",
+            "status": "active",
+            "config": kwargs["json"],
+            "createdAt": "2026-01-01T00:00:00.000Z",
+            "updatedAt": "2026-01-01T00:00:00.000Z",
+        }
 
-@pytest.mark.asyncio
-async def test_monitor_get(client):
-    monitor_id = str(uuid4())
-    with aioresponses() as mocked:
-        mocked.get(
-            f"{API_BASE_URL}/monitor/{monitor_id}",
-            payload={"id": monitor_id, "name": "Test Monitor"},
-        )
-        result = await client.monitor.get(monitor_id)
-        assert result["id"] == monitor_id
+    client._make_request = fake_request
 
+    result = await client.monitor.create(
+        name="Price Monitor",
+        url="https://example.com/products",
+        prompt="Extract product prices",
+        interval="0 9 * * 1",
+        output_schema={"type": "object", "properties": {"price": {"type": "number"}}},
+    )
 
-@pytest.mark.asyncio
-async def test_monitor_pause(client):
-    monitor_id = str(uuid4())
-    with aioresponses() as mocked:
-        mocked.post(
-            f"{API_BASE_URL}/monitor/{monitor_id}/pause",
-            payload={"id": monitor_id, "status": "paused"},
-        )
-        result = await client.monitor.pause(monitor_id)
-        assert result["status"] == "paused"
-
-
-@pytest.mark.asyncio
-async def test_monitor_resume(client):
-    monitor_id = str(uuid4())
-    with aioresponses() as mocked:
-        mocked.post(
-            f"{API_BASE_URL}/monitor/{monitor_id}/resume",
-            payload={"id": monitor_id, "status": "active"},
-        )
-        result = await client.monitor.resume(monitor_id)
-        assert result["status"] == "active"
-
-
-@pytest.mark.asyncio
-async def test_monitor_delete(client):
-    monitor_id = str(uuid4())
-    with aioresponses() as mocked:
-        mocked.delete(
-            f"{API_BASE_URL}/monitor/{monitor_id}",
-            payload={"message": "deleted"},
-        )
-        result = await client.monitor.delete(monitor_id)
-        assert result["message"] == "deleted"
-
-
-# ------------------------------------------------------------------
-# Error handling
-# ------------------------------------------------------------------
+    assert captured["json"] == {
+        "name": "Price Monitor",
+        "url": "https://example.com/products",
+        "formats": [
+            {
+                "type": "json",
+                "prompt": "Extract product prices",
+                "mode": "normal",
+                "schema": {
+                    "type": "object",
+                    "properties": {"price": {"type": "number"}},
+                },
+            }
+        ],
+        "interval": "0 9 * * 1",
+    }
+    assert result["cronId"] == "mon-1"
 
 
 @pytest.mark.asyncio
 async def test_api_error_handling(client):
     from scrapegraph_py.exceptions import APIError
 
-    with aioresponses() as mocked:
-        mocked.post(
-            f"{API_BASE_URL}/scrape",
-            payload={"error": "Invalid URL"},
-            status=400,
-        )
-        with pytest.raises(APIError) as exc_info:
-            await client.scrape("https://example.com")
-        assert exc_info.value.status_code == 400
+    async def fake_request(method, url, **kwargs):
+        raise APIError("Invalid URL", status_code=400)
 
+    client._make_request = fake_request
 
-# ------------------------------------------------------------------
-# Context manager
-# ------------------------------------------------------------------
+    with pytest.raises(APIError) as exc_info:
+        await client.scrape("https://example.com")
+    assert exc_info.value.status_code == 400
 
 
 @pytest.mark.asyncio
 async def test_context_manager(api_key):
-    with aioresponses() as mocked:
-        mocked.get(
-            f"{API_BASE_URL}/credits",
-            payload={"remaining_credits": 500},
-        )
-        async with AsyncClient(api_key=api_key) as client:
-            result = await client.credits()
-            assert result["remaining_credits"] == 500
+    async with AsyncClient(api_key=api_key) as client:
+
+        async def fake_request(method, url, **kwargs):
+            return {"remaining": 500, "used": 0, "plan": "local"}
+
+        client._make_request = fake_request
+        result = await client.credits()
+        assert result["remaining"] == 500

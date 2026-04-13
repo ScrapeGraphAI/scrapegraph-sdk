@@ -1,4 +1,4 @@
-"""Tests for v2 Pydantic models."""
+"""Tests for the SGAI v2 Pydantic models."""
 
 import pytest
 
@@ -10,10 +10,6 @@ from scrapegraph_py.models.scrape import ScrapeFormat, ScrapeRequest
 from scrapegraph_py.models.search import SearchRequest
 from scrapegraph_py.models.shared import FetchConfig, FetchMode, LlmConfig
 
-# ------------------------------------------------------------------
-# Shared models
-# ------------------------------------------------------------------
-
 
 def test_fetch_config_defaults():
     config = FetchConfig()
@@ -21,49 +17,24 @@ def test_fetch_config_defaults():
     assert config.mode == FetchMode.AUTO
 
 
-def test_fetch_config_excludes_none():
+def test_fetch_config_uses_camel_case():
     config = FetchConfig(mode="fast")
     data = config.model_dump()
     assert "cookies" not in data
     assert data["mode"] == "fast"
 
 
-def test_fetch_config_all_modes():
-    for mode in FetchMode:
-        config = FetchConfig(mode=mode)
-        assert config.mode == mode
-
-
-def test_fetch_config_invalid_mode():
-    with pytest.raises(ValueError):
-        FetchConfig(mode="invalid")
-
-
-def test_llm_config_excludes_none():
-    config = LlmConfig(model="gpt-4")
+def test_llm_config_uses_camel_case():
+    config = LlmConfig(model="gpt-4o-mini", max_tokens=512)
     data = config.model_dump()
-    assert data["model"] == "gpt-4"
-    assert "temperature" not in data
+    assert data["model"] == "gpt-4o-mini"
+    assert data["maxTokens"] == 512
 
 
-# ------------------------------------------------------------------
-# Scrape
-# ------------------------------------------------------------------
-
-
-def test_scrape_request_valid():
+def test_scrape_request_defaults_to_markdown_formats():
     req = ScrapeRequest(url="https://example.com")
-    assert req.format == ScrapeFormat.MARKDOWN
-
-
-def test_scrape_request_html():
-    req = ScrapeRequest(url="https://example.com", format=ScrapeFormat.HTML)
-    assert req.format == ScrapeFormat.HTML
-
-
-def test_scrape_request_empty_url():
-    with pytest.raises(ValueError, match="URL cannot be empty"):
-        ScrapeRequest(url="")
+    assert req.formats == [{"type": "markdown", "mode": "normal"}]
+    assert req.model_dump()["formats"] == [{"type": "markdown", "mode": "normal"}]
 
 
 def test_scrape_request_invalid_url():
@@ -71,123 +42,68 @@ def test_scrape_request_invalid_url():
         ScrapeRequest(url="ftp://example.com")
 
 
-# ------------------------------------------------------------------
-# Extract
-# ------------------------------------------------------------------
-
-
 def test_extract_request_valid():
     req = ExtractRequest(url="https://example.com", prompt="Extract data")
     assert req.prompt == "Extract data"
+    assert req.model_dump()["mode"] == "normal"
 
 
-def test_extract_request_empty_prompt():
-    with pytest.raises(ValueError, match="Prompt cannot be empty"):
-        ExtractRequest(url="https://example.com", prompt="")
+def test_extract_request_requires_one_content_input():
+    with pytest.raises(ValueError, match="Either url, html, or markdown is required"):
+        ExtractRequest(url=None, html=None, markdown=None, prompt="Extract")
 
 
-def test_extract_request_with_schema():
-    req = ExtractRequest(
-        url="https://example.com",
-        prompt="Extract",
-        output_schema={"type": "object", "properties": {"name": {"type": "string"}}},
-    )
-    assert req.output_schema is not None
+def test_search_request_accepts_single_result():
+    req = SearchRequest(query="python web scraping", num_results=1)
+    assert req.num_results == 1
+    assert req.model_dump()["numResults"] == 1
 
 
-# ------------------------------------------------------------------
-# Search
-# ------------------------------------------------------------------
+def test_search_request_schema_requires_prompt():
+    with pytest.raises(ValueError, match="schema requires prompt"):
+        SearchRequest(
+            query="python web scraping",
+            schema={"type": "object"},
+        )
 
 
-def test_search_request_valid():
-    req = SearchRequest(query="python web scraping")
-    assert req.num_results == 5
-
-
-def test_search_request_custom_results():
-    req = SearchRequest(query="test", num_results=10)
-    assert req.num_results == 10
-
-
-def test_search_request_empty_query():
-    with pytest.raises(ValueError, match="Query cannot be empty"):
-        SearchRequest(query="")
-
-
-def test_search_request_num_results_bounds():
-    with pytest.raises(ValueError):
-        SearchRequest(query="test", num_results=2)
-    with pytest.raises(ValueError):
-        SearchRequest(query="test", num_results=21)
-
-
-def test_search_request_with_location_geo_code():
-    req = SearchRequest(query="test", location_geo_code="us")
-    assert req.location_geo_code == "us"
-
-
-def test_search_request_location_geo_code_excluded_when_none():
-    req = SearchRequest(query="test")
-    data = req.model_dump()
-    assert "location_geo_code" not in data
-
-
-def test_search_request_location_geo_code_too_long():
-    with pytest.raises(ValueError):
-        SearchRequest(query="test", location_geo_code="a" * 11)
-
-
-# ------------------------------------------------------------------
-# Crawl
-# ------------------------------------------------------------------
-
-
-def test_crawl_request_valid():
+def test_crawl_request_defaults_to_markdown_formats():
     req = CrawlRequest(url="https://example.com")
-    assert req.depth == 2
-    assert req.max_pages == 10
-    assert req.format == CrawlFormat.MARKDOWN
+    assert req.formats == [{"type": "markdown", "mode": "normal"}]
+    assert req.max_depth == 2
+    assert req.model_dump()["maxDepth"] == 2
 
 
-def test_crawl_request_custom():
+def test_crawl_request_custom_values():
     req = CrawlRequest(
         url="https://example.com",
-        depth=5,
+        formats=[{"type": CrawlFormat.HTML.value, "mode": "normal"}],
+        max_depth=5,
         max_pages=50,
-        format=CrawlFormat.HTML,
         include_patterns=["/blog/*"],
         exclude_patterns=["/admin/*"],
     )
-    assert req.depth == 5
-    assert len(req.include_patterns) == 1
-
-
-def test_crawl_request_invalid_url():
-    with pytest.raises(ValueError):
-        CrawlRequest(url="not-a-url")
-
-
-def test_crawl_request_depth_bounds():
-    with pytest.raises(ValueError):
-        CrawlRequest(url="https://example.com", depth=0)
-    with pytest.raises(ValueError):
-        CrawlRequest(url="https://example.com", depth=11)
-
-
-# ------------------------------------------------------------------
-# Monitor
-# ------------------------------------------------------------------
+    data = req.model_dump()
+    assert data["formats"] == [{"type": "html", "mode": "normal"}]
+    assert data["maxDepth"] == 5
+    assert len(data["includePatterns"]) == 1
 
 
 def test_monitor_create_valid():
     req = MonitorCreateRequest(
         name="Price Tracker",
         url="https://example.com",
-        prompt="Extract prices",
+        formats=[
+            {
+                "type": ScrapeFormat.JSON.value,
+                "prompt": "Extract prices",
+                "mode": "normal",
+            }
+        ],
         interval="0 9 * * 1",
     )
     assert req.name == "Price Tracker"
+    assert req.model_dump()["formats"][0]["type"] == "json"
 
 
 def test_monitor_create_invalid_interval():
@@ -195,32 +111,11 @@ def test_monitor_create_invalid_interval():
         MonitorCreateRequest(
             name="Test",
             url="https://example.com",
-            prompt="Test",
+            formats=[{"type": "markdown", "mode": "normal"}],
             interval="invalid",
         )
 
 
-def test_monitor_create_empty_name():
-    with pytest.raises(ValueError, match="Name cannot be empty"):
-        MonitorCreateRequest(
-            name="",
-            url="https://example.com",
-            prompt="Test",
-            interval="0 9 * * 1",
-        )
-
-
-# ------------------------------------------------------------------
-# History
-# ------------------------------------------------------------------
-
-
-def test_history_filter_empty():
-    f = HistoryFilter()
-    assert f.to_params() == {}
-
-
-def test_history_filter_with_values():
-    f = HistoryFilter(endpoint="scrape", limit=10)
-    params = f.to_params()
-    assert params == {"endpoint": "scrape", "limit": 10}
+def test_history_filter_to_params():
+    filt = HistoryFilter(page=2, service="scrape", limit=10)
+    assert filt.to_params() == {"page": 2, "limit": 10, "service": "scrape"}

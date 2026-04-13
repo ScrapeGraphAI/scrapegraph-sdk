@@ -1,61 +1,65 @@
-"""
-Pydantic models for the v2 Crawl endpoints.
-
-POST /v2/crawl         - Start a crawl job
-GET  /v2/crawl/:id     - Get crawl status/results
-POST /v2/crawl/:id/stop   - Stop a running crawl
-POST /v2/crawl/:id/resume - Resume a stopped crawl
-"""
+"""Pydantic models for the SGAI v2 crawl endpoints."""
 
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, Field, conint, model_validator
+from pydantic import Field, conint, model_validator
 
-from .shared import FetchConfig
+from scrapegraph_py.utils.payloads import build_single_format_entry
+
+from .shared import CamelModel, FetchConfig
 
 
 class CrawlFormat(str, Enum):
-    """Output format for crawled pages."""
+    """Supported crawl format types in SGAI v2."""
 
     MARKDOWN = "markdown"
     HTML = "html"
+    LINKS = "links"
+    IMAGES = "images"
+    SUMMARY = "summary"
+    JSON = "json"
+    BRANDING = "branding"
+    SCREENSHOT = "screenshot"
 
 
-class CrawlRequest(BaseModel):
-    """Request model for POST /v2/crawl."""
+class CrawlRequest(CamelModel):
+    """Request model for POST /api/v2/crawl."""
 
     url: str = Field(..., description="The starting URL for the crawl")
-    depth: conint(ge=1, le=10) = Field(
-        default=2, description="Maximum crawl depth (1-10)"
+    formats: List[Dict[str, Any]] = Field(
+        default_factory=lambda: [build_single_format_entry("markdown")],
+        description="Requested output formats for crawled pages",
     )
-    max_pages: conint(ge=1, le=100) = Field(
-        default=10, description="Maximum number of pages to crawl (1-100)"
+    max_depth: conint(ge=0) = Field(default=2, description="Maximum crawl depth")
+    max_pages: conint(ge=1, le=1000) = Field(
+        default=10, description="Maximum number of pages to crawl"
     )
-    format: CrawlFormat = Field(
-        default=CrawlFormat.MARKDOWN,
-        description="Output format: markdown or html",
+    max_links_per_page: conint(ge=1) = Field(
+        default=10, description="Maximum number of links to follow per page"
+    )
+    allow_external: bool = Field(
+        default=False, description="Whether the crawler can cross domains"
     )
     include_patterns: Optional[List[str]] = Field(
-        default=None,
-        description="URL patterns to include (e.g. ['/products/*', '/blog/**'])",
+        default=None, description="URL patterns to include"
     )
     exclude_patterns: Optional[List[str]] = Field(
-        default=None,
-        description="URL patterns to exclude (e.g. ['/admin/*', '/api/*'])",
+        default=None, description="URL patterns to exclude"
+    )
+    content_types: Optional[List[str]] = Field(
+        default=None, description="Allowed content types for crawl pages"
     )
     fetch_config: Optional[FetchConfig] = Field(
         default=None, description="Fetch configuration options"
     )
 
     @model_validator(mode="after")
-    def validate_url(self) -> "CrawlRequest":
+    def validate_fields(self) -> "CrawlRequest":
         if not self.url or not self.url.strip():
             raise ValueError("URL cannot be empty")
         if not (self.url.startswith("http://") or self.url.startswith("https://")):
             raise ValueError("URL must start with http:// or https://")
+        if not self.formats:
+            raise ValueError("formats must contain at least one entry")
         return self
-
-    def model_dump(self, *args: Any, **kwargs: Any) -> Dict[str, Any]:
-        kwargs.setdefault("exclude_none", True)
-        return super().model_dump(*args, **kwargs)

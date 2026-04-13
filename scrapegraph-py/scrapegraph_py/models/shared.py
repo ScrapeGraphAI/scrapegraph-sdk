@@ -7,7 +7,19 @@ These models are used across multiple endpoints for fetch and LLM configuration.
 from enum import Enum
 from typing import Any, Dict, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
+from pydantic.alias_generators import to_camel
+
+
+class CamelModel(BaseModel):
+    """Base model that serializes using the API's camelCase field names."""
+
+    model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
+
+    def model_dump(self, *args: Any, **kwargs: Any) -> Dict[str, Any]:
+        kwargs.setdefault("exclude_none", True)
+        kwargs.setdefault("by_alias", True)
+        return super().model_dump(*args, **kwargs)
 
 
 class FetchMode(str, Enum):
@@ -27,7 +39,7 @@ class FetchMode(str, Enum):
     JS_STEALTH = "js+stealth"
 
 
-class FetchConfig(BaseModel):
+class FetchConfig(CamelModel):
     """Configuration for how pages are fetched."""
 
     mode: FetchMode = Field(
@@ -61,12 +73,8 @@ class FetchConfig(BaseModel):
     )
     mock: bool = Field(default=False, description="Use mock mode for testing")
 
-    def model_dump(self, *args: Any, **kwargs: Any) -> Dict[str, Any]:
-        kwargs.setdefault("exclude_none", True)
-        return super().model_dump(*args, **kwargs)
 
-
-class LlmConfig(BaseModel):
+class LlmConfig(CamelModel):
     """Configuration for the LLM used in extraction."""
 
     model: Optional[str] = Field(
@@ -81,10 +89,6 @@ class LlmConfig(BaseModel):
     max_tokens: Optional[int] = Field(
         default=None, ge=1, description="Maximum tokens in the response"
     )
-    chunker: Optional[str] = Field(
+    chunker: Optional[Dict[str, Any]] = Field(
         default=None, description="Chunking strategy for large pages"
     )
-
-    def model_dump(self, *args: Any, **kwargs: Any) -> Dict[str, Any]:
-        kwargs.setdefault("exclude_none", True)
-        return super().model_dump(*args, **kwargs)

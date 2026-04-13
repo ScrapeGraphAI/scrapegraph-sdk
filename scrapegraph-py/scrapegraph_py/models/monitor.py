@@ -1,54 +1,42 @@
-"""
-Pydantic models for the v2 Monitor endpoints.
+"""Pydantic models for the SGAI v2 monitor endpoints."""
 
-POST   /v2/monitor          - Create a monitor
-GET    /v2/monitor           - List monitors
-GET    /v2/monitor/:id       - Get a monitor
-POST   /v2/monitor/:id/pause  - Pause a monitor
-POST   /v2/monitor/:id/resume - Resume a monitor
-DELETE /v2/monitor/:id       - Delete a monitor
-"""
+from typing import Any, Dict, List, Optional
 
-from typing import Any, Dict, Optional
+from pydantic import Field, model_validator
 
-from pydantic import BaseModel, Field, model_validator
+from scrapegraph_py.utils.payloads import build_single_format_entry
 
-from .shared import FetchConfig, LlmConfig
+from .shared import CamelModel, FetchConfig
 
 
-class MonitorCreateRequest(BaseModel):
-    """Request model for POST /v2/monitor."""
+class MonitorCreateRequest(CamelModel):
+    """Request model for POST /api/v2/monitor."""
 
-    name: str = Field(..., description="Name of the monitor")
     url: str = Field(..., description="URL to monitor")
-    prompt: str = Field(..., description="Prompt for AI extraction")
-    interval: str = Field(..., description="Cron expression for scheduling (5 fields)")
-    output_schema: Optional[Dict[str, Any]] = Field(
-        default=None,
-        description="JSON Schema defining the structure of extracted data",
+    name: Optional[str] = Field(default=None, description="Name of the monitor")
+    formats: List[Dict[str, Any]] = Field(
+        default_factory=lambda: [build_single_format_entry("markdown")],
+        description="Requested output formats for each monitor run",
     )
+    webhook_url: Optional[str] = Field(
+        default=None, description="Webhook URL invoked when changes are detected"
+    )
+    interval: str = Field(..., description="Cron expression for scheduling")
     fetch_config: Optional[FetchConfig] = Field(
         default=None, description="Fetch configuration options"
-    )
-    llm_config: Optional[LlmConfig] = Field(
-        default=None, description="LLM configuration options"
     )
 
     @model_validator(mode="after")
     def validate_fields(self) -> "MonitorCreateRequest":
-        if not self.name or not self.name.strip():
-            raise ValueError("Name cannot be empty")
         if not self.url or not self.url.strip():
             raise ValueError("URL cannot be empty")
         if not (self.url.startswith("http://") or self.url.startswith("https://")):
             raise ValueError("URL must start with http:// or https://")
-        if not self.prompt or not self.prompt.strip():
-            raise ValueError("Prompt cannot be empty")
+        if self.name is not None and not self.name.strip():
+            raise ValueError("Name cannot be empty")
+        if not self.formats:
+            raise ValueError("formats must contain at least one entry")
         parts = self.interval.strip().split()
         if len(parts) != 5:
             raise ValueError("Interval cron expression must have exactly 5 fields")
         return self
-
-    def model_dump(self, *args: Any, **kwargs: Any) -> Dict[str, Any]:
-        kwargs.setdefault("exclude_none", True)
-        return super().model_dump(*args, **kwargs)
