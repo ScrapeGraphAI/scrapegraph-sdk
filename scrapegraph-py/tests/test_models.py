@@ -8,7 +8,7 @@ from scrapegraph_py.models.history import HistoryFilter
 from scrapegraph_py.models.monitor import MonitorCreateRequest
 from scrapegraph_py.models.scrape import ScrapeFormat, ScrapeRequest
 from scrapegraph_py.models.search import SearchRequest
-from scrapegraph_py.models.shared import FetchConfig, FetchMode, LlmConfig
+from scrapegraph_py.models.shared import FetchConfig, FetchMode
 
 
 def test_fetch_config_defaults():
@@ -22,13 +22,6 @@ def test_fetch_config_uses_camel_case():
     data = config.model_dump()
     assert "cookies" not in data
     assert data["mode"] == "fast"
-
-
-def test_llm_config_uses_camel_case():
-    config = LlmConfig(model="gpt-4o-mini", max_tokens=512)
-    data = config.model_dump()
-    assert data["model"] == "gpt-4o-mini"
-    assert data["maxTokens"] == 512
 
 
 def test_scrape_request_defaults_to_markdown_formats():

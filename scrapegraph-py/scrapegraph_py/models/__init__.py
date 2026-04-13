@@ -8,13 +8,12 @@ from .history import HistoryFilter
 from .monitor import MonitorCreateRequest
 from .scrape import GetScrapeRequest, ScrapeFormat, ScrapeRequest
 from .search import SearchRequest
-from .shared import FetchConfig, FetchMode, LlmConfig
+from .shared import FetchConfig, FetchMode
 
 __all__ = [
     # Shared
     "FetchConfig",
     "FetchMode",
-    "LlmConfig",
     # Scrape
     "ScrapeFormat",
     "ScrapeRequest",

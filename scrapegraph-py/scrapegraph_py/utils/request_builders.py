@@ -8,7 +8,7 @@ from scrapegraph_py.models.history import HistoryFilter
 from scrapegraph_py.models.monitor import MonitorCreateRequest
 from scrapegraph_py.models.scrape import ScrapeRequest
 from scrapegraph_py.models.search import SearchRequest
-from scrapegraph_py.models.shared import FetchConfig, LlmConfig
+from scrapegraph_py.models.shared import FetchConfig
 from scrapegraph_py.utils.payloads import (
     build_json_format_entry,
     normalize_format_entries,
@@ -55,15 +55,12 @@ def build_monitor_payload(
     url: str,
     prompt: Optional[str],
     interval: str,
-    output_schema: Optional[Dict[str, Any]] = None,
     fetch_config: Optional[FetchConfig] = None,
-    llm_config: Optional[LlmConfig] = None,
     schema: Optional[Any] = None,
     formats: Optional[List[Dict[str, Any]]] = None,
     webhook_url: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Build the SGAI v2 monitor payload from SDK inputs."""
-    schema_value = schema if schema is not None else output_schema
     if formats is not None:
         normalized_formats = normalize_format_entries(formats)
     else:
@@ -72,8 +69,7 @@ def build_monitor_payload(
         normalized_formats = [
             build_json_format_entry(
                 prompt=prompt,
-                schema=schema_value,
-                llm_config=llm_config,
+                schema=schema,
             )
         ]
 
@@ -110,9 +106,7 @@ def build_extract_payload(
     *,
     url: Optional[str],
     prompt: str,
-    output_schema: Optional[Any] = None,
     fetch_config: Optional[FetchConfig] = None,
-    llm_config: Optional[LlmConfig] = None,
     schema: Optional[Any] = None,
     mode: str = "normal",
     content_type: Optional[str] = None,
@@ -120,14 +114,12 @@ def build_extract_payload(
     markdown: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Build the SGAI v2 extract payload from SDK inputs."""
-    _ = llm_config
-    schema_value = schema if schema is not None else output_schema
     request = ExtractRequest(
         url=url,
         html=html,
         markdown=markdown,
         prompt=prompt,
-        schema_=schema_to_dict(schema_value),
+        schema_=schema_to_dict(schema),
         fetch_config=fetch_config,
         mode=mode,
         content_type=content_type,
@@ -139,9 +131,7 @@ def build_search_payload(
     *,
     query: str,
     num_results: int = 5,
-    output_schema: Optional[Any] = None,
     location_geo_code: Optional[str] = None,
-    llm_config: Optional[LlmConfig] = None,
     schema: Optional[Any] = None,
     prompt: Optional[str] = None,
     format: str = "markdown",
@@ -150,12 +140,10 @@ def build_search_payload(
     time_range: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Build the SGAI v2 search payload from SDK inputs."""
-    _ = llm_config
-    schema_value = schema if schema is not None else output_schema
     request = SearchRequest(
         query=query,
         num_results=num_results,
-        schema_=schema_to_dict(schema_value),
+        schema_=schema_to_dict(schema),
         prompt=prompt,
         format=format,
         mode=mode,

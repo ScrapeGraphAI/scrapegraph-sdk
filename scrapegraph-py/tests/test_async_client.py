@@ -75,7 +75,7 @@ async def test_extract_sends_schema_and_fetch_config(client):
     result = await client.extract(
         url="https://example.com",
         prompt="Extract product name",
-        output_schema=Product,
+        schema=Product,
         fetch_config={"timeout": 5000},
     )
 
@@ -267,7 +267,7 @@ async def test_monitor_create_translates_legacy_prompt_to_json_format(client):
         url="https://example.com/products",
         prompt="Extract product prices",
         interval="0 9 * * 1",
-        output_schema={"type": "object", "properties": {"price": {"type": "number"}}},
+        schema={"type": "object", "properties": {"price": {"type": "number"}}},
     )
 
     assert captured["json"] == {

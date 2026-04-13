@@ -86,7 +86,7 @@ def test_extract_sends_schema_and_fetch_config(client):
     result = client.extract(
         url="https://example.com",
         prompt="Extract product name",
-        output_schema=Product,
+        schema=Product,
         fetch_config={"timeout": 5000},
     )
 
@@ -111,6 +111,15 @@ def test_extract_sends_schema_and_fetch_config(client):
         "fetchConfig": {"mode": "auto", "timeout": 5000, "mock": False},
     }
     assert result["json"]["name"] == "Widget"
+
+
+def test_extract_rejects_output_schema_alias(client):
+    with pytest.raises(TypeError, match="output_schema"):
+        client.extract(
+            url="https://example.com",
+            prompt="Extract product name",
+            output_schema={"type": "object"},
+        )
 
 
 def test_search_accepts_single_result_and_uses_camel_case(client):
@@ -281,7 +290,7 @@ def test_monitor_create_translates_legacy_prompt_to_json_format(client):
         url="https://example.com/products",
         prompt="Extract product prices",
         interval="0 9 * * 1",
-        output_schema={"type": "object", "properties": {"price": {"type": "number"}}},
+        schema={"type": "object", "properties": {"price": {"type": "number"}}},
     )
 
     assert captured["json"] == {

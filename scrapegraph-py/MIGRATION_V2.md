@@ -95,7 +95,7 @@ from scrapegraph_py import FetchConfig
 response = client.extract(
     url="https://example.com",
     prompt="Extract the main heading and description",
-    output_schema=MyPydanticModel,
+    schema=MyPydanticModel,
     fetch_config=FetchConfig(
         mode="js+stealth",
         headers={"User-Agent": "MyBot"},
@@ -110,7 +110,7 @@ response = client.extract(
 |---|---|
 | `website_url` | `url` |
 | `user_prompt` | `prompt` |
-| `output_schema` | `output_schema` (unchanged) |
+| `output_schema` | `schema` |
 | `headers` | `fetch_config=FetchConfig(headers=...)` |
 | `cookies` | `fetch_config=FetchConfig(cookies=...)` |
 | `number_of_scrolls` | `fetch_config=FetchConfig(scrolls=...)` |
@@ -152,7 +152,7 @@ result = client.get_searchscraper(request_id)
 response = client.search(
     query="What is the latest version of Python?",
     num_results=5,
-    output_schema=MyModel,
+    schema=MyModel,
 )
 ```
 
@@ -160,7 +160,7 @@ response = client.search(
 |---|---|
 | `user_prompt` | `query` |
 | `num_results` | `num_results` (unchanged) |
-| `output_schema` | `output_schema` (unchanged) |
+| `output_schema` | `schema` |
 | `extraction_mode` | Removed (always AI extraction) |
 | `stealth` | Removed (use `fetch_config=FetchConfig(mode=...)` on other endpoints) |
 | `location_geo_code` | Removed |
@@ -390,7 +390,7 @@ execs = client.get_job_executions(job_id, page=1, page_size=20)
 #### v2
 
 ```python
-from scrapegraph_py import FetchConfig, LlmConfig
+from scrapegraph_py import FetchConfig
 
 # Create
 monitor = client.monitor.create(
@@ -398,9 +398,8 @@ monitor = client.monitor.create(
     url="https://example.com",
     prompt="Extract company info",
     interval="0 9 * * *",
-    output_schema={"type": "object", "properties": {"name": {"type": "string"}}},
+    schema={"type": "object", "properties": {"name": {"type": "string"}}},
     fetch_config=FetchConfig(mode="direct+stealth"),
-    llm_config=LlmConfig(temperature=0.1),
 )
 
 # List
@@ -517,7 +516,7 @@ The following v1 endpoints have been **removed** in v2:
 
 ## Shared Configuration Models
 
-v2 introduces `FetchConfig` and `LlmConfig` — reusable configuration objects that replace the scattered per-method parameters from v1.
+v2 introduces `FetchConfig` — a reusable configuration object that replaces the scattered per-method fetch parameters from v1.
 
 ### FetchConfig
 
@@ -547,21 +546,6 @@ config = FetchConfig(
 | `js` | Headless browser rendering for JavaScript-heavy pages |
 | `direct+stealth` | Residential proxy with stealth headers, no JS |
 | `js+stealth` | JS rendering combined with stealth/residential proxy |
-
-### LlmConfig
-
-Controls the AI model used for extraction. Used by `extract()`, `search()`, and `monitor.create()`.
-
-```python
-from scrapegraph_py import LlmConfig
-
-config = LlmConfig(
-    model="gpt-4",       # LLM model to use
-    temperature=0.3,     # Sampling temperature (0.0-2.0)
-    max_tokens=1000,     # Max tokens in response
-    chunker="auto",      # Chunking strategy for large pages
-)
-```
 
 ---
 

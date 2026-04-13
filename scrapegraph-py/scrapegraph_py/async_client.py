@@ -23,7 +23,7 @@ from aiohttp.client_exceptions import ClientError
 from scrapegraph_py.config import API_BASE_URL, DEFAULT_HEADERS
 from scrapegraph_py.exceptions import APIError
 from scrapegraph_py.logger import sgai_logger as logger
-from scrapegraph_py.models.shared import FetchConfig, LlmConfig
+from scrapegraph_py.models.shared import FetchConfig
 from scrapegraph_py.utils.helpers import handle_async_response, validate_api_key
 from scrapegraph_py.utils.request_builders import (
     build_crawl_payload,
@@ -113,9 +113,7 @@ class _AsyncMonitorNamespace:
         url: str,
         prompt: Optional[str],
         interval: str,
-        output_schema: Optional[Dict[str, Any]] = None,
         fetch_config: Optional[FetchConfig] = None,
-        llm_config: Optional[LlmConfig] = None,
         schema: Optional[Any] = None,
         formats: Optional[List[Dict[str, Any]]] = None,
         webhook_url: Optional[str] = None,
@@ -130,9 +128,7 @@ class _AsyncMonitorNamespace:
                 url=url,
                 prompt=prompt,
                 interval=interval,
-                output_schema=output_schema,
                 fetch_config=fetch_config,
-                llm_config=llm_config,
                 schema=schema,
                 formats=formats,
                 webhook_url=webhook_url,
@@ -335,9 +331,7 @@ class AsyncClient:
         self,
         url: Optional[str],
         prompt: str,
-        output_schema: Optional[Any] = None,
         fetch_config: Optional[FetchConfig] = None,
-        llm_config: Optional[LlmConfig] = None,
         *,
         schema: Optional[Any] = None,
         mode: str = "normal",
@@ -350,9 +344,7 @@ class AsyncClient:
         Args:
             url: URL to extract data from
             prompt: Natural language prompt describing what to extract
-            output_schema: Legacy alias for schema
             fetch_config: Fetch configuration options
-            llm_config: Deprecated and ignored by the SGAI v2 extract route
         """
         logger.info(f"Extracting from {url}")
         return await self._make_request(
@@ -361,9 +353,7 @@ class AsyncClient:
             json=build_extract_payload(
                 url=url,
                 prompt=prompt,
-                output_schema=output_schema,
                 fetch_config=fetch_config,
-                llm_config=llm_config,
                 schema=schema,
                 mode=mode,
                 content_type=content_type,
@@ -380,9 +370,7 @@ class AsyncClient:
         self,
         query: str,
         num_results: int = 5,
-        output_schema: Optional[Any] = None,
         location_geo_code: Optional[str] = None,
-        llm_config: Optional[LlmConfig] = None,
         *,
         schema: Optional[Any] = None,
         prompt: Optional[str] = None,
@@ -396,9 +384,7 @@ class AsyncClient:
         Args:
             query: The search query
             num_results: Number of results (3-20, default 5)
-            output_schema: Legacy alias for schema
             location_geo_code: Geo code for geo-targeted results
-            llm_config: Deprecated and ignored by the SGAI v2 search route
         """
         logger.info(f"Searching: {query}")
         return await self._make_request(
@@ -407,9 +393,7 @@ class AsyncClient:
             json=build_search_payload(
                 query=query,
                 num_results=num_results,
-                output_schema=output_schema,
                 location_geo_code=location_geo_code,
-                llm_config=llm_config,
                 schema=schema,
                 prompt=prompt,
                 format=format,

@@ -4,14 +4,23 @@ from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel
 
-from scrapegraph_py.models.shared import LlmConfig
-
 DEFAULT_SCREENSHOT_FORMAT = {
     "type": "screenshot",
     "fullPage": False,
     "width": 1440,
     "height": 900,
     "quality": 80,
+}
+
+ALLOWED_FORMAT_KEYS = {
+    "markdown": {"type", "mode"},
+    "html": {"type", "mode"},
+    "screenshot": {"type", "fullPage", "width", "height", "quality"},
+    "links": {"type"},
+    "images": {"type"},
+    "summary": {"type"},
+    "branding": {"type"},
+    "json": {"type", "prompt", "schema", "mode"},
 }
 
 
@@ -26,19 +35,6 @@ def schema_to_dict(schema: Optional[Any]) -> Optional[Dict[str, Any]]:
     raise ValueError(
         "schema must be a dict (JSON Schema) or a Pydantic BaseModel class"
     )
-
-
-def llm_config_to_dict(
-    llm_config: Optional[LlmConfig | Dict[str, Any]],
-) -> Optional[Dict[str, Any]]:
-    """Normalize llmConfig payloads for json/summary scrape formats."""
-    if llm_config is None:
-        return None
-    if isinstance(llm_config, LlmConfig):
-        return llm_config.model_dump()
-    if isinstance(llm_config, dict):
-        return llm_config
-    raise ValueError("llm_config must be a dict or LlmConfig instance")
 
 
 def build_single_format_entry(format_name: str) -> Dict[str, Any]:
@@ -71,7 +67,6 @@ def build_single_format_entry(format_name: str) -> Dict[str, Any]:
 def build_json_format_entry(
     prompt: str,
     schema: Optional[Any] = None,
-    llm_config: Optional[LlmConfig | Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """Build a json scrape format entry used by monitor compatibility shims."""
     entry: Dict[str, Any] = {
@@ -82,9 +77,6 @@ def build_json_format_entry(
     schema_dict = schema_to_dict(schema)
     if schema_dict is not None:
         entry["schema"] = schema_dict
-    llm_config_dict = llm_config_to_dict(llm_config)
-    if llm_config_dict is not None:
-        entry["llmConfig"] = llm_config_dict
     return entry
 
 
@@ -96,16 +88,12 @@ def normalize_format_entries(
     if formats:
         normalized_formats: List[Dict[str, Any]] = []
         for entry in formats:
-            normalized_entry = dict(entry)
+            allowed_keys = ALLOWED_FORMAT_KEYS.get(entry.get("type"), {"type"})
+            normalized_entry = {
+                key: value for key, value in dict(entry).items() if key in allowed_keys
+            }
             if normalized_entry.get("type") == "json" and "schema" in normalized_entry:
                 normalized_entry["schema"] = schema_to_dict(normalized_entry["schema"])
-            if (
-                normalized_entry.get("type") in {"json", "summary"}
-                and "llmConfig" in normalized_entry
-            ):
-                normalized_entry["llmConfig"] = llm_config_to_dict(
-                    normalized_entry["llmConfig"]
-                )
             normalized_formats.append(normalized_entry)
         return normalized_formats
 

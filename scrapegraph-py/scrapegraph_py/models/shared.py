@@ -1,7 +1,7 @@
 """
 Shared configuration models for the ScrapeGraphAI v2 API.
 
-These models are used across multiple endpoints for fetch and LLM configuration.
+These models are used across multiple endpoints for fetch configuration.
 """
 
 from enum import Enum
@@ -72,23 +72,3 @@ class FetchConfig(CamelModel):
         default=None, ge=0, le=100, description="Number of scrolls to perform (0-100)"
     )
     mock: bool = Field(default=False, description="Use mock mode for testing")
-
-
-class LlmConfig(CamelModel):
-    """Configuration for the LLM used in extraction."""
-
-    model: Optional[str] = Field(
-        default=None, description="LLM model to use for extraction"
-    )
-    temperature: Optional[float] = Field(
-        default=None,
-        ge=0.0,
-        le=2.0,
-        description="Sampling temperature (0.0-2.0)",
-    )
-    max_tokens: Optional[int] = Field(
-        default=None, ge=1, description="Maximum tokens in the response"
-    )
-    chunker: Optional[Dict[str, Any]] = Field(
-        default=None, description="Chunking strategy for large pages"
-    )
