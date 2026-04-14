@@ -155,7 +155,7 @@ response = client.search(
     num_results=5,
     prompt="Extract key findings",
     schema=MyModel,
-    location_geo_code="us",
+    country="us",
     time_range="past_week",
 )
 ```
@@ -167,7 +167,7 @@ response = client.search(
 | `output_schema` | `schema` (now requires `prompt`) |
 | `extraction_mode` | Removed (always AI extraction) |
 | `stealth` | Removed (use `fetch_config=FetchConfig(mode=...)`) |
-| `location_geo_code` | `location_geo_code` (unchanged) |
+| `location_geo_code` | `country` (renamed, matches `FetchConfig.country`) |
 | `time_range` | `time_range` (values: `past_hour`, `past_24_hours`, `past_week`, `past_month`, `past_year`) |
 | `mock` | Removed |
 | `return_toon` | Removed |

@@ -144,7 +144,7 @@ def test_search_accepts_single_result_and_uses_camel_case(client):
         num_results=1,
         prompt="Extract titles",
         schema={"type": "object", "properties": {"title": {"type": "string"}}},
-        location_geo_code="it",
+        country="it",
         time_range="past_week",
     )
 

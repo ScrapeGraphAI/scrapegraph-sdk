@@ -30,10 +30,11 @@ class SearchRequest(CamelModel):
         validation_alias="schema",
         description="JSON Schema defining the structure of extracted search data",
     )
-    location_geo_code: Optional[str] = Field(
+    country: Optional[str] = Field(
         default=None,
         max_length=10,
-        description="Geo code for localized search results",
+        serialization_alias="locationGeoCode",
+        description="Two-letter country code for geo-targeted results (e.g. 'us', 'it')",
     )
     time_range: Optional[str] = Field(
         default=None,

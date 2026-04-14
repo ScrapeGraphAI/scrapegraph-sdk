@@ -370,7 +370,7 @@ class AsyncClient:
         self,
         query: str,
         num_results: int = 3,
-        location_geo_code: Optional[str] = None,
+        country: Optional[str] = None,
         *,
         schema: Optional[Any] = None,
         prompt: Optional[str] = None,
@@ -384,7 +384,7 @@ class AsyncClient:
         Args:
             query: The search query
             num_results: Number of results (1-20, default 3)
-            location_geo_code: Geo code for geo-targeted results
+            country: Two-letter country code for geo-targeted results (e.g. 'us', 'it')
         """
         logger.info(f"Searching: {query}")
         return await self._make_request(
@@ -393,7 +393,7 @@ class AsyncClient:
             json=build_search_payload(
                 query=query,
                 num_results=num_results,
-                location_geo_code=location_geo_code,
+                country=country,
                 schema=schema,
                 prompt=prompt,
                 format=format,

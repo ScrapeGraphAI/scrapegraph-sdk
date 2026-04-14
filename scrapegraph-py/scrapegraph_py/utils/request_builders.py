@@ -131,7 +131,7 @@ def build_search_payload(
     *,
     query: str,
     num_results: int = 3,
-    location_geo_code: Optional[str] = None,
+    country: Optional[str] = None,
     schema: Optional[Any] = None,
     prompt: Optional[str] = None,
     format: str = "markdown",
@@ -148,7 +148,7 @@ def build_search_payload(
         format=format,
         mode=mode,
         fetch_config=fetch_config,
-        location_geo_code=location_geo_code,
+        country=country,
         time_range=time_range,
     )
     return request.model_dump()
