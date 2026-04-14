@@ -155,7 +155,7 @@ def test_search_accepts_single_result_and_uses_camel_case(client):
         "mode": "prune",
         "prompt": "Extract titles",
         "schema": {"type": "object", "properties": {"title": {"type": "string"}}},
-        "locationGeoCode": "it",
+        "country": "it",
         "timeRange": "past_week",
     }
     assert result["results"][0]["url"] == "https://example.com"

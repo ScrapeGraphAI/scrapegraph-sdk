@@ -33,7 +33,6 @@ class SearchRequest(CamelModel):
     country: Optional[str] = Field(
         default=None,
         max_length=10,
-        serialization_alias="locationGeoCode",
         description="Two-letter country code for geo-targeted results (e.g. 'us', 'it')",
     )
     time_range: Optional[str] = Field(
