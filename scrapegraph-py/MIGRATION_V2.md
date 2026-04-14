@@ -97,7 +97,8 @@ response = client.extract(
     prompt="Extract the main heading and description",
     schema=MyPydanticModel,
     fetch_config=FetchConfig(
-        mode="js+stealth",
+        mode="js",
+        stealth=True,
         headers={"User-Agent": "MyBot"},
         cookies={"session": "abc123"},
         scrolls=3,
@@ -114,8 +115,8 @@ response = client.extract(
 | `headers` | `fetch_config=FetchConfig(headers=...)` |
 | `cookies` | `fetch_config=FetchConfig(cookies=...)` |
 | `number_of_scrolls` | `fetch_config=FetchConfig(scrolls=...)` |
-| `render_heavy_js` | `fetch_config=FetchConfig(mode="js")` or `mode="js+stealth"` |
-| `stealth` | `fetch_config=FetchConfig(mode="direct+stealth")` or `mode="js+stealth"` |
+| `render_heavy_js` | `fetch_config=FetchConfig(mode="js")` |
+| `stealth` | `fetch_config=FetchConfig(stealth=True)` |
 | `wait_ms` | `fetch_config=FetchConfig(wait=...)` |
 | `mock` | Removed |
 | `plain_text` | Removed |
@@ -210,7 +211,8 @@ response = client.scrape(
     "https://example.com",
     format="markdown",
     fetch_config=FetchConfig(
-        mode="js+stealth",
+        mode="js",
+        stealth=True,
         wait=2000,
         headers={"User-Agent": "MyBot"},
     ),
@@ -220,10 +222,10 @@ response = client.scrape(
 | v1 parameter | v2 equivalent |
 |---|---|
 | `website_url` | `url` (positional) |
-| `render_heavy_js` | `fetch_config=FetchConfig(mode="js")` or `mode="js+stealth"` |
+| `render_heavy_js` | `fetch_config=FetchConfig(mode="js")` |
 | `branding` | `format="branding"` |
 | `headers` | `fetch_config=FetchConfig(headers=...)` |
-| `stealth` | `fetch_config=FetchConfig(mode="direct+stealth")` or `mode="js+stealth"` |
+| `stealth` | `fetch_config=FetchConfig(stealth=True)` |
 | `wait_ms` | `fetch_config=FetchConfig(wait=...)` |
 | `mock` | Removed |
 | `return_toon` | Removed |
@@ -252,7 +254,7 @@ response = client.markdownify(
 response = client.scrape(
     "https://example.com",
     format="markdown",
-    fetch_config=FetchConfig(mode="js+stealth"),
+    fetch_config=FetchConfig(mode="js", stealth=True),
 )
 ```
 
@@ -303,7 +305,8 @@ response = client.crawl.start(
     include_patterns=["/blog/*"],
     exclude_patterns=["/admin/*"],
     fetch_config=FetchConfig(
-        mode="js+stealth",
+        mode="js",
+        stealth=True,
         wait=1000,
         headers={"User-Agent": "MyBot"},
     ),
@@ -399,7 +402,7 @@ monitor = client.monitor.create(
     prompt="Extract company info",
     interval="0 9 * * *",
     schema={"type": "object", "properties": {"name": {"type": "string"}}},
-    fetch_config=FetchConfig(mode="direct+stealth"),
+    fetch_config=FetchConfig(stealth=True),
 )
 
 # List
@@ -526,7 +529,8 @@ Controls how pages are fetched. Used by `scrape()`, `extract()`, `crawl.start()`
 from scrapegraph_py import FetchConfig
 
 config = FetchConfig(
-    mode="js+stealth",   # Fetch mode: auto, fast, js, direct+stealth, js+stealth
+    mode="js",           # Fetch mode: auto, fast, js
+    stealth=True,        # Use residential proxies (+5 credits)
     timeout=30000,       # Request timeout in ms (1000-60000)
     wait=2000,           # Wait after page load in ms (0-30000)
     headers={"k": "v"},  # Custom HTTP headers
@@ -544,8 +548,8 @@ config = FetchConfig(
 | `auto` | Automatically selects the best provider chain (default) |
 | `fast` | Direct HTTP fetch via impit — fastest, no JS rendering |
 | `js` | Headless browser rendering for JavaScript-heavy pages |
-| `direct+stealth` | Residential proxy with stealth headers, no JS |
-| `js+stealth` | JS rendering combined with stealth/residential proxy |
+
+**Stealth:** Set `stealth=True` to use residential proxies for bot detection bypass (+5 credits per request). Selecting a `country` automatically enables stealth.
 
 ---
 
@@ -630,7 +634,7 @@ For a fast migration, search your codebase for these patterns:
 | `client.replace_scheduled_job(` | Remove |
 | `client.get_job_executions(` | Remove |
 | `return_toon=True` | Remove |
-| `render_heavy_js=` | `fetch_config=FetchConfig(mode="js")` or `mode="js+stealth"` |
+| `render_heavy_js=` | `fetch_config=FetchConfig(mode="js")` |
 | `from scrapegraph_py.models.smartscraper import` | Remove |
 | `from scrapegraph_py.models.searchscraper import` | Remove |
 | `from scrapegraph_py.models.markdownify import` | Remove |

@@ -15,6 +15,7 @@ def test_fetch_config_defaults():
     config = FetchConfig()
     assert config.mock is False
     assert config.mode == FetchMode.AUTO
+    assert config.stealth is False
 
 
 def test_fetch_config_uses_camel_case():

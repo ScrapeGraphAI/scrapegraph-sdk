@@ -28,15 +28,11 @@ class FetchMode(str, Enum):
     - AUTO: Automatically selects the best provider chain.
     - FAST: Direct HTTP fetch via impit (fastest, no JS).
     - JS: Headless browser rendering for JavaScript-heavy pages.
-    - DIRECT_STEALTH: Residential proxy with stealth headers (no JS).
-    - JS_STEALTH: JS rendering combined with stealth/residential proxy.
     """
 
     AUTO = "auto"
     FAST = "fast"
     JS = "js"
-    DIRECT_STEALTH = "direct+stealth"
-    JS_STEALTH = "js+stealth"
 
 
 class FetchConfig(CamelModel):
@@ -44,7 +40,11 @@ class FetchConfig(CamelModel):
 
     mode: FetchMode = Field(
         default=FetchMode.AUTO,
-        description="Fetch/proxy mode: 'auto', 'fast', 'js', 'direct+stealth', 'js+stealth'",
+        description="Fetch/proxy mode: 'auto', 'fast', or 'js'",
+    )
+    stealth: bool = Field(
+        default=False,
+        description="Use residential proxies to bypass bot detection (+5 credits)",
     )
     timeout: Optional[int] = Field(
         default=None,

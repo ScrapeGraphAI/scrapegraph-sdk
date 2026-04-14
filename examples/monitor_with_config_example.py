@@ -14,7 +14,8 @@ monitor = client.monitor.create(
     prompt="Extract the top 5 news headlines with their dates",
     interval="0 */6 * * *",  # Every 6 hours
     fetch_config=FetchConfig(
-        mode="js+stealth",
+        mode="js",
+        stealth=True,
         wait=2000,
     ),
     llm_config=LlmConfig(

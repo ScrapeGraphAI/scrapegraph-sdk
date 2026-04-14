@@ -2,14 +2,16 @@
 Scrape a webpage with custom fetch configuration.
 
 FetchConfig allows you to control the fetch mode (proxy strategy),
-wait times, cookies, headers, country-based geolocation, and more.
+stealth toggle, wait times, cookies, headers, country-based geolocation,
+and more.
 
 Available modes:
   - auto: Automatically selects the best provider chain (default)
   - fast: Direct HTTP fetch, fastest option, no JS rendering
   - js: Headless browser rendering for JavaScript-heavy pages
-  - direct+stealth: Residential proxy with stealth headers (no JS)
-  - js+stealth: JS rendering combined with stealth/residential proxy
+
+Stealth:
+  - stealth=True: Use residential proxies to bypass bot detection (+5 credits)
 """
 
 import json
@@ -22,7 +24,8 @@ result = client.scrape(
     "https://example.com",
     format="markdown",
     fetch_config=FetchConfig(
-        mode="js+stealth",
+        mode="js",
+        stealth=True,
         wait=3000,
         headers={"User-Agent": "MyBot/1.0"},
         cookies={"session": "abc123"},
