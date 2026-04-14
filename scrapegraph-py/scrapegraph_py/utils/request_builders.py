@@ -130,7 +130,7 @@ def build_extract_payload(
 def build_search_payload(
     *,
     query: str,
-    num_results: int = 5,
+    num_results: int = 3,
     location_geo_code: Optional[str] = None,
     schema: Optional[Any] = None,
     prompt: Optional[str] = None,

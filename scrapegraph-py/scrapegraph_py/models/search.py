@@ -12,7 +12,7 @@ class SearchRequest(CamelModel):
 
     query: str = Field(..., description="The search query")
     num_results: conint(ge=1, le=20) = Field(
-        default=5, description="Number of results to return (1-20)"
+        default=3, description="Number of results to return (1-20)"
     )
     format: str = Field(default="markdown", description="Search scrape format")
     mode: str = Field(default="prune", description="HTML processing mode")

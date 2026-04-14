@@ -413,7 +413,7 @@ class Client:
     def search(
         self,
         query: str,
-        num_results: int = 5,
+        num_results: int = 3,
         location_geo_code: Optional[str] = None,
         *,
         schema: Optional[Any] = None,
@@ -427,7 +427,7 @@ class Client:
 
         Args:
             query: The search query
-            num_results: Number of results (1-20, default 5)
+            num_results: Number of results (1-20, default 3)
             location_geo_code: Geo code for geo-targeted results
         """
         logger.info(f"Searching: {query}")

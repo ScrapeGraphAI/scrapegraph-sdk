@@ -153,21 +153,26 @@ result = client.get_searchscraper(request_id)
 response = client.search(
     query="What is the latest version of Python?",
     num_results=5,
+    prompt="Extract key findings",
     schema=MyModel,
+    location_geo_code="us",
+    time_range="past_week",
 )
 ```
 
 | v1 parameter | v2 equivalent |
 |---|---|
 | `user_prompt` | `query` |
-| `num_results` | `num_results` (unchanged) |
-| `output_schema` | `schema` |
+| `num_results` | `num_results` (unchanged, default changed from 5 to 3) |
+| `output_schema` | `schema` (now requires `prompt`) |
 | `extraction_mode` | Removed (always AI extraction) |
-| `stealth` | Removed (use `fetch_config=FetchConfig(mode=...)` on other endpoints) |
-| `location_geo_code` | Removed |
-| `time_range` | Removed |
+| `stealth` | Removed (use `fetch_config=FetchConfig(mode=...)`) |
+| `location_geo_code` | `location_geo_code` (unchanged) |
+| `time_range` | `time_range` (values: `past_hour`, `past_24_hours`, `past_week`, `past_month`, `past_year`) |
 | `mock` | Removed |
 | `return_toon` | Removed |
+
+New parameters in v2: `format`, `mode`, `prompt`, `fetch_config`.
 
 > **Note:** `get_searchscraper()` has been removed.
 
