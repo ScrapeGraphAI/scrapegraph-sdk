@@ -108,7 +108,12 @@ def test_extract_sends_schema_and_fetch_config(client):
             "type": "object",
         },
         "mode": "normal",
-        "fetchConfig": {"mode": "auto", "timeout": 5000, "stealth": False, "mock": False},
+        "fetchConfig": {
+            "mode": "auto",
+            "timeout": 5000,
+            "stealth": False,
+            "mock": False,
+        },
     }
     assert result["json"]["name"] == "Widget"
 
