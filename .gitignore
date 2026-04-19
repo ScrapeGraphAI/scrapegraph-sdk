@@ -1,5 +1,47 @@
 .env
-# Ignore .DS_Store files anywhere in the repository
+.env.*
+*.csv
+
+# OS
 .DS_Store
 **/.DS_Store
-*.csv
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+*.egg
+.eggs/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# Linting/formatting
+.ruff_cache/
+.mypy_cache/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Build artifacts
+*.whl
+
+# Misc
+.bfg-report/

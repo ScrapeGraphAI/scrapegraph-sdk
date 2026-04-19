@@ -1,0 +1,57 @@
+[project]
+name = "scrapegraph-py"
+version = "2.0.0"
+description = "Official Python SDK for ScrapeGraph AI API"
+readme = "README.md"
+license = "MIT"
+authors = [
+    { name = "ScrapeGraph AI", email = "support@scrapegraphai.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "httpx>=0.27.0",
+    "pydantic>=2.0.0",
+]
+keywords = ["scraping", "ai", "web-scraping", "api", "sdk"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Internet :: WWW/HTTP :: Indexing/Search",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
+]
+
+[project.urls]
+Homepage = "https://scrapegraphai.com"
+Documentation = "https://docs.scrapegraphai.com"
+Repository = "https://github.com/ScrapeGraphAI/scrapegraph-py"
+Issues = "https://github.com/ScrapeGraphAI/scrapegraph-py/issues"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/scrapegraph_py"]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "python-dotenv>=1.0.0",
+    "ruff>=0.4.0",
+]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["F841", "E402"]
