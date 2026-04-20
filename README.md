@@ -333,7 +333,7 @@ async with AsyncScrapeGraphAI() as sgai:
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `SGAI_API_KEY` | Your ScrapeGraphAI API key | — |
-| `SGAI_API_URL` | Override API base URL | `https://api.scrapegraphai.com/api/v2` |
+| `SGAI_API_URL` | Override API base URL | `https://v2-api.scrapegraphai.com/api/v2` |
 | `SGAI_DEBUG` | Enable debug logging (`"1"`) | off |
 | `SGAI_TIMEOUT` | Request timeout in seconds | `120` |
 
