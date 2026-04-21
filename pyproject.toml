@@ -1,6 +1,6 @@
 [project]
 name = "scrapegraph-py"
-version = "2.0.0"
+version = "2.0.1"
 description = "Official Python SDK for ScrapeGraph AI API"
 readme = "README.md"
 license = "MIT"

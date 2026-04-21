@@ -15,7 +15,7 @@ class Env:
 
     @property
     def base_url(self) -> str:
-        return os.environ.get("SGAI_API_URL") or "https://v2-api.scrapegraphai.com/api/v2"
+        return os.environ.get("SGAI_API_URL") or "https://v2-api.scrapegraphai.com/api"
 
 
 env = Env()
