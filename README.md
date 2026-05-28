@@ -134,14 +134,14 @@ res = sgai.search(
 Crawl a website and its linked pages.
 
 ```python
-from scrapegraph_py import ScrapeGraphAI, MarkdownFormatConfig
+from scrapegraph_py import ScrapeGraphAI, ScrapeMarkdownFormatEntry
 
 sgai = ScrapeGraphAI()
 
 # Start a crawl
 start = sgai.crawl.start(
     "https://example.com",
-    formats=[MarkdownFormatConfig()],
+    formats=[ScrapeMarkdownFormatEntry()],
     max_pages=50,
     max_depth=2,
     max_links_per_page=10,
@@ -151,6 +151,7 @@ start = sgai.crawl.start(
 
 # Check status
 status = sgai.crawl.get(start.data["id"])
+pages = sgai.crawl.pages(start.data["id"], cursor=0, limit=50)
 
 # Control
 sgai.crawl.stop(crawl_id)
@@ -259,6 +260,7 @@ async with AsyncScrapeGraphAI() as sgai:
 async with AsyncScrapeGraphAI() as sgai:
     start = await sgai.crawl.start("https://example.com", max_pages=50)
     status = await sgai.crawl.get(start.data["id"])
+    pages = await sgai.crawl.pages(start.data["id"], cursor=0, limit=50)
 ```
 
 ### Async Monitor
@@ -289,6 +291,7 @@ async with AsyncScrapeGraphAI() as sgai:
 | search | [`search_with_extraction.py`](examples/search/search_with_extraction.py) | Search + AI extraction |
 | crawl | [`crawl_basic.py`](examples/crawl/crawl_basic.py) | Start and monitor a crawl |
 | crawl | [`crawl_with_formats.py`](examples/crawl/crawl_with_formats.py) | Crawl with formats |
+| crawl | [`crawl_pages.py`](examples/crawl/crawl_pages.py) | Paginated crawl pages with scrape results |
 | monitor | [`monitor_basic.py`](examples/monitor/monitor_basic.py) | Create a page monitor |
 | monitor | [`monitor_with_webhook.py`](examples/monitor/monitor_with_webhook.py) | Monitor with webhook |
 | utilities | [`credits.py`](examples/utilities/credits.py) | Check credits and limits |
@@ -310,6 +313,7 @@ async with AsyncScrapeGraphAI() as sgai:
 | search | [`search_with_extraction_async.py`](examples/search/search_with_extraction_async.py) | Search + AI extraction |
 | crawl | [`crawl_basic_async.py`](examples/crawl/crawl_basic_async.py) | Start and monitor a crawl |
 | crawl | [`crawl_with_formats_async.py`](examples/crawl/crawl_with_formats_async.py) | Crawl with formats |
+| crawl | [`crawl_pages_async.py`](examples/crawl/crawl_pages_async.py) | Paginated crawl pages with scrape results |
 | monitor | [`monitor_basic_async.py`](examples/monitor/monitor_basic_async.py) | Create a page monitor |
 | monitor | [`monitor_with_webhook_async.py`](examples/monitor/monitor_with_webhook_async.py) | Monitor with webhook |
 | utilities | [`credits_async.py`](examples/utilities/credits_async.py) | Check credits and limits |

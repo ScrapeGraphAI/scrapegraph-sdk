@@ -287,6 +287,37 @@ class TestCrawl:
             assert res.status == "success"
             assert res.data.status == "completed"
 
+    def test_pages(self):
+        body = {
+            "data": [
+                {
+                    "url": "https://example.com",
+                    "status": "completed",
+                    "depth": 0,
+                    "parentUrl": None,
+                    "links": [],
+                    "scrapeRefId": "scrape-123",
+                    "title": "Example",
+                    "contentType": "text/html",
+                    "scrape": {
+                        "results": {"markdown": {"data": ["# Example"]}},
+                        "metadata": {"contentType": "text/html"},
+                    },
+                }
+            ],
+            "pagination": {"limit": 50, "nextCursor": None},
+        }
+        with patch.object(httpx.Client, "request", return_value=mock_response(body)) as mock:
+            sgai = ScrapeGraphAI(api_key=API_KEY)
+            res = sgai.crawl.pages("crawl-123", cursor=0, limit=50)
+
+            assert res.status == "success"
+            assert res.data.data[0].scrape_ref_id == "scrape-123"
+            assert res.data.pagination.next_cursor is None
+            args, kwargs = mock.call_args
+            assert args[:2] == ("GET", "/crawl/crawl-123/pages")
+            assert kwargs["params"] == {"cursor": 0, "limit": 50}
+
     def test_stop(self):
         with patch.object(httpx.Client, "request", return_value=mock_response({})):
             sgai = ScrapeGraphAI(api_key=API_KEY)

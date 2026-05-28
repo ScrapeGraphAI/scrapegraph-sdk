@@ -14,6 +14,8 @@ from pydantic import BaseModel, TypeAdapter
 from .env import env
 from .schemas import (
     ApiResult,
+    CrawlPagesQuery,
+    CrawlPagesResponse,
     CrawlRequest,
     CrawlResponse,
     CreditsResponse,
@@ -115,6 +117,18 @@ class AsyncCrawlResource:
 
     async def get(self, id: str) -> ApiResult[CrawlResponse]:
         return await self._client._get(f"/crawl/{id}", CrawlResponse)
+
+    async def pages(
+        self,
+        id: str,
+        *,
+        cursor: int | None = None,
+        limit: int | None = None,
+    ) -> ApiResult[CrawlPagesResponse]:
+        kwargs = _compact(cursor=cursor, limit=limit)
+        query = CrawlPagesQuery(**kwargs) if kwargs else None
+        qs = {key: getattr(query, key) for key in kwargs} if query else None
+        return await self._client._get(f"/crawl/{id}/pages", CrawlPagesResponse, params=qs or None)
 
     async def stop(self, id: str) -> ApiResult[dict]:
         return await self._client._post_empty(f"/crawl/{id}/stop")
