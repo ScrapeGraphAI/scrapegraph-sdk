@@ -11,6 +11,33 @@
 
 Official Python SDK for the [ScrapeGraphAI API](https://scrapegraphai.com).
 
+## 🆚 Open Source vs Managed API
+
+This SDK is a client for the **managed cloud API**. ScrapeGraphAI also ships an [open-source library](https://github.com/ScrapeGraphAI/Scrapegraph-ai) you can run yourself. This table explains the difference so you can pick the right one.
+
+| | Open Source (`scrapegraphai`) | Managed API (this SDK) |
+|---|---|---|
+| **What it is** | A Python library you run yourself | A hosted cloud service you call via SDK |
+| **Where it runs** | Your own infrastructure (self-hosted) | ScrapeGraphAI cloud |
+| **LLM** | Bring your own (OpenAI, Groq, Gemini, Azure, local via Ollama) | Managed for you |
+| **Browser / JS rendering** | You configure it (Playwright) | Managed (stealth, `auto`/`fast`/`js` modes) |
+| **Proxies & anti-bot** | Your responsibility | Included |
+| **Scaling & maintenance** | Your responsibility | Fully managed |
+| **Cost model** | LLM tokens + your own infra | Pay-as-you-go credits |
+| **Auth** | Your own LLM keys | `SGAI_API_KEY` |
+| **Capabilities** | Graph pipelines (SmartScraper, Search, Speech, ScriptCreator…) | Scrape, Extract, Search, Crawl, Monitor, History |
+| **Setup effort** | More configuration | Minimal — API key + one call |
+| **License** | MIT | SDK is MIT; the API service is paid |
+
+**Choose the open-source library** if you want full control, on-prem/self-hosted data, local LLMs (Ollama), or fine-grained cost tuning — and you're happy to manage browsers, proxies and scaling yourself.
+
+**Choose the managed API** (this SDK) if you want zero infrastructure, managed JS rendering & anti-bot, built-in **Crawl** and scheduled **Monitor** jobs, and the fastest path to production — billed per credit.
+
+- Open-source library: https://github.com/ScrapeGraphAI/Scrapegraph-ai
+- Python SDK: https://github.com/ScrapeGraphAI/scrapegraph-py
+- JS/TS SDK: https://github.com/ScrapeGraphAI/scrapegraph-js
+- API docs: https://docs.scrapegraphai.com/introduction
+
 ## Install
 
 ```bash
