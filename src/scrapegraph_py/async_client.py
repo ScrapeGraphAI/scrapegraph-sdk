@@ -395,6 +395,7 @@ class AsyncScrapeGraphAI:
         schema: dict[str, object] | None = None,
         fetch_config: FetchConfig | None = None,
         location_geo_code: str | None = None,
+        content_types: list[FetchContentType] | None = None,
         time_range: TimeRange | None = None,
     ) -> ApiResult[SearchResponse]:
         req = SearchRequest(
@@ -407,6 +408,7 @@ class AsyncScrapeGraphAI:
                 schema=schema,
                 fetch_config=fetch_config,
                 location_geo_code=location_geo_code,
+                content_types=content_types,
                 time_range=time_range,
             )
         )

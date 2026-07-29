@@ -27,6 +27,10 @@ HistoryStatus = Literal["completed", "failed", "running", "paused", "deleted"]
 FetchContentType = Literal[
     "text/html",
     "application/json",
+    "text/markdown",
+    "text/plain",
+    "text/csv",
+    "application/x-latex",
     "application/pdf",
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     "application/vnd.openxmlformats-officedocument.presentationml.presentation",
@@ -42,9 +46,6 @@ FetchContentType = Literal[
     "application/epub+zip",
     "application/rtf",
     "application/vnd.oasis.opendocument.text",
-    "text/csv",
-    "text/plain",
-    "application/x-latex",
 ]
 
 ScrapeContentFormat = Literal["markdown", "html", "links", "images", "summary", "json", "branding"]
@@ -187,6 +188,7 @@ class SearchRequest(CamelModel):
     prompt: Annotated[str, Field(min_length=1, max_length=10000)] | None = None
     schema_: dict[str, object] | None = Field(default=None, alias="schema")
     location_geo_code: Annotated[str, Field(max_length=10)] | None = None
+    content_types: list[FetchContentType] | None = None
     time_range: TimeRange | None = None
 
     @model_validator(mode="after")

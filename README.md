@@ -152,8 +152,19 @@ res = sgai.search(
     schema={...},                       # optional
     time_range="past_week",             # optional
     location_geo_code="us",             # optional
+    content_types=[                     # optional, defaults to text-like types
+        "text/html",
+        "application/json",
+        "text/markdown",
+        "text/plain",
+    ],
 )
 ```
+
+By default `search` only scrapes text-like results (`text/html`, `application/json`,
+`text/markdown`, `text/plain`); PDFs, office documents and images are skipped. Pass
+`content_types` to change that, for example `content_types=["text/html", "application/pdf"]`
+to include PDFs.
 
 ### crawl
 
