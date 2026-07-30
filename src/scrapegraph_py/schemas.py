@@ -154,6 +154,8 @@ FormatConfig = ScrapeFormatEntry
 class ScrapeRequest(CamelModel):
     url: HttpUrl
     content_type: FetchContentType | None = None
+    allowed_types: list[FetchContentType] | None = None
+    processors: list[PdfProcessor] | None = None
     fetch_config: FetchConfig | None = None
     formats: list[ScrapeFormatEntry] = Field(default_factory=lambda: [ScrapeMarkdownFormatEntry()])
 
@@ -173,6 +175,8 @@ class ExtractRequestBase(CamelModel):
     prompt: Annotated[str, Field(min_length=1, max_length=10000)]
     schema_: dict[str, object] | None = Field(default=None, alias="schema")
     content_type: FetchContentType | None = None
+    allowed_types: list[FetchContentType] | None = None
+    processors: list[PdfProcessor] | None = None
     fetch_config: FetchConfig | None = None
 
     @model_validator(mode="after")
@@ -246,7 +250,8 @@ class CrawlRequest(CamelModel):
     allow_external: bool = False
     include_patterns: list[str] | None = None
     exclude_patterns: list[str] | None = None
-    content_types: list[FetchContentType] | None = None
+    allowed_types: list[FetchContentType] | None = None
+    processors: list[PdfProcessor] | None = None
     fetch_config: FetchConfig | None = None
 
     @model_validator(mode="after")

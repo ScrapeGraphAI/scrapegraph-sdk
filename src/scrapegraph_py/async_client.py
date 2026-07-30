@@ -97,7 +97,8 @@ class AsyncCrawlResource:
         allow_external: bool | None = None,
         include_patterns: list[str] | None = None,
         exclude_patterns: list[str] | None = None,
-        content_types: list[FetchContentType] | None = None,
+        allowed_types: list[FetchContentType] | None = None,
+        processors: list[PdfProcessor] | None = None,
         fetch_config: FetchConfig | None = None,
     ) -> ApiResult[CrawlResponse]:
         req = CrawlRequest(
@@ -110,7 +111,8 @@ class AsyncCrawlResource:
                 allow_external=allow_external,
                 include_patterns=include_patterns,
                 exclude_patterns=exclude_patterns,
-                content_types=content_types,
+                allowed_types=allowed_types,
+                processors=processors,
                 fetch_config=fetch_config,
             )
         )
@@ -348,6 +350,8 @@ class AsyncScrapeGraphAI:
         formats: list[FormatConfig] | None = None,
         fetch_config: FetchConfig | None = None,
         content_type: FetchContentType | None = None,
+        allowed_types: list[FetchContentType] | None = None,
+        processors: list[PdfProcessor] | None = None,
     ) -> ApiResult[ScrapeResponse]:
         req = ScrapeRequest(
             **_compact(
@@ -355,6 +359,8 @@ class AsyncScrapeGraphAI:
                 formats=formats,
                 fetch_config=fetch_config,
                 content_type=content_type,
+                allowed_types=allowed_types,
+                processors=processors,
             )
         )
         return await self._post("/scrape", req, ScrapeResponse)
@@ -370,6 +376,8 @@ class AsyncScrapeGraphAI:
         mode: HtmlMode | None = None,
         fetch_config: FetchConfig | None = None,
         content_type: FetchContentType | None = None,
+        allowed_types: list[FetchContentType] | None = None,
+        processors: list[PdfProcessor] | None = None,
     ) -> ApiResult[ExtractResponse]:
         req = ExtractRequest(
             **_compact(
@@ -381,6 +389,8 @@ class AsyncScrapeGraphAI:
                 mode=mode,
                 fetch_config=fetch_config,
                 content_type=content_type,
+                allowed_types=allowed_types,
+                processors=processors,
             )
         )
         return await self._post("/extract", req, ExtractResponse)
