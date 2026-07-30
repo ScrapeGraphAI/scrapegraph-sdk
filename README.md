@@ -140,7 +140,7 @@ res = sgai.extract(
 Search the web and optionally extract structured data.
 
 ```python
-from scrapegraph_py import ScrapeGraphAI
+from scrapegraph_py import PdfProcessor, ScrapeGraphAI
 
 sgai = ScrapeGraphAI()
 
@@ -152,19 +152,14 @@ res = sgai.search(
     schema={...},                       # optional
     time_range="past_week",             # optional
     location_geo_code="us",             # optional
-    content_types=[                     # optional, defaults to text-like types
-        "text/html",
-        "application/json",
-        "text/markdown",
-        "text/plain",
-    ],
+    allowed_types=["text/html", "application/pdf"],  # optional MIME allowlist
+    processors=[PdfProcessor(max_pages=10)],          # optional PDF page cap
 )
 ```
 
-By default `search` only scrapes text-like results (`text/html`, `application/json`,
-`text/markdown`, `text/plain`); PDFs, office documents and images are skipped. Pass
-`content_types` to change that, for example `content_types=["text/html", "application/pdf"]`
-to include PDFs.
+By default `search` accepts every supported content type, including PDFs, and processes up to 25
+pages per PDF. Use `allowed_types` to restrict accepted MIME types. Configure PDF processing
+separately with `processors`; `max_pages` accepts `1`–`500`, or `-1` for no page limit.
 
 ### crawl
 

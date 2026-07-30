@@ -34,6 +34,7 @@ from .schemas import (
     MonitorCreateRequest,
     MonitorResponse,
     MonitorUpdateRequest,
+    PdfProcessor,
     ScrapeRequest,
     ScrapeResponse,
     SearchRequest,
@@ -395,7 +396,8 @@ class ScrapeGraphAI:
         schema: dict[str, object] | None = None,
         fetch_config: FetchConfig | None = None,
         location_geo_code: str | None = None,
-        content_types: list[FetchContentType] | None = None,
+        allowed_types: list[FetchContentType] | None = None,
+        processors: list[PdfProcessor] | None = None,
         time_range: TimeRange | None = None,
     ) -> ApiResult[SearchResponse]:
         req = SearchRequest(
@@ -408,7 +410,8 @@ class ScrapeGraphAI:
                 schema=schema,
                 fetch_config=fetch_config,
                 location_geo_code=location_geo_code,
-                content_types=content_types,
+                allowed_types=allowed_types,
+                processors=processors,
                 time_range=time_range,
             )
         )

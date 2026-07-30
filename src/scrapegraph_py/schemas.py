@@ -48,6 +48,12 @@ FetchContentType = Literal[
     "application/vnd.oasis.opendocument.text",
 ]
 
+
+class PdfProcessor(CamelModel):
+    type: Literal["pdf"] = "pdf"
+    max_pages: Literal[-1] | Annotated[int, Field(ge=1, le=500)] = 25
+
+
 ScrapeContentFormat = Literal["markdown", "html", "links", "images", "summary", "json", "branding"]
 ScrapeCaptureFormat = Literal["screenshot"]
 ScrapeFormat = Literal[
@@ -188,7 +194,8 @@ class SearchRequest(CamelModel):
     prompt: Annotated[str, Field(min_length=1, max_length=10000)] | None = None
     schema_: dict[str, object] | None = Field(default=None, alias="schema")
     location_geo_code: Annotated[str, Field(max_length=10)] | None = None
-    content_types: list[FetchContentType] | None = None
+    allowed_types: list[FetchContentType] | None = None
+    processors: list[PdfProcessor] | None = None
     time_range: TimeRange | None = None
 
     @model_validator(mode="after")
