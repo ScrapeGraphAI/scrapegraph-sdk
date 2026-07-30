@@ -10,6 +10,7 @@ from scrapegraph_py import (
     JsonFormatConfig,
     LinksFormatConfig,
     MarkdownFormatConfig,
+    PdfProcessor,
     ScrapeGraphAI,
     ScreenshotFormatConfig,
 )
@@ -259,6 +260,21 @@ class TestSearch:
             assert res.status == "success"
             _, kwargs = mock.call_args
             assert kwargs["json"]["prompt"] == "Summarize results"
+
+    def test_with_pdf_options(self):
+        body = {"results": [], "metadata": {"search": {}, "pages": {}}}
+        with patch.object(httpx.Client, "request", return_value=mock_response(body)) as mock:
+            sgai = ScrapeGraphAI(api_key=API_KEY)
+            res = sgai.search(
+                "papers",
+                allowed_types=["application/pdf"],
+                processors=[PdfProcessor(max_pages=10)],
+            )
+
+            assert res.status == "success"
+            _, kwargs = mock.call_args
+            assert kwargs["json"]["allowedTypes"] == ["application/pdf"]
+            assert kwargs["json"]["processors"] == [{"type": "pdf", "maxPages": 10}]
 
 
 class TestCrawl:

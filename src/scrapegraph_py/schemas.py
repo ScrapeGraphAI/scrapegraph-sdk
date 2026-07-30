@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Annotated, Generic, Literal, TypeVar
 
-from pydantic import BaseModel, ConfigDict, Field, HttpUrl, model_validator
+from pydantic import AfterValidator, BaseModel, ConfigDict, Field, HttpUrl, model_validator
 from pydantic.alias_generators import to_camel
 
 T = TypeVar("T")
@@ -27,6 +27,10 @@ HistoryStatus = Literal["completed", "failed", "running", "paused", "deleted"]
 FetchContentType = Literal[
     "text/html",
     "application/json",
+    "text/markdown",
+    "text/plain",
+    "text/csv",
+    "application/x-latex",
     "application/pdf",
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     "application/vnd.openxmlformats-officedocument.presentationml.presentation",
@@ -42,10 +46,32 @@ FetchContentType = Literal[
     "application/epub+zip",
     "application/rtf",
     "application/vnd.oasis.opendocument.text",
-    "text/csv",
-    "text/plain",
-    "application/x-latex",
 ]
+
+
+class PdfProcessor(CamelModel):
+    type: Literal["pdf"] = "pdf"
+    max_pages: Literal[-1] | Annotated[int, Field(ge=1, le=500)] = 25
+
+
+def _unique_allowed_types(values: list[FetchContentType]) -> list[FetchContentType]:
+    if len(values) != len(set(values)):
+        raise ValueError("duplicate allowed types not allowed")
+    return values
+
+
+def _unique_processors(values: list[PdfProcessor]) -> list[PdfProcessor]:
+    types = [processor.type for processor in values]
+    if len(types) != len(set(types)):
+        raise ValueError("duplicate processor types not allowed")
+    return values
+
+
+AllowedTypes = Annotated[
+    list[FetchContentType], Field(min_length=1), AfterValidator(_unique_allowed_types)
+]
+Processors = Annotated[list[PdfProcessor], Field(min_length=1), AfterValidator(_unique_processors)]
+
 
 ScrapeContentFormat = Literal["markdown", "html", "links", "images", "summary", "json", "branding"]
 ScrapeCaptureFormat = Literal["screenshot"]
@@ -147,6 +173,8 @@ FormatConfig = ScrapeFormatEntry
 class ScrapeRequest(CamelModel):
     url: HttpUrl
     content_type: FetchContentType | None = None
+    allowed_types: AllowedTypes | None = None
+    processors: Processors | None = None
     fetch_config: FetchConfig | None = None
     formats: list[ScrapeFormatEntry] = Field(default_factory=lambda: [ScrapeMarkdownFormatEntry()])
 
@@ -166,6 +194,8 @@ class ExtractRequestBase(CamelModel):
     prompt: Annotated[str, Field(min_length=1, max_length=10000)]
     schema_: dict[str, object] | None = Field(default=None, alias="schema")
     content_type: FetchContentType | None = None
+    allowed_types: AllowedTypes | None = None
+    processors: Processors | None = None
     fetch_config: FetchConfig | None = None
 
     @model_validator(mode="after")
@@ -187,6 +217,8 @@ class SearchRequest(CamelModel):
     prompt: Annotated[str, Field(min_length=1, max_length=10000)] | None = None
     schema_: dict[str, object] | None = Field(default=None, alias="schema")
     location_geo_code: Annotated[str, Field(max_length=10)] | None = None
+    allowed_types: AllowedTypes | None = None
+    processors: Processors | None = None
     time_range: TimeRange | None = None
 
     @model_validator(mode="after")
@@ -237,7 +269,8 @@ class CrawlRequest(CamelModel):
     allow_external: bool = False
     include_patterns: list[str] | None = None
     exclude_patterns: list[str] | None = None
-    content_types: list[FetchContentType] | None = None
+    allowed_types: AllowedTypes | None = None
+    processors: Processors | None = None
     fetch_config: FetchConfig | None = None
 
     @model_validator(mode="after")
