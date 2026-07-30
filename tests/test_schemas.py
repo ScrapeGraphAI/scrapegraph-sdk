@@ -30,6 +30,17 @@ def test_documented_pdf_configuration(request_model, base):
 
 
 @pytest.mark.parametrize(("request_model", "base"), REQUESTS)
+def test_default_pdf_cap_can_be_omitted(request_model, base):
+    request = request_model(**base)
+    assert "processors" not in request.model_dump(by_alias=True, mode="json", exclude_none=True)
+
+    request = request_model(**base, processors=[{"type": "pdf"}])
+    assert request.model_dump(by_alias=True, mode="json", exclude_none=True)["processors"] == [
+        {"type": "pdf", "maxPages": 25}
+    ]
+
+
+@pytest.mark.parametrize(("request_model", "base"), REQUESTS)
 @pytest.mark.parametrize(
     "invalid",
     [
