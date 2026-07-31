@@ -6,6 +6,7 @@ import re
 import sys
 import time
 from datetime import datetime
+from importlib import metadata
 from typing import Literal
 
 import httpx
@@ -44,6 +45,7 @@ from .schemas import (
 )
 
 _SERVER_TIMING_RE = re.compile(r"dur=(\d+(?:\.\d+)?)")
+USER_AGENT = f"scrapegraph-py/{metadata.version('scrapegraph-py')}"
 
 
 def _debug(label: str, data: object = None) -> None:
@@ -262,7 +264,7 @@ class ScrapeGraphAI:
         self._http = httpx.Client(
             base_url=env.base_url,
             timeout=env.timeout,
-            headers={"SGAI-APIKEY": self._api_key},
+            headers={"SGAI-APIKEY": self._api_key, "User-Agent": USER_AGENT},
         )
 
         self.crawl = CrawlResource(self)
@@ -291,7 +293,7 @@ class ScrapeGraphAI:
                     url,
                     json=json_body,
                     params=params,
-                    headers={"SGAI-APIKEY": self._api_key},
+                    headers={"SGAI-APIKEY": self._api_key, "User-Agent": USER_AGENT},
                     timeout=env.timeout,
                 )
             else:
