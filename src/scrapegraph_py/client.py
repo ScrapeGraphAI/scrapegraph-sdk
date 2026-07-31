@@ -6,12 +6,13 @@ import re
 import sys
 import time
 from datetime import datetime
+from importlib import metadata
 from typing import Literal
 
 import httpx
 from pydantic import BaseModel, TypeAdapter
 
-from .env import USER_AGENT, env
+from .env import env
 from .schemas import (
     ApiResult,
     CrawlPagesQuery,
@@ -44,6 +45,7 @@ from .schemas import (
 )
 
 _SERVER_TIMING_RE = re.compile(r"dur=(\d+(?:\.\d+)?)")
+USER_AGENT = f"scrapegraph-py/{metadata.version('scrapegraph-py')}"
 
 
 def _debug(label: str, data: object = None) -> None:

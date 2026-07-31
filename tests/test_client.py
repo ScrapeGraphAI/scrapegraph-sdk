@@ -15,7 +15,7 @@ from scrapegraph_py import (
     ScrapeGraphAI,
     ScreenshotFormatConfig,
 )
-from scrapegraph_py.env import USER_AGENT
+from scrapegraph_py.client import USER_AGENT
 
 API_KEY = "test-sgai-key"
 BASE_URL = "https://api.scrapegraphai.com/v2"

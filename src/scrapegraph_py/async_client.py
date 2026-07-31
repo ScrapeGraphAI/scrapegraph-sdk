@@ -11,7 +11,8 @@ from typing import Literal
 import httpx
 from pydantic import BaseModel, TypeAdapter
 
-from .env import USER_AGENT, env
+from .client import USER_AGENT
+from .env import env
 from .schemas import (
     ApiResult,
     CrawlPagesQuery,
