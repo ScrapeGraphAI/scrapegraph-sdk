@@ -1,6 +1,15 @@
 from __future__ import annotations
 
 import os
+import platform
+from importlib.metadata import PackageNotFoundError, version
+
+try:
+    __version__ = version("scrapegraph-py")
+except PackageNotFoundError:  # local checkout without an installed distribution
+    __version__ = "unknown"
+
+USER_AGENT = f"scrapegraph-py/{__version__} python/{platform.python_version()}"
 
 
 class Env:

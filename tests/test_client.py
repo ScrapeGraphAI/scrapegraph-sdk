@@ -4,6 +4,7 @@ import httpx
 import pytest
 
 from scrapegraph_py import (
+    AsyncScrapeGraphAI,
     FetchConfig,
     HtmlFormatConfig,
     ImagesFormatConfig,
@@ -14,6 +15,7 @@ from scrapegraph_py import (
     ScrapeGraphAI,
     ScreenshotFormatConfig,
 )
+from scrapegraph_py.env import USER_AGENT
 
 API_KEY = "test-sgai-key"
 BASE_URL = "https://api.scrapegraphai.com/v2"
@@ -482,6 +484,15 @@ class TestClientInit:
     def test_explicit_api_key(self):
         sgai = ScrapeGraphAI(api_key="explicit-key")
         assert sgai._api_key == "explicit-key"
+
+    def test_sends_user_agent(self):
+        sgai = ScrapeGraphAI(api_key=API_KEY)
+        assert sgai._http.headers["User-Agent"] == USER_AGENT
+        assert USER_AGENT.startswith("scrapegraph-py/")
+
+    def test_async_sends_user_agent(self):
+        sgai = AsyncScrapeGraphAI(api_key=API_KEY)
+        assert sgai._http.headers["User-Agent"] == USER_AGENT
 
 
 class TestCamelCaseSerialization:

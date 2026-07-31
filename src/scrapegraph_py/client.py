@@ -11,7 +11,7 @@ from typing import Literal
 import httpx
 from pydantic import BaseModel, TypeAdapter
 
-from .env import env
+from .env import USER_AGENT, env
 from .schemas import (
     ApiResult,
     CrawlPagesQuery,
@@ -262,7 +262,7 @@ class ScrapeGraphAI:
         self._http = httpx.Client(
             base_url=env.base_url,
             timeout=env.timeout,
-            headers={"SGAI-APIKEY": self._api_key},
+            headers={"SGAI-APIKEY": self._api_key, "User-Agent": USER_AGENT},
         )
 
         self.crawl = CrawlResource(self)
@@ -291,7 +291,7 @@ class ScrapeGraphAI:
                     url,
                     json=json_body,
                     params=params,
-                    headers={"SGAI-APIKEY": self._api_key},
+                    headers={"SGAI-APIKEY": self._api_key, "User-Agent": USER_AGENT},
                     timeout=env.timeout,
                 )
             else:
