@@ -3,11 +3,7 @@
 [![PyPI version](https://badge.fury.io/py/scrapegraph-py.svg)](https://badge.fury.io/py/scrapegraph-py)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-<p align="center">
-  <a href="https://scrapegraphai.com">
-    <img src="media/banner.png" alt="ScrapeGraphAI Python SDK" style="width: 100%;">
-  </a>
-</p>
+[![ScrapeGraphAI Python SDK](media/banner.png)](https://scrapegraphai.com)
 
 Official Python SDK for the [ScrapeGraphAI API](https://scrapegraphai.com).
 
@@ -30,7 +26,7 @@ sgai = ScrapeGraphAI()
 result = sgai.scrape("https://example.com")
 
 if result.status == "success":
-    print(result.data["results"]["markdown"]["data"])
+    print(result.data.results.get("markdown", {}).get("data"))
 else:
     print(result.error)
 ```
@@ -38,19 +34,24 @@ else:
 Every method returns `ApiResult[T]` — no exceptions to catch:
 
 ```python
-@dataclass
-class ApiResult(Generic[T]):
+from pydantic import BaseModel
+from typing import Generic, Literal, TypeVar
+
+T = TypeVar("T")
+
+class ApiResult(BaseModel, Generic[T]):
     status: Literal["success", "error"]
     data: T | None
     error: str | None
     elapsed_ms: int
 ```
+
 ## 🆚 Open Source vs Managed API
 
 This SDK is a client for the **managed cloud API**. ScrapeGraphAI also ships an [open-source library](https://github.com/ScrapeGraphAI/Scrapegraph-ai) you can run yourself. This table explains the difference so you can pick the right one.
 
 | | Open Source (`scrapegraphai`) | Managed API (this SDK) |
-|---|---|---|
+| --- | --- | --- |
 | **What it is** | A Python library you run yourself | A hosted cloud service you call via SDK |
 | **Where it runs** | Your own infrastructure (self-hosted) | ScrapeGraphAI cloud |
 | **LLM** | Bring your own (OpenAI, Groq, Gemini, Azure, local via Ollama) | Managed for you |
@@ -67,10 +68,10 @@ This SDK is a client for the **managed cloud API**. ScrapeGraphAI also ships an 
 
 **Choose the managed API** (this SDK) if you want zero infrastructure, managed JS rendering & anti-bot, built-in **Crawl** and scheduled **Monitor** jobs, and the fastest path to production — billed per credit.
 
-- Open-source library: https://github.com/ScrapeGraphAI/Scrapegraph-ai
-- Python SDK: https://github.com/ScrapeGraphAI/scrapegraph-py
-- JS/TS SDK: https://github.com/ScrapeGraphAI/scrapegraph-js
-- API docs: https://docs.scrapegraphai.com/introduction
+- [Open-source library](https://github.com/ScrapeGraphAI/Scrapegraph-ai)
+- [Python SDK](https://github.com/ScrapeGraphAI/scrapegraph-py)
+- [JS/TS SDK](https://github.com/ScrapeGraphAI/scrapegraph-js)
+- [API docs](https://docs.scrapegraphai.com/introduction)
 
 ## API
 
@@ -108,6 +109,7 @@ res = sgai.scrape(
 ```
 
 **Formats:**
+
 - `markdown` — Clean markdown (modes: `normal`, `reader`, `prune`)
 - `html` — Raw HTML (modes: `normal`, `reader`, `prune`)
 - `links` — All links on the page
@@ -311,7 +313,7 @@ async with AsyncScrapeGraphAI() as sgai:
 ### Sync Examples
 
 | Service | Example | Description |
-|---------|---------|-------------|
+| --- | --- | --- |
 | scrape | [`scrape_basic.py`](examples/scrape/scrape_basic.py) | Basic markdown scraping |
 | scrape | [`scrape_multi_format.py`](examples/scrape/scrape_multi_format.py) | Multiple formats |
 | scrape | [`scrape_json_extraction.py`](examples/scrape/scrape_json_extraction.py) | Structured JSON extraction |
@@ -333,7 +335,7 @@ async with AsyncScrapeGraphAI() as sgai:
 ### Async Examples
 
 | Service | Example | Description |
-|---------|---------|-------------|
+| --- | --- | --- |
 | scrape | [`scrape_basic_async.py`](examples/scrape/scrape_basic_async.py) | Basic markdown scraping |
 | scrape | [`scrape_multi_format_async.py`](examples/scrape/scrape_multi_format_async.py) | Multiple formats |
 | scrape | [`scrape_json_extraction_async.py`](examples/scrape/scrape_json_extraction_async.py) | Structured JSON extraction |
@@ -355,7 +357,7 @@ async with AsyncScrapeGraphAI() as sgai:
 ## Environment Variables
 
 | Variable | Description | Default |
-|----------|-------------|---------|
+| --- | --- | --- |
 | `SGAI_API_KEY` | Your ScrapeGraphAI API key | — |
 | `SGAI_API_URL` | Override API base URL | `https://v2-api.scrapegraphai.com/api` |
 | `SGAI_DEBUG` | Enable debug logging (`"1"`) | off |
